@@ -1,8 +1,8 @@
-.TH IPTRAF-NG 8 "IPTraf-ng Help Page"
+.TH VIPTRAF 8 "VIPTraf Help Page"
 .SH NAME
 iptraf \- Interactive Colorful IP LAN Monitor
 .SH SYNOPSIS
-.BR iptraf-ng " { [ " \-f " ] [ { " \-i 
+.BR viptraf " { [ " \-f " ] [ { " \-i 
 .IR iface " | " 
 .BR \-g " | " \-d
 .IR iface " | "
@@ -20,11 +20,11 @@ iptraf \- Interactive Colorful IP LAN Monitor
 .BR \-h " ] }"
 .br
 .SH DESCRIPTION
-.B iptraf-ng
+.B viptraf
 is an ncurses-based IP LAN monitor that generates various network statistics including TCP info, UDP counts, ICMP and OSPF information, Ethernet load info, node stats, IP checksum errors, and others.
 .PP
 If the 
-.B iptraf-ng
+.B viptraf
 command is issued without any command-line options, the program comes up in interactive mode, with the various facilities accessed through the main menu.
 
 .SH OPTIONS
@@ -51,7 +51,7 @@ start the LAN station monitor on the specified interface, or all LAN
 interfaces if "\-l all" is specified
 .TP
 .BI "\-t " timeout
-tells IPTraf-ng to run the specified facility for only
+tells VIPTraf to run the specified facility for only
 .I timeout
 minutes.  This option is used only with one of the above parameters.
 .TP
@@ -67,10 +67,10 @@ name is based on either the interface selected (detailed interface
 statistics, TCP/UDP service statistics, packet size breakdown), or the
 instance of the facility (IP traffic monitor, LAN station monitor).  If a
 path is not specified, the log file is placed in
-.B /var/log/iptraf-ng
+.B /var/log/viptraf
 .TP
 .B "\-f"
-clears all locks and counters, causing this instance of IPTraf-ng to think
+clears all locks and counters, causing this instance of VIPTraf to think
 it's the first one running.  This should only be used to recover from
 an abnormal termination or system crash.
 .TP
@@ -79,11 +79,11 @@ shows a command summary
 .SH SIGNALS
 
  SIGUSR1 - rotates log files while program is running
- SIGUSR2 - terminates an IPTraf-ng process running in the background.
+ SIGUSR2 - terminates an VIPTraf process running in the background.
 
 .SH FILES
- /var/log/iptraf-ng/*.log - log file
- /var/lib/iptraf-ng/* - important IPTraf-ng data files
+ /var/log/viptraf/*.log - log file
+ /var/lib/viptraf/* - important VIPTraf data files
 
 .SH SEE ALSO
  Documentation/* - complete documentation written by the author
@@ -92,7 +92,7 @@ shows a command summary
 Gerard Paul Java (riker@mozcom.com)
 
 .SH MANUAL AUTHOR
-Frederic Peters (fpeters@debian.org), using iptraf-ng \-h
+Frederic Peters (fpeters@debian.org), using viptraf \-h
 General manual page modifications by Gerard Paul Java (riker@mozcom.com),
 Phil Cameron (pcameron@redhat.com)
 

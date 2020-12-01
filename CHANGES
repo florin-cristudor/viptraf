@@ -1,3 +1,7 @@
+CHANGES file for viptraf
+- Moved working dirs to ../viptraf/ (lib and log)
+- moved pid to /var/run/viptraf.pid
+
 CHANGES file for iptraf-ng
 
 * Tue Jul 21 2020 Vitezslav Samel <vitezslav@samel.cz> - 1.2.1

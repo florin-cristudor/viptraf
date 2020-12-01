@@ -35,10 +35,6 @@ An IP Network Statistics Utility
 #define WITHALL 1
 #define WITHOUTALL 0
 
-#ifndef IPTRAF_PIDFILE
-#define IPTRAF_PIDFILE "/var/run/iptraf-ng.pid"
-#endif
-
 const char *ALLSPEC = "all";
 
 #define CMD(name, h) { .cmd = #name, .fn = cmd_##name, .help = h }
@@ -297,15 +293,15 @@ static struct options iptraf_ng_options[] = {
 
 static int create_pidfile(void)
 {
-	int fd = open(IPTRAF_PIDFILE, O_WRONLY|O_CREAT, 0644);
+	int fd = open(VIPTRAF_PIDFILE, O_WRONLY|O_CREAT, 0644);
 	if (fd < 0) {
-		perror("can not open "IPTRAF_PIDFILE);
+		perror("can not open "VIPTRAF_PIDFILE);
 		return -1;
 	}
 
 	if (lockf(fd, F_TLOCK, 0) < 0) {
-		error("The PID file is locked "IPTRAF_PIDFILE". "
-		      "Maybe other iptraf-ng instance is running?can not acquire ");
+		error("The PID file is locked "VIPTRAF_PIDFILE". "
+		      "Maybe other viptraf instance is running?can not acquire ");
 		return -1;
 	}
 
@@ -553,7 +549,7 @@ int main(int argc, char **argv)
 	endwin();
 
 cleanup:
-	unlink(IPTRAF_PIDFILE);
+	unlink(VIPTRAF_PIDFILE);
 bailout:
 	return 0;
 }

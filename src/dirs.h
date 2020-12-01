@@ -1,5 +1,5 @@
-#ifndef IPTRAF_NG_DIRS_H
-#define IPTRAF_NG_DIRS_H
+#ifndef VIPTRAF_DIRS_H
+#define VIPTRAF_DIRS_H
 
 // TODO: full rewrite
 
@@ -20,11 +20,11 @@
  */
 
 #ifndef WORKDIR
-#define WORKDIR		"/var/lib/iptraf-ng"
+#define WORKDIR     "/var/lib/viptraf"
 #endif
 
 #ifndef LOGDIR
-#define LOGDIR		"/var/log/iptraf-ng"
+#define LOGDIR      "/var/log/viptraf"
 #endif
 
 /*
@@ -36,8 +36,11 @@
  */
 
 #ifndef LOCKDIR
-#define LOCKDIR		"/var/lock/iptraf-ng"
+#define LOCKDIR     "/var/lock/viptraf"
 #endif
+
+/* PIF FILE */
+#define VIPTRAF_PIDFILE "/var/run/viptraf.pid"
 
 /***
  *** Directory environment variables.  Overrides built in definitions.
@@ -100,7 +103,7 @@
  * The IPTraf configuration data file
  */
 
-#define CONFIGFILE	get_path(T_WORKDIR, "iptraf.cfg")
+#define CONFIGFILE	get_path(T_WORKDIR, "viptraf.cfg")
 
 /*
  * The IPTraf log files
@@ -130,7 +133,7 @@
 /*
  * The rvnamed log file
  */
-#define RVNDLOGFILE	get_path(T_LOGDIR, "rvnamed-ng.log")
+#define RVNDLOGFILE	get_path(T_LOGDIR, "rvnamed.log")
 
 /*
  * The debug log file
@@ -141,4 +144,4 @@
 #define PATH_MAX	4095
 #endif
 
-#endif	/* IPTRAF_NG_DIRS_H */
+#endif	/* VIPTRAF_DIRS_H */
