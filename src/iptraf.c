@@ -60,7 +60,7 @@ static void press_enter_to_continue(void)
 	getchar();
 }
 
-static void clearfiles(char *prefix, char *directory)
+static void clearfiles(const char *prefix, const char *directory)
 {
 	DIR *dir;
 	struct dirent *dir_entry;

@@ -48,7 +48,7 @@ void tx_initmenu(struct MENU *menu, int y1, int x1, int y2, int x2,
 
 /* add menu item */
 
-void tx_additem(struct MENU *menu, char *item, char *desc)
+void tx_additem(struct MENU *menu, const char *item, const char *desc)
 {
 	struct ITEM *tnode;
 	char cur_option[OPTIONSTRLEN_MAX];
@@ -57,7 +57,7 @@ void tx_additem(struct MENU *menu, char *item, char *desc)
 	if (menu->itemcount >= 25)
 		return;
 
-	tnode = xmalloc(sizeof(struct ITEM));
+    tnode = (struct ITEM *)xmalloc(sizeof(struct ITEM));
 
 	if (item != NULL) {
 		strcpy(tnode->option, item);

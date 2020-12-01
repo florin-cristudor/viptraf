@@ -41,7 +41,7 @@ void tx_init_listbox(struct scroll_list *list, int width, int height,
 	scrollok(list->win, 0);
 }
 
-void tx_set_listbox_title(struct scroll_list *list, char *text, int x)
+void tx_set_listbox_title(struct scroll_list *list, const char *text, int x)
 {
 	mvwprintw(list->borderwin, 0, x, " %s ", text);
 }
@@ -50,7 +50,7 @@ void tx_add_list_entry(struct scroll_list *list, char *node, char *text)
 {
 	struct textlisttype *ptmp;
 
-	ptmp = xmallocz(sizeof(struct textlisttype));
+	ptmp = (struct textlisttype *)xmallocz(sizeof(struct textlisttype));
 
 	strncpy(ptmp->text, text, MAX_TEXT_LENGTH - 1);
 	ptmp->nodeptr = node;

@@ -32,7 +32,7 @@ static unsigned int capt_recvmmsg_find_filled_slot(struct capt_data_recvmmsg *da
 
 static bool capt_have_packet_recvmmsg(struct capt *capt)
 {
-	struct capt_data_recvmmsg *data = capt->priv;
+	struct capt_data_recvmmsg *data = (struct capt_data_recvmmsg *) capt->priv;
 
 	if (capt_recvmmsg_find_filled_slot(data) != FRAMES)
 		return true;
@@ -42,7 +42,7 @@ static bool capt_have_packet_recvmmsg(struct capt *capt)
 
 static int capt_get_packet_recvmmsg(struct capt *capt, struct pkt_hdr *pkt)
 {
-	struct capt_data_recvmmsg *data = capt->priv;
+	struct capt_data_recvmmsg *data = (struct capt_data_recvmmsg *) capt->priv;
 	int ret = 0;
 
 	unsigned int slot = capt_recvmmsg_find_filled_slot(data);
@@ -76,7 +76,7 @@ static int capt_get_packet_recvmmsg(struct capt *capt, struct pkt_hdr *pkt)
 
 static int capt_put_packet_recvmmsg(struct capt *capt, struct pkt_hdr *pkt __unused)
 {
-	struct capt_data_recvmmsg *data = capt->priv;
+	struct capt_data_recvmmsg *data = (struct capt_data_recvmmsg *) capt->priv;
 
 	/* hand out processed slot to kernel */
 	if (data->slot < FRAMES) {
@@ -90,7 +90,7 @@ static int capt_put_packet_recvmmsg(struct capt *capt, struct pkt_hdr *pkt __unu
 
 static void capt_cleanup_recvmmsg(struct capt *capt)
 {
-	struct capt_data_recvmmsg *data = capt->priv;
+	struct capt_data_recvmmsg *data = (struct capt_data_recvmmsg *) capt->priv;
 
 	capt->cleanup = NULL;
 	capt->put_packet = NULL;
@@ -117,11 +117,11 @@ int capt_setup_recvmmsg(struct capt *capt)
 	if (capt_get_socket(capt) == -1)
 		return -1;
 
-	data			= xmallocz(sizeof(struct capt_data_recvmmsg));
-	data->buf		= xmallocz(FRAMES * MAX_PACKET_SIZE);
-	data->msgvec		= xmallocz(FRAMES * sizeof(*data->msgvec));
-	data->iov		= xmallocz(FRAMES * sizeof(*data->iov));
-	data->from		= xmallocz(FRAMES * sizeof(*data->from));
+	data			= (struct capt_data_recvmmsg *) xmallocz(sizeof(struct capt_data_recvmmsg));
+	data->buf		= (char *) xmallocz(FRAMES * MAX_PACKET_SIZE);
+	data->msgvec		= (struct mmsghdr *) xmallocz(FRAMES * sizeof(*data->msgvec));
+	data->iov		= (struct iovec *) xmallocz(FRAMES * sizeof(*data->iov));
+	data->from		= (struct sockaddr_ll *) xmallocz(FRAMES * sizeof(*data->from));
 
 	for (unsigned int i = 0; i < FRAMES; i++) {
 		data->iov[i].iov_len	= MAX_PACKET_SIZE;

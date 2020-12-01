@@ -16,29 +16,29 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
 	list->prev = list;
 }
 
-static inline void __list_add(struct list_head *new, struct list_head *prev,
+static inline void __list_add(struct list_head *pnew, struct list_head *prev,
 			      struct list_head *next)
 {
-	next->prev = new;
-	new->next = next;
-	new->prev = prev;
-	prev->next = new;
+	next->prev = pnew;
+	pnew->next = next;
+	pnew->prev = prev;
+	prev->next = pnew;
 }
 
-static inline void list_add(struct list_head *new, struct list_head *head)
+static inline void list_add(struct list_head *pnew, struct list_head *head)
 {
-	__list_add(new, head, head->next);
+	__list_add(pnew, head, head->next);
 }
 
-static inline void list_add_tail(struct list_head *new, struct list_head *head)
+static inline void list_add_tail(struct list_head *pnew, struct list_head *head)
 {
-	__list_add(new, head->prev, head);
+	__list_add(pnew, head->prev, head);
 }
 
-static inline void list_add_tail_unique(struct list_head *new,
+static inline void list_add_tail_unique(struct list_head *pnew,
 					struct list_head *head)
 {
-	__list_add(new, head->prev, head);
+	__list_add(pnew, head->prev, head);
 }
 
 static inline void __list_del(struct list_head *prev, struct list_head *next)

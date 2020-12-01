@@ -1,5 +1,5 @@
-#ifndef IPTRAF_NG_LOG_H
-#define IPTRAF_NG_LOG_H
+#ifndef VIPTRAF_LOG_H
+#define VIPTRAF_LOG_H
 
 /***
 
@@ -7,14 +7,14 @@ log.h - the iptraf logging facility header file
 
 ***/
 
-#define TIME_TARGET_MAX		30
+#define TIME_TARGET_MAX     30
 
-char *gen_instance_logname(char *template, int instance_id);
+char *gen_instance_logname(const char *stemplate, int instance_id);
 void input_logfile(char *target, int *aborted);
-void opentlog(FILE ** fd, char *logfilename);
-void writelog(int logging, FILE * fd, char *msg);
+void opentlog(FILE ** fd, const char *logfilename);
+void writelog(int logging, FILE * fd, const char *msg);
 void genatime(time_t now, char *atime);
-void write_daemon_err(char *msg, va_list vararg);
+void write_daemon_err(const char *msg, va_list vararg);
 
 #define DEBUG 1
 #ifdef DEBUG
@@ -23,10 +23,10 @@ void write_daemon_err(char *msg, va_list vararg);
 #define debug_log(x, ...) {}
 #endif
 
-void write_daemon_log(char *format, ...);
-void rotate_logfile(FILE ** fd, char *name);
+void write_daemon_log(const char *format, ...);
+void rotate_logfile(FILE ** fd, const char *name);
 void check_rotate_flag(FILE ** fd);
 void announce_rotate_prepare(FILE * fd);
 void announce_rotate_complete(FILE * fd);
 
-#endif	/* IPTRAF_NG_LOG_H */
+#endif	/* VIPTRAF_LOG_H */

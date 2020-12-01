@@ -217,9 +217,10 @@ int dev_get_ifname(int ifindex, char *ifname)
 	if (fd == -1)
 		return fd;
 
-	struct ifreq ifr = {
-		.ifr_ifindex = ifindex
-	};
+	struct ifreq ifr;
+
+    ifr.ifr_ifindex = ifindex;
+
 	int ir = ioctl(fd, SIOCGIFNAME, &ifr);
 
 	/* need to preserve errno across call to close() */

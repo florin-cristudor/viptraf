@@ -130,7 +130,7 @@ static int addrstat(struct rvn *rvnpacket, struct hosts *hostlist,
 	return NOTRESOLVED;
 }
 
-static void writervnlog(FILE * fd, char *msg)
+static void writervnlog(FILE * fd, const char *msg)
 {
 	time_t now;
 	char atime[TIME_TARGET_MAX] = "";

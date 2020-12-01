@@ -15,7 +15,7 @@ void sortkeyhelp(void);
 void tabkeyhelp(WINDOW * win);
 void scrollkeyhelp(void);
 void stdexitkeyhelp(void);
-void indicate(char *message);
+void indicate(const char *message);
 void printlargenum(unsigned long long i, WINDOW * win);
 void print_packet_drops(unsigned long count, WINDOW *win, int x);
 void set_next_screen_update(struct timespec *next_screen_update, struct timespec *now);

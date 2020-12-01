@@ -21,7 +21,7 @@ static bool capt_have_packet_recvmsg(struct capt *capt __unused)
 
 static int capt_get_packet_recvmsg(struct capt *capt, struct pkt_hdr *pkt)
 {
-	struct capt_data_recvmsg *data = capt->priv;
+	struct capt_data_recvmsg *data = (struct capt_data_recvmsg *) capt->priv;
 
 	/* these are set upon return from recvmsg() so clean */
 	/* them beforehand */
@@ -44,7 +44,7 @@ static int capt_get_packet_recvmsg(struct capt *capt, struct pkt_hdr *pkt)
 
 static void capt_cleanup_recvmsg(struct capt *capt)
 {
-	struct capt_data_recvmsg *data = capt->priv;
+	struct capt_data_recvmsg *data = (struct capt_data_recvmsg *) capt->priv;
 
 	capt->cleanup = NULL;
 	capt->put_packet = NULL;
@@ -69,13 +69,13 @@ int capt_setup_recvmsg(struct capt *capt)
 	if (capt_get_socket(capt) == -1)
 		return -1;
 
-	data			= xmallocz(sizeof(struct capt_data_recvmsg));
-	data->buf		= xmallocz(MAX_PACKET_SIZE);
+	data			= (struct capt_data_recvmsg *) xmallocz(sizeof(struct capt_data_recvmsg));
+	data->buf		= (char *) xmallocz(MAX_PACKET_SIZE);
 	data->iov.iov_len	= MAX_PACKET_SIZE;
 	data->iov.iov_base	= data->buf;
 
-	data->msg		= xmallocz(sizeof(*data->msg));
-	data->from		= xmallocz(sizeof(*data->from));
+	data->msg		= (struct msghdr *) xmallocz(sizeof(*data->msg));
+	data->from		= (struct sockaddr_ll *) xmallocz(sizeof(*data->from));
 
 	data->msg->msg_name	= data->from;
 	data->msg->msg_namelen	= sizeof(*data->from);

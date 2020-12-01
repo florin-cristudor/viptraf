@@ -10,7 +10,7 @@
 
 #include "winops.h"
 
-void tx_printkeyhelp(char *keytext, char *desc, WINDOW * win, int highattr,
+void tx_printkeyhelp(const char *keytext, const char *desc, WINDOW * win, int highattr,
 		     int textattr)
 {
 	wattrset(win, highattr);

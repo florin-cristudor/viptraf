@@ -124,7 +124,7 @@ int loadfilterlist(struct ffnode **fltfile)
 	}
 
 	do {
-		ptemp = xmalloc(sizeof(struct ffnode));
+		ptemp = (struct ffnode *) xmalloc(sizeof(struct ffnode));
 		br = read(pfd, &(ptemp->ffe), sizeof(struct filterfileent));
 
 		if (br > 0) {
@@ -315,7 +315,7 @@ void selectfilter(struct filterfileent *ffe, int *aborted)
 }
 
 
-void get_filter_description(char *description, int *aborted, char *pre_edit)
+void get_filter_description(char *description, int *aborted, const char *pre_edit)
 {
 	struct FIELDLIST descfield;
 	int dlgwintop;

@@ -46,7 +46,7 @@ static struct tpacket_block_desc *capt_mmap_find_filled_block(struct capt_data_m
 
 static bool capt_have_packet_mmap_v3(struct capt *capt)
 {
-	struct capt_data_mmap_v3 *data = capt->priv;
+	struct capt_data_mmap_v3 *data = (struct capt_data_mmap_v3 *) capt->priv;
 
 	if (data->pbd != NULL)
 		return true;
@@ -60,7 +60,7 @@ static bool capt_have_packet_mmap_v3(struct capt *capt)
 
 static int capt_get_packet_mmap_v3(struct capt *capt, struct pkt_hdr *pkt)
 {
-	struct capt_data_mmap_v3 *data = capt->priv;
+	struct capt_data_mmap_v3 *data =  (struct capt_data_mmap_v3 *) capt->priv;
 
 	if (data->pbd == NULL)
 		data->pbd = capt_mmap_find_filled_block(data);
@@ -86,7 +86,7 @@ static int capt_get_packet_mmap_v3(struct capt *capt, struct pkt_hdr *pkt)
 
 static int capt_put_packet_mmap_v3(struct capt *capt, struct pkt_hdr *pkt __unused)
 {
-	struct capt_data_mmap_v3 *data = capt->priv;
+	struct capt_data_mmap_v3 *data =  (struct capt_data_mmap_v3 *) capt->priv;
 
 	if (data->ppd->tp_next_offset != 0) {
 		data->ppd = (struct tpacket3_hdr *)((uint8_t *)data->ppd + data->ppd->tp_next_offset);
@@ -120,7 +120,7 @@ static unsigned long capt_get_dropped_mmap_v3(struct capt *capt)
 
 static void capt_cleanup_mmap_v3(struct capt *capt)
 {
-	struct capt_data_mmap_v3 *data = capt->priv;
+	struct capt_data_mmap_v3 *data =  (struct capt_data_mmap_v3 *) capt->priv;
 
 	free(data->pbds);
 
@@ -141,15 +141,20 @@ static void capt_cleanup_mmap_v3(struct capt *capt)
 
 int capt_setup_mmap_v3(struct capt *capt)
 {
+
+	int version = TPACKET_V3;
+	int hdrlen = version;
+	socklen_t socklen = sizeof(hdrlen);
+    size_t size;
+    void *map;
+    struct capt_data_mmap_v3 *data;
+
 	if (capt_get_socket(capt) == -1)
 		return -1;
 
-	int version = TPACKET_V3;
 	if (setsockopt(capt->fd, SOL_PACKET, PACKET_VERSION, &version, sizeof(version)) != 0)
 		goto err;
 
-	int hdrlen = version;
-	socklen_t socklen = sizeof(hdrlen);
 	if (getsockopt(capt->fd, SOL_PACKET, PACKET_HDRLEN, &hdrlen, &socklen) != 0)
 		goto err;
 
@@ -167,25 +172,25 @@ int capt_setup_mmap_v3(struct capt *capt)
 	if(setsockopt(capt->fd, SOL_PACKET, PACKET_RX_RING, &req, sizeof(req)) != 0)
 		goto err;
 
-	size_t size = req.tp_block_size * req.tp_block_nr;
-	void *map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, capt->fd, 0);
+	size = req.tp_block_size * req.tp_block_nr;
+	map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, capt->fd, 0);
 	if (map == MAP_FAILED)
 		goto err;
 
 	/* try to lock this memory to RAM */
-	(void)mlock(map, size);	/* no need to check return value because the mlock() is
+	(void)mlock(map, size); /* no need to check return value because the mlock() is
 				 * not mandatory; if it fails packet capture just works OK
 				 * albeit suboptimally */
 
-	struct capt_data_mmap_v3 *data = xmallocz(sizeof(struct capt_data_mmap_v3));
+	data = (struct capt_data_mmap_v3 *) xmallocz(sizeof(struct capt_data_mmap_v3));
 
 	data->hdrlen = hdrlen;
 	data->mmap = map;
 	data->mmap_size = size;
 
-	data->pbds = xmallocz(BLOCKS * sizeof(*data->pbd));
+	data->pbds = (struct tpacket_block_desc **) xmallocz(BLOCKS * sizeof(*data->pbd));
 	for (int i = 0; i < BLOCKS; i++) {
-		data->pbds[i] = map + i * req.tp_block_size;
+		data->pbds[i] = (struct tpacket_block_desc* )map + i * req.tp_block_size;
 	}
 
 	capt->priv		= data;

@@ -131,7 +131,7 @@ static int ifinlist(struct iflist *list, char *ifname)
 
 static struct iflist *alloc_iflist_entry(void)
 {
-	struct iflist *tmp = xmallocz(sizeof(struct iflist));
+	struct iflist *tmp = (struct iflist *) xmallocz(sizeof(struct iflist));
 
 	rate_alloc(&tmp->rate, 5);
 
@@ -525,6 +525,21 @@ void ifstats(time_t facilitytime)
 
 	struct pkt_hdr pkt;
 
+
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	struct timespec last_time = now;
+	struct timespec next_screen_update;
+
+    memset(&next_screen_update, 0, sizeof(next_screen_update));
+
+	time_t starttime = now.tv_sec;
+	time_t endtime = INT_MAX;
+
+	time_t log_next = INT_MAX;
+
+
+
 	initiflist(&(table.head));
 	if (!table.head) {
 		no_ifaces_error();
@@ -572,17 +587,9 @@ void ifstats(time_t facilitytime)
 
 	exitloop = 0;
 
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	struct timespec last_time = now;
-	struct timespec next_screen_update = { 0 };
-
-	time_t starttime = now.tv_sec;
-	time_t endtime = INT_MAX;
 	if (facilitytime != 0)
 		endtime = now.tv_sec + facilitytime * 60;
 
-	time_t log_next = INT_MAX;
 	if (logging)
 		log_next = now.tv_sec + options.logspan;
 

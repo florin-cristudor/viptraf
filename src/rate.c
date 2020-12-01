@@ -21,7 +21,7 @@ void rate_alloc(struct rate *rate, unsigned int n)
 		return;
 
 	rate->n = n;
-	rate->rates = xmalloc(n * sizeof(rate->rates[0]));
+	rate->rates = (unsigned long long *) xmalloc(n * sizeof(rate->rates[0]));
 
 	rate_init(rate);
 }
@@ -69,7 +69,7 @@ unsigned long rate_get_average(struct rate *rate)
 
 int rate_print(unsigned long rate, char *buf, unsigned n)
 {
-	char *suffix[] = { "k", "M", "G", "T", "P", "E", "Z", "Y" };
+	const char *suffix[] = { "k", "M", "G", "T", "P", "E", "Z", "Y" };
 	unsigned n_suffix = ARRAY_SIZE(suffix);
 
 	int chars;

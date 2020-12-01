@@ -140,7 +140,7 @@ void flushclosedentries(struct tcptable *table);
 void write_timeout_log(int logging, FILE *logfile, struct tcptableent *tcpnode);
 
 void writetcplog(int logging, FILE *fd, struct tcptableent *entry,
-		 unsigned int pktlen, char *message);
+		 unsigned int pktlen, const char *message);
 
 void write_tcp_unclosed(int logging, FILE *fd, struct tcptable *table);
 

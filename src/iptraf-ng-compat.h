@@ -93,14 +93,14 @@
  *
  * DO NOT USE any expression with side-effect for 'x', 'nr', or 'alloc'.
  */
-#define ALLOC_GROW(x, nr, alloc)					\
+#define ALLOC_GROW(x, nr, alloc, type)					\
 	do {								\
 		if ((nr) > alloc) {					\
 			if (alloc_nr(alloc) < (nr))			\
 				alloc = (nr);				\
 			else						\
 				alloc = alloc_nr(alloc);		\
-			x = xrealloc((x), alloc * sizeof(*(x)));	\
+			x = (type) xrealloc((x), alloc * sizeof(*(x)));	\
 		}							\
 	} while (0)
 

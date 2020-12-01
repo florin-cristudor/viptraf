@@ -26,7 +26,7 @@ void pickafilter(struct ffnode *files, struct ffnode **fltfile, int *aborted);
 char *pickfilterbyname(struct ffnode *fltlist, char *filename);
 void selectfilter(struct filterfileent *ffe, int *aborted);
 void destroyfilterlist(struct ffnode *fltlist);
-void get_filter_description(char *description, int *aborted, char *pre_edit);
+void get_filter_description(char *description, int *aborted, const char *pre_edit);
 void genname(unsigned long n, char *m);
 int nametoaddr(char *ascname, struct filter_addr *fa);
 void listfileerr(int code);

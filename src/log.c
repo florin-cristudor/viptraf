@@ -31,11 +31,11 @@ char debug_logfile[TARGET_LOGNAME_MAX];
  * a facility.   Used by the IP Traffic Monitor and LAN Station Monitor.
  */
 
-char *gen_instance_logname(char *template, int instance_num)
+char *gen_instance_logname(const char *stemplate, int instance_num)
 {
 	static char filename[80];
 
-	snprintf(filename, 80, "%s-%d.log", template, instance_num);
+	snprintf(filename, 80, "%s-%d.log", stemplate, instance_num);
 	return filename;
 }
 
@@ -85,7 +85,7 @@ void input_logfile(char *target, int *logging)
 	doupdate();
 }
 
-void opentlog(FILE ** fd, char *logfilename)
+void opentlog(FILE ** fd, const char *logfilename)
 {
 	*fd = fopen(logfilename, "a");
 
@@ -103,7 +103,7 @@ void genatime(time_t now, char *atime)
 	atime[strlen(atime) - 1] = '\0';
 }
 
-void writelog(int logging, FILE * fd, char *msg)
+void writelog(int logging, FILE * fd, const char *msg)
 {
 	char atime[TIME_TARGET_MAX];
 
@@ -115,7 +115,7 @@ void writelog(int logging, FILE * fd, char *msg)
 	fflush(fd);
 }
 
-void write_daemon_err(char *msg, va_list vararg)
+void write_daemon_err(const char *msg, va_list vararg)
 {
 	char atime[TIME_TARGET_MAX];
 	FILE *fd;
@@ -128,7 +128,7 @@ void write_daemon_err(char *msg, va_list vararg)
 	fclose(fd);
 }
 
-void write_daemon_log(char *format, ...)
+void write_daemon_log(const char *format, ...)
 {
 	char atime[TIME_TARGET_MAX];
 	FILE *fd;
@@ -146,7 +146,7 @@ void write_daemon_log(char *format, ...)
 
 
 
-void rotate_logfile(FILE ** fd, char *name)
+void rotate_logfile(FILE ** fd, const char *name)
 {
 	fclose(*fd);
 	*fd = fopen(name, "a");

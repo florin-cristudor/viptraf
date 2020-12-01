@@ -6,6 +6,6 @@
 #define T_EXECDIR	3
 #define T_LOCKDIR	4
 
-char *get_path(int dirtype, char *file);
+const char *get_path(int dirtype, const char *file);
 
 #endif	/* IPTRAF_NG_GETPATH_H */

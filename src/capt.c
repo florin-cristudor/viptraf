@@ -14,6 +14,7 @@
 #include "capt-recvmmsg.h"
 #include "capt-mmap-v2.h"
 #include "capt-mmap-v3.h"
+#include "time.h"
 
 int capt_get_socket(struct capt *capt) {
 
@@ -148,7 +149,9 @@ int capt_get_packet(struct capt *capt, struct pkt_hdr *pkt, int *ch, WINDOW *win
 	int ss = 0;
 	bool have_packet = capt->have_packet(capt);
 	int timeout = ch ? DEFAULT_UPDATE_DELAY : -1;
-	static struct timespec next_kbd_check = { 0 };
+	static struct timespec next_kbd_check;
+
+    memset(&next_kbd_check, 0, sizeof(next_kbd_check));
 
 	/* no packet ready, so poll() for it */
 	if (!have_packet) {

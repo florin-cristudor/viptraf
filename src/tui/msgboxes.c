@@ -73,7 +73,7 @@ void tui_error(const char *prompt, const char *err, ...)
 	va_end(params);
 }
 
-void tx_infobox(char *text, char *prompt)
+void tx_infobox(const char *text, const char *prompt)
 {
 	WINDOW *win;
 	PANEL *panel;

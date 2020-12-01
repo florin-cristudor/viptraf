@@ -311,7 +311,7 @@ int packet_is_first_fragment(struct pkt_hdr *pkt)
 	}
 }
 
-static char *pkttype_to_string(unsigned int type)
+static const char *pkttype_to_string(unsigned int type)
 {
 	switch(type) {
 	case PACKET_HOST:	return "PACKET_HOST";
@@ -326,7 +326,7 @@ static char *pkttype_to_string(unsigned int type)
 	}
 }
 
-static char *l2_type_to_string(unsigned int type)
+static const char *l2_type_to_string(unsigned int type)
 {
 	switch(type) {
 	case 0:		return "ARPHRD_NETROM";
@@ -399,7 +399,7 @@ static char *l2_type_to_string(unsigned int type)
 	}
 }
 
-static char *l3_proto_to_string(unsigned short protocol)
+static const char *l3_proto_to_string(unsigned short protocol)
 {
 	switch(protocol) {
 	case 0x0001:	return "ETH_P_802_3";
@@ -502,7 +502,7 @@ void packet_dump(struct pkt_hdr *pkt, FILE *fp) {
 	unsigned i = 0;
 	unsigned len;
 	char *adr;
-	char *str;
+	const char *str;
 
 	if(pkt == NULL)
 		return;

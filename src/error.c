@@ -12,7 +12,7 @@ error.c - Error-handling subroutines
 #include "log.h"
 #include "tui/msgboxes.h"
 
-void write_error(char *msg, ...)
+void write_error(const char *msg, ...)
 {
 	va_list vararg;
 

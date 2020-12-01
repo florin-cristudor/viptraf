@@ -21,7 +21,7 @@ VERSION-FILE: FORCE
 
 CFLAGS = -g -O2 -Wall -W -Werror=format-security
 LDFLAGS =
-VIPTRAF_CFLAGS := -std=gnu99 -D_GNU_SOURCE
+VIPTRAF_CFLAGS := -D_GNU_SOURCE
 ALL_CFLAGS = $(CPPFLAGS) $(CFLAGS) $(VIPTRAF_CFLAGS)
 ALL_LDFLAGS = $(LDFLAGS)
 STRIP ?= strip
@@ -40,7 +40,7 @@ pathsep = :
 
 export prefix bindir sharedir sysconfdir gitwebdir localedir
 
-CC = cc
+CC = c++
 RM = rm -f
 INSTALL = install
 RPMBUILD = rpmbuild

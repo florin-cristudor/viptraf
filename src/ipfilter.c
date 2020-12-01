@@ -37,10 +37,10 @@ static in_port_t parse_port(char *buf)
 	else
 		return 0;
 }
-void gethostparams(struct hostparams *data, char *init_saddr, char *init_smask,
-		   char *init_sport1, char *init_sport2, char *init_daddr,
-		   char *init_dmask, char *init_dport1, char *init_dport2,
-		   char *initinex, char *initmatchop, int *aborted)
+void gethostparams(struct hostparams *data, const char *init_saddr, const char *init_smask,
+		   const char *init_sport1, const char *init_sport2, const char *init_daddr,
+		   const char *init_dmask, const char *init_dport1, const char *init_dport2,
+		   const char *initinex, const char *initmatchop, int *aborted)
 {
 	WINDOW *dlgwin;
 	PANEL *dlgpanel;

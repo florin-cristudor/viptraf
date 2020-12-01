@@ -833,7 +833,9 @@ void ipmon(time_t facilitytime, char *ifptr)
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	struct timespec last_time = now;
-	struct timespec next_screen_update = { 0 };
+	struct timespec next_screen_update;
+
+    memset(&next_screen_update, 0, sizeof(next_screen_update));
 	time_t starttime = now.tv_sec;
 
 	time_t check_closed;

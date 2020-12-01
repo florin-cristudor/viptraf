@@ -176,7 +176,7 @@ static void add_tcp_hash_entry(struct tcptable *table, struct tcptableent *entry
     struct tcp_hashentry *ptmp;
 
     hp = tcp_hash(&entry->saddr, &entry->daddr);
-    ptmp = xmallocz(sizeof(struct tcp_hashentry));
+    ptmp = (struct tcp_hashentry *) xmallocz(sizeof(struct tcp_hashentry));
     /*
      * Add backpointer from screen node to hash node for deletion later
      * (Actually point to its predecessor coz of the header cell).
@@ -270,8 +270,8 @@ struct tcptableent *addentry(struct tcptable *table,
 	 */
 
 	if (table->closedentries == NULL) {
-		new_entry = xmalloc(sizeof(struct tcptableent));
-		new_entry->oth_connection = xmalloc(sizeof(struct tcptableent));
+		new_entry = (struct tcptableent *) xmalloc(sizeof(struct tcptableent));
+		new_entry->oth_connection = (struct tcptableent *) xmalloc(sizeof(struct tcptableent));
 
 		new_entry->oth_connection->oth_connection = new_entry;
 
@@ -434,7 +434,7 @@ void addtoclosedlist(struct tcptable *table, struct tcptableent *entry)
 {
 	struct closedlist *ctemp;
 
-	ctemp = xmalloc(sizeof(struct closedlist));
+	ctemp = (struct closedlist *) xmalloc(sizeof(struct closedlist));
 	/*
 	 * Point to closed entries
 	 */
@@ -1109,7 +1109,7 @@ void flushclosedentries(struct tcptable *table)
 }
 
 void writetcplog(int logging, FILE *fd, struct tcptableent *entry,
-		 unsigned int pktlen, char *message)
+		 unsigned int pktlen, const char *message)
 {
 	char msgbuf[MSGSTRING_MAX];
 

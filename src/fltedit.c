@@ -35,7 +35,7 @@ void init_filter_table(struct filterlist *fl)
  * Loads the filter from the filter file
  */
 
-int loadfilter(char *filename, struct filterlist *fl, int resolve)
+int loadfilter(const char *filename, struct filterlist *fl, int resolve)
 {
     struct filterent *fe;
     int pfd;
@@ -53,7 +53,7 @@ int loadfilter(char *filename, struct filterlist *fl, int resolve)
     }
     do
     {
-        fe = xmalloc(sizeof(struct filterent));
+        fe = (struct filterent *) xmalloc(sizeof(struct filterent));
         br = read(pfd, &(fe->hp), sizeof(struct hostparams));
 
         if (br > 0)
@@ -98,7 +98,7 @@ int loadfilter(char *filename, struct filterlist *fl, int resolve)
 	return 0;
 }
 
-void savefilter(char *filename, struct filterlist *fl)
+void savefilter(const char *filename, struct filterlist *fl)
 {
 	struct filterent *fe = fl->head;
 	int pfd;
@@ -294,7 +294,7 @@ void modify_host_parameters(struct filterlist *fl)
 		case 'i':
 		case 'I':
 		case KEY_IC:
-			ftemp = xmallocz(sizeof(struct filterent));
+			ftemp = (struct filterent *) xmallocz(sizeof(struct filterent));
 
 			gethostparams(&(ftemp->hp), "", "", "", "", "", "", "",
 				      "", "I", "N", &gh_aborted);
@@ -336,7 +336,7 @@ void modify_host_parameters(struct filterlist *fl)
 		case 'a':
 		case 'A':
 		case 1:
-			ftemp = xmallocz(sizeof(struct filterent));
+			ftemp = (struct filterent *) xmallocz(sizeof(struct filterent));
 
 			gethostparams(&(ftemp->hp), "", "", "", "", "", "", "",
 				      "", "I", "N", &gh_aborted);

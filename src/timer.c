@@ -21,7 +21,7 @@ void printelapsedtime(time_t elapsed, int x, WINDOW *win)
 	mvwprintw(win, y, x, " Time: %3u:%02u ", hours, mins);
 }
 
-inline bool time_after(struct timespec const *a, struct timespec const *b)
+bool time_after(struct timespec const *a, struct timespec const *b)
 {
 	if (a->tv_sec > b->tv_sec)
 		return true;

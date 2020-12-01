@@ -89,10 +89,10 @@ static void parse_eth_desc(FILE * fp, struct eth_desc *hd)
 			continue;
 		}
 
-		struct eth_desc *new = xmalloc(sizeof(struct eth_desc));
+		struct eth_desc *pnew = (struct eth_desc *) xmalloc(sizeof(struct eth_desc));
 
-		memcpy(new->hd_mac, mac, sizeof(mac));
-		new->hd_desc = xstrdup(line);
+		memcpy(pnew->hd_mac, mac, sizeof(mac));
+		pnew->hd_desc = xstrdup(line);
 
 		struct eth_desc *desc = NULL;
 
@@ -101,7 +101,7 @@ static void parse_eth_desc(FILE * fp, struct eth_desc *hd)
 			|| (strcmp(desc->hd_desc, line) == 0))
 			goto dupe;
 
-		list_add_tail(&new->hd_list, &hd->hd_list);
+		list_add_tail(&pnew->hd_list, &hd->hd_list);
 	      dupe:;
 	}
 
@@ -126,7 +126,7 @@ struct eth_desc *load_eth_desc(unsigned link_type)
  * [fddi]
  *     MAC ip/hostname
  */
-	char *filename = NULL;
+	const char *filename = NULL;
 	FILE *fp = NULL;
 
 	if (link_type == ARPHRD_ETHER)
@@ -134,7 +134,7 @@ struct eth_desc *load_eth_desc(unsigned link_type)
 	else if (link_type == ARPHRD_FDDI)
 		filename = FDDIFILE;
 
-	struct eth_desc *hd = xmallocz(sizeof(struct eth_desc));
+	struct eth_desc *hd = (struct eth_desc *) xmallocz(sizeof(struct eth_desc));
 
 	INIT_LIST_HEAD(&hd->hd_list);
 
@@ -278,12 +278,12 @@ static void add_eth_desc(struct eth_desc *list)
 	int aborted = dialog_eth_desc(&fields, "", "");
 
 	if (!aborted) {
-		struct eth_desc *new = xmalloc(sizeof(struct eth_desc));
+		struct eth_desc *pnew = (struct eth_desc *) xmalloc(sizeof(struct eth_desc));
 
-		memcpy(new->hd_mac, fields.list->buf, sizeof(new->hd_mac));
-		new->hd_desc = xstrdup(fields.list->nextfield->buf);
+		memcpy(pnew->hd_mac, fields.list->buf, sizeof(pnew->hd_mac));
+		pnew->hd_desc = xstrdup(fields.list->nextfield->buf);
 
-		list_add_tail(&new->hd_list, &list->hd_list);
+		list_add_tail(&pnew->hd_list, &list->hd_list);
 	}
 
 	tx_destroyfields(&fields);

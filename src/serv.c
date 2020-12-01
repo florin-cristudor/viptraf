@@ -212,7 +212,7 @@ static struct portlistent *addtoportlist(struct portlist *list,
 {
 	struct portlistent *ptemp;
 
-	ptemp = xmalloc(sizeof(struct portlistent));
+	ptemp = (struct portlistent *) xmalloc(sizeof(struct portlistent));
 	if (list->head == NULL) {
 		ptemp->prev_entry = NULL;
 		list->head = ptemp;
@@ -905,6 +905,17 @@ void servmon(char *ifname, time_t facilitytime)
 
 	struct pkt_hdr pkt;
 
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	struct timespec last_time = now;
+	struct timespec next_screen_update;
+    memset(&next_screen_update, 0, sizeof(next_screen_update));
+
+	time_t log_next = INT_MAX;
+	time_t starttime = now.tv_sec;
+	time_t endtime = INT_MAX;
+
+
 	if (!dev_up(ifname)) {
 		err_iface_down();
 		return;
@@ -949,16 +960,11 @@ void servmon(char *ifname, time_t facilitytime)
 
 	exitloop = 0;
 
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	struct timespec last_time = now;
-	struct timespec next_screen_update = { 0 };
-	time_t starttime = now.tv_sec;
-	time_t endtime = INT_MAX;
+
+
 	if (facilitytime != 0)
 		endtime = now.tv_sec + facilitytime * 60;
 
-	time_t log_next = INT_MAX;
 	if (logging)
 		log_next = now.tv_sec + options.logspan;
 
@@ -1168,7 +1174,7 @@ void addmoreports(struct porttab **table)
 		if (dup_portentry(*table, port_min, port_max))
 			tui_error(ANYKEY_MSG, "Duplicate port/range entry");
 		else {
-			ptmp = xmalloc(sizeof(struct porttab));
+			ptmp = (struct porttab *) xmalloc(sizeof(struct porttab));
 
 			ptmp->port_min = port_min;
 			ptmp->port_max = port_max;
@@ -1200,7 +1206,7 @@ void loadaddports(struct porttab **table)
 		return;
 
 	do {
-		ptemp = xmalloc(sizeof(struct porttab));
+        ptemp = (struct porttab *) xmalloc(sizeof(struct porttab));
 
 		br = read(fd, &(ptemp->port_min), sizeof(unsigned int));
 		br = read(fd, &(ptemp->port_max), sizeof(unsigned int));

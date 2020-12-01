@@ -99,7 +99,7 @@ void parse_opts(int argc, char **argv, const struct options *opt,
 	int nr = 0, alloc = 0;
 
 	char *shortopts = NULL;
-	struct option *longopts = xmallocz(sizeof(longopts[0]) * (size + 2));
+	struct option *longopts = (struct option *) xmallocz(sizeof(longopts[0]) * (size + 2));
 	const struct options *curopt = opt;
 	struct option *curlongopts = longopts;
 
@@ -110,7 +110,7 @@ void parse_opts(int argc, char **argv, const struct options *opt,
 		case OPTION_BOOL:
 			curlongopts->has_arg = no_argument;
 			if (curopt->short_name) {
-				ALLOC_GROW(shortopts, nr + 1, alloc);
+				ALLOC_GROW(shortopts, nr + 1, alloc, char *);
 				shortopts[nr++] = curopt->short_name;
 			}
 			break;
@@ -118,7 +118,7 @@ void parse_opts(int argc, char **argv, const struct options *opt,
 		case OPTION_STRING:
 			curlongopts->has_arg = required_argument;
 			if (curopt->short_name) {
-				ALLOC_GROW(shortopts, nr + 2, alloc);
+				ALLOC_GROW(shortopts, nr + 2, alloc, char *);
 				shortopts[nr++] = curopt->short_name;
 				shortopts[nr++] = ':';
 			}

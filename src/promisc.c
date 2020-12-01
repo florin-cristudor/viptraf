@@ -67,11 +67,11 @@ static void promisc_enable_dev(struct list_head *promisc, int sock, const char *
 		return;
 	}
 
-	struct promisc_list *new = xmallocz(sizeof(*new));
+	struct promisc_list *pnew = (struct promisc_list *) xmallocz(sizeof(*pnew));
 
-	new->ifindex = ifindex;
-	strcpy(new->ifname, dev);
-	list_add_tail(&new->list, promisc);
+	pnew->ifindex = ifindex;
+	strcpy(pnew->ifname, dev);
+	list_add_tail(&pnew->list, promisc);
 }
 
 void promisc_enable(int sock, struct list_head *promisc, const char *device_name)

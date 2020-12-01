@@ -92,7 +92,7 @@ struct othptable {
 /* Added by David Harbaugh for Non-IP protocol identification */
 
 struct packetstruct {
-	char *packet_name;	/* Name of packet type   */
+	const char *packet_name;	/* Name of packet type   */
 	unsigned int protocol;	/* Number of packet type */
 };
 

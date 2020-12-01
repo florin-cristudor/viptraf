@@ -47,10 +47,10 @@ static struct fragent *addnewdgram(struct iphdr *packet)
 {
 	struct fragent *ptmp;
 
-	ptmp = xmallocz(sizeof(struct fragent));
+	ptmp = (struct fragent *) xmallocz(sizeof(struct fragent));
 	list_add_tail(&ptmp->fragent_list, &frag_head);
 
-	ptmp->fragdesclist = xmalloc(sizeof(struct fragdescent));
+	ptmp->fragdesclist = (struct fragdescent *) xmalloc(sizeof(struct fragdescent));
 	ptmp->fragdesclist->min = 0;
 	ptmp->fragdesclist->max = 65535;
 	ptmp->fragdesclist->next_entry = NULL;
@@ -69,7 +69,7 @@ static struct fragdescent *addnewhole(struct fragent *frag)
 {
 	struct fragdescent *ptmp;
 
-	ptmp = xmalloc(sizeof(struct fragdescent));
+	ptmp = (struct fragdescent *) xmalloc(sizeof(struct fragdescent));
 
 	if (frag->fragdesclist == NULL) {
 		frag->fragdesclist = ptmp;

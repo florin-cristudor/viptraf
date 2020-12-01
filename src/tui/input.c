@@ -33,7 +33,7 @@ void tx_addfield(struct FIELDLIST *list, unsigned int len, unsigned int y,
 {
 	struct FIELD *newfield;
 
-	newfield = xmalloc(sizeof(struct FIELD));
+    newfield = (struct FIELD *)xmalloc(sizeof(struct FIELD));
 
 	if (list->list == NULL) {
 		list->list = newfield;
@@ -50,7 +50,7 @@ void tx_addfield(struct FIELDLIST *list, unsigned int len, unsigned int y,
 	newfield->ypos = y;
 	newfield->len = len;
 	newfield->tlen = strlen(initstr);
-	newfield->buf = xmallocz(len + 1);
+    newfield->buf = (char *) xmallocz(len + 1);
 	strncpy(newfield->buf, initstr, len);
 
 	if (newfield->tlen > (len))

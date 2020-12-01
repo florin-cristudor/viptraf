@@ -29,8 +29,8 @@ othptab.c - non-TCP protocol display module
 #define MSGSTRING_MAX	240
 #define SHORTSTRING_MAX	40
 
-static void writeothplog(int logging, FILE *fd, char *protname,
-			 char *description, char *additional, int is_ip,
+static void writeothplog(int logging, FILE *fd, const char *protname,
+			 const char *description, const char *additional, int is_ip,
 			 int withmac, struct othptabent *entry)
 {
 	char msgbuffer[MSGSTRING_MAX];
@@ -193,7 +193,7 @@ struct othptabent *add_othp_entry(struct othptable *table, struct pkt_hdr *pkt,
 	struct othptabent *new_entry;
 	struct othptabent *temp;
 
-	new_entry = xmallocz(sizeof(struct othptabent));
+	new_entry = (struct othptabent *) xmallocz(sizeof(struct othptabent));
 
 	new_entry->is_ip = is_ip;
 	new_entry->fragment = !packet_is_first_fragment(pkt);
@@ -328,7 +328,7 @@ struct othptabent *add_othp_entry(struct othptable *table, struct pkt_hdr *pkt,
  * provided beyond the type.
  */
 
-static char *packetlookup(unsigned int protocol)
+static const char *packetlookup(unsigned int protocol)
 {
 	unsigned int i = 0;
 	static struct packetstruct packettypes[] = {
@@ -363,7 +363,7 @@ void print_udp(char * buffer, int size, struct othptabent *entry)
 void print_icmp(char * buffer, int size, struct othptabent *entry)
 {
     if (!buffer) return;
-    char *pDescription = "", *pAdditional = "";
+    const char *pDescription = "", *pAdditional = "";
 
     switch (entry->un.icmp.type)
     {
@@ -469,7 +469,7 @@ void print_icmp(char * buffer, int size, struct othptabent *entry)
 void print_icmpv6(char * buffer, int size, struct othptabent *entry)
 {
     if (!buffer) return;
-    char *pDescription = "", *pAdditional = "";
+    const char *pDescription = "", *pAdditional = "";
 
     switch (entry->un.icmp6.type)
     {
@@ -565,7 +565,7 @@ void printothpentry(struct othptable *table, struct othptabent *entry,
     char *startstr;
     int message_complete=0;
 
-    char *packet_type;
+    const char *packet_type;
 
     char rarp_mac_addr[18];
 

@@ -167,7 +167,7 @@ void tabkeyhelp(WINDOW * win)
 	tx_printkeyhelp("Tab", "-next field  ", win, DLGHIGHATTR, DLGTEXTATTR);
 }
 
-void indicate(char *message)
+void indicate(const char *message)
 {
 	attrset(STATUSBARATTR);
 	mvprintw(LINES - 1, 0, "%*c", COLS, ' ');

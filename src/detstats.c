@@ -520,6 +520,21 @@ void detstats(char *iface, time_t facilitytime)
 
 	struct pkt_hdr pkt;
 
+
+
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	struct timespec last_time = now;
+	struct timespec next_screen_update;
+
+    memset(&next_screen_update, 0, sizeof(next_screen_update));
+
+	time_t starttime = now.tv_sec;
+	time_t endtime = INT_MAX;
+	time_t log_next = INT_MAX;
+
+
+
 	if (!dev_up(iface)) {
 		err_iface_down();
 		return;
@@ -583,17 +598,9 @@ void detstats(char *iface, time_t facilitytime)
 
 	exitloop = 0;
 
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	struct timespec last_time = now;
-	struct timespec next_screen_update = { 0 };
-
-	time_t starttime = now.tv_sec;
-	time_t endtime = INT_MAX;
 	if (facilitytime != 0)
 		endtime = now.tv_sec + facilitytime * 60;
 
-	time_t log_next = INT_MAX;
 	if (logging)
 		log_next = now.tv_sec + options.logspan;
 

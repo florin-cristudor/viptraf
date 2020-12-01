@@ -31,7 +31,7 @@ static unsigned int capt_mmap_find_filled_slot(struct capt_data_mmap_v2 *data)
 
 static bool capt_have_packet_mmap_v2(struct capt *capt)
 {
-	struct capt_data_mmap_v2 *data = capt->priv;
+	struct capt_data_mmap_v2 *data = (struct capt_data_mmap_v2 *) capt->priv;
 
 	if (capt_mmap_find_filled_slot(data) != FRAMES)
 		return true;
@@ -41,7 +41,7 @@ static bool capt_have_packet_mmap_v2(struct capt *capt)
 
 static int capt_get_packet_mmap_v2(struct capt *capt, struct pkt_hdr *pkt)
 {
-	struct capt_data_mmap_v2 *data = capt->priv;
+	struct capt_data_mmap_v2 *data =  (struct capt_data_mmap_v2 *) capt->priv;
 	int ss = 0;
 
 	unsigned int slot = capt_mmap_find_filled_slot(data);
@@ -64,7 +64,7 @@ static int capt_get_packet_mmap_v2(struct capt *capt, struct pkt_hdr *pkt)
 
 static int capt_put_packet_mmap_v2(struct capt *capt, struct pkt_hdr *pkt __unused)
 {
-	struct capt_data_mmap_v2 *data = capt->priv;
+	struct capt_data_mmap_v2 *data =  (struct capt_data_mmap_v2 *) capt->priv;
 
 	/* hand out processed slot to kernel */
 	if (data->slot < FRAMES) {
@@ -78,7 +78,7 @@ static int capt_put_packet_mmap_v2(struct capt *capt, struct pkt_hdr *pkt __unus
 
 static void capt_cleanup_mmap_v2(struct capt *capt)
 {
-	struct capt_data_mmap_v2 *data = capt->priv;
+	struct capt_data_mmap_v2 *data =  (struct capt_data_mmap_v2 *) capt->priv;
 
 	free(data->sll);
 	data->sll = NULL;
@@ -102,15 +102,20 @@ static void capt_cleanup_mmap_v2(struct capt *capt)
 
 int capt_setup_mmap_v2(struct capt *capt)
 {
+
 	if (capt_get_socket(capt) == -1)
 		return -1;
 
 	int version = TPACKET_V2;
+	int hdrlen = version;
+	socklen_t socklen = sizeof(hdrlen);
+    size_t size;
+    void *map;
+    struct capt_data_mmap_v2 *data;
+
 	if (setsockopt(capt->fd, SOL_PACKET, PACKET_VERSION, &version, sizeof(version)) != 0)
 		goto err;
 
-	int hdrlen = version;
-	socklen_t socklen = sizeof(hdrlen);
 	if (getsockopt(capt->fd, SOL_PACKET, PACKET_HDRLEN, &hdrlen, &socklen) != 0)
 		goto err;
 
@@ -124,8 +129,8 @@ int capt_setup_mmap_v2(struct capt *capt)
 	if (setsockopt(capt->fd, SOL_PACKET, PACKET_RX_RING, &req, sizeof(req)) != 0)
 		goto err;
 
-	size_t size = req.tp_block_size * req.tp_block_nr;
-	void *map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, capt->fd, 0);
+	size = req.tp_block_size * req.tp_block_nr;
+	map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, capt->fd, 0);
 	if (map == MAP_FAILED)
 		goto err;
 
@@ -134,12 +139,12 @@ int capt_setup_mmap_v2(struct capt *capt)
 				 * not mandatory; if it fails packet capture just works OK
 				 * albeit suboptimally */
 
-	struct capt_data_mmap_v2 *data = xmallocz(sizeof(struct capt_data_mmap_v2));
+	data = (struct capt_data_mmap_v2 *) xmallocz(sizeof(struct capt_data_mmap_v2));
 
 	data->mmap = map;
 	data->mmap_size = size;
-	data->hdr = xmallocz(FRAMES * sizeof(*data->hdr));
-	data->sll = xmallocz(FRAMES * sizeof(*data->sll));
+	data->hdr = (struct tpacket2_hdr **) xmallocz(FRAMES * sizeof(*data->hdr));
+	data->sll = (struct sockaddr_ll **) xmallocz(FRAMES * sizeof(*data->sll));
 	for (int i = 0; i < FRAMES; i++) {
 		data->hdr[i] = (struct tpacket2_hdr *)((char *)map + i * FRAME_SIZE);
 		data->sll[i] = (struct sockaddr_ll *)((char *)data->hdr[i] + TPACKET_ALIGN(hdrlen));
