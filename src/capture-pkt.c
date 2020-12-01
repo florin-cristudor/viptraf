@@ -10,7 +10,7 @@
 #include "capt.h"
 
 static const char *const capture_usage[] = {
-	IPTRAF_NAME " capture [options] <device>",
+	VIPTRAF_NAME " capture [options] <device>",
 	NULL
 };
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GVF=VERSION-FILE
-DEF_VER=1.2.1
+DEF_VER=1.0.0
 LF='
 '
 
@@ -24,11 +24,11 @@ VN=$(expr "$VN" : v*'\(.*\)')
 
 if test -r $GVF
 then
-	VC=$(sed -e 's/^IPTRAF_VERSION = //' <$GVF)
+	VC=$(sed -e 's/^VIPTRAF_VERSION = //' <$GVF)
 else
 	VC=unset
 fi
 test "$VN" = "$VC" || {
-	echo >&2 "IPTRAF_VERSION = $VN"
-	echo "IPTRAF_VERSION = $VN" >$GVF
+	echo >&2 "VIPTRAF_VERSION = $VN"
+	echo "VIPTRAF_VERSION = $VN" >$GVF
 }

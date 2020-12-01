@@ -20,8 +20,8 @@ VERSION-FILE: FORCE
 
 CFLAGS = -g -O2 -Wall -W -Werror=format-security
 LDFLAGS =
-IPTRAF_CFLAGS := -std=gnu99 -D_GNU_SOURCE
-ALL_CFLAGS = $(CPPFLAGS) $(CFLAGS) $(IPTRAF_CFLAGS)
+VIPTRAF_CFLAGS := -std=gnu99 -D_GNU_SOURCE
+ALL_CFLAGS = $(CPPFLAGS) $(CFLAGS) $(VIPTRAF_CFLAGS)
 ALL_LDFLAGS = $(LDFLAGS)
 STRIP ?= strip
 
@@ -58,7 +58,7 @@ BASIC_LDFLAGS =
 iptraf-h :=
 iptraf-o :=
 
-ALL_PROGRAMS := iptraf-ng
+ALL_PROGRAMS := viptraf
 
 ifndef SHELL_PATH
 	SHELL_PATH = /bin/sh
@@ -312,14 +312,14 @@ SHELL = $(SHELL_PATH)
 
 all:: $(ALL_PROGRAMS)
 
-iptraf-ng: $(iptraf-o)
+viptraf: $(iptraf-o)
 	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ \
 		$(iptraf-o) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
 
 src/deskman.o src/iptraf.o: VERSION-FILE
 src/deskman.o src/iptraf.o src/capture-pkt.o: EXTRA_CPPFLAGS = \
-	-DIPTRAF_VERSION='"$(IPTRAF_VERSION)"' \
-	-DIPTRAF_NAME='"iptraf-ng"'
+	-DVIPTRAF_VERSION='"$(VIPTRAF_VERSION)"' \
+	-DVIPTRAF_NAME='"viptraf"'
 
 OBJECTS := $(sort $(iptraf-o))
 
@@ -393,13 +393,13 @@ endif
 
 ### Maintainer's dist rules
 
-IPTRAF_TARNAME = iptraf-ng-$(IPTRAF_VERSION)
+VIPTRAF_TARNAME = viptraf-$(VIPTRAF_VERSION)
 dist:
-	@mkdir -p $(IPTRAF_TARNAME)
-	@cp --parents `git ls-files` $(IPTRAF_TARNAME)
-	$(TAR) cf $(IPTRAF_TARNAME).tar $(IPTRAF_TARNAME)
-	@$(RM) -rf $(IPTRAF_TARNAME)
-	gzip -f -9 $(IPTRAF_TARNAME).tar
+	@mkdir -p $(VIPTRAF_TARNAME)
+	@cp --parents `git ls-files` $(VIPTRAF_TARNAME)
+	$(TAR) cf $(VIPRRAF_TARNAME).tar $(VIPTRAF_TARNAME)
+	@$(RM) -rf $(VIPTRAF_TARNAME)
+	gzip -f -9 $(VIPTRAF_TARNAME).tar
 
 ### Documentation rules
 html: Documentation/book1.html
@@ -413,8 +413,8 @@ Documentation/manual.pdf: Documentation/manual.sgml
 
 Documentation/manual.sgml: Documentation/manual.sgml.in VERSION-FILE
 	cat $< | sed \
-		-e s/@@version@@/`echo $(IPTRAF_VERSION) | cut -d. -f1-3`/ \
-		-e s/@@major@@/`echo $(IPTRAF_VERSION) | cut -d. -f1-2`/ \
+		-e s/@@version@@/`echo $(VIPTRAF_VERSION) | cut -d. -f1-3`/ \
+		-e s/@@major@@/`echo $(VIPTRAF_VERSION) | cut -d. -f1-2`/ \
 	> $@
 
 ## TODO: use asciidoc to generate mans
@@ -425,7 +425,7 @@ install: all
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(sbindir_SQ)'
 	$(INSTALL) $(ALL_PROGRAMS) '$(DESTDIR_SQ)$(sbindir_SQ)'
 	$(INSTALL) -d -m 755 $(DESTDIR)$(man8dir)
-	$(INSTALL) -m 644 src/iptraf-ng.8  $(DESTDIR)$(man8dir)
+	$(INSTALL) -m 644 src/viptraf.8  $(DESTDIR)$(man8dir)
 
 ### Cleaning rules
 
@@ -438,7 +438,7 @@ clean:
 	$(RM) $(iptraf-o)
 	$(RM) $(ALL_PROGRAMS)
 	$(RM) -r $(dep_dirs)
-	$(RM) $(IPTRAF_TARNAME).tar.gz
+	$(RM) $(VIPTRAF_TARNAME).tar.gz
 	$(RM) VERSION-FILE
 
 gtags:

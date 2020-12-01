@@ -12,7 +12,7 @@
 *.sgml
 
 # ignore binaries
-/iptraf-ng
+/viptraf
 /rvnamed-ng
 
 # don't ignore git files

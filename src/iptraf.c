@@ -252,8 +252,8 @@ static void program_interface(void)
 }
 
 static const char *const iptraf_ng_usage[] = {
-	IPTRAF_NAME " [options]",
-	IPTRAF_NAME " [options] -B [-i <iface> | -d <iface> | -s <iface> | -z <iface> | -l <iface> | -g]",
+	VIPTRAF_NAME " [options]",
+	VIPTRAF_NAME " [options] -B [-i <iface> | -d <iface> | -s <iface> | -z <iface> | -l <iface> | -g]",
 	NULL
 };
 
@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 			options.logging = 1;
 			break;
 		case -1:	/* error */
-			error("Fork error, %s cannot run in background", IPTRAF_NAME);
+			error("Fork error, %s cannot run in background", VIPTRAF_NAME);
 			goto cleanup;
 		default:	/* parent */
 			goto cleanup;
@@ -523,7 +523,7 @@ int main(int argc, char **argv)
 	 * */
 	draw_desktop();
 	attrset(STATUSBARATTR);
-	mvprintw(0, 1, "%s %s", IPTRAF_NAME, IPTRAF_VERSION);
+	mvprintw(0, 1, "%s %s", VIPTRAF_NAME, VIPTRAF_VERSION);
 
 	/* simplify */
 	if (g_opt)
