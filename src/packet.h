@@ -53,8 +53,8 @@ static inline __u8 pkt_ip_protocol(const struct pkt_hdr *p)
 }
 
 int packet_process(struct pkt_hdr *pkt, unsigned int *total_br,
-		   in_port_t *sport, in_port_t *dport,
-		   int match_opposite, int v6inv4asv6);
+           in_port_t *sport, in_port_t *dport,
+           int v6inv4asv6);
 int packet_init(struct pkt_hdr *pkt);
 void packet_destroy(struct pkt_hdr *pkt);
 int packet_is_first_fragment(struct pkt_hdr *pkt);

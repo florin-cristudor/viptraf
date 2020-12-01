@@ -801,8 +801,7 @@ static void hostmon_process_key(struct ethtab *table, int ch)
 
 static void hostmon_process_packet(struct ethtab *table, struct pkt_hdr *pkt)
 {
-	int pkt_result = packet_process(pkt, NULL, NULL, NULL,
-					MATCH_OPPOSITE_USECONFIG, 0);
+    int pkt_result = packet_process(pkt, NULL, NULL, NULL, 0);
 
 	if (pkt_result != PACKET_OK)
 		return;

@@ -464,7 +464,7 @@ int ip6filter(struct in6_addr *saddr, struct in6_addr *daddr, in_port_t sport, i
 
 /* Display/logging filter for IPv6. */
 int ipfilter(unsigned long saddr, unsigned long daddr, in_port_t sport,
-         in_port_t dport, unsigned int protocol, int match_opp_mode)
+         in_port_t dport, unsigned int protocol)
 {
     struct filterent *fe;
 //    int result = 0;

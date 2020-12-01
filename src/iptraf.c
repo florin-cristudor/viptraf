@@ -313,8 +313,8 @@ static int create_pidfile(void)
 
 	char buf[sizeof(long) * 3 + 2];
 	int len = sprintf(buf, "%lu\n", (long) getpid());
-	write(fd, buf, len);
-	ftruncate(fd, len);
+    if (write(fd, buf, len)) {}
+    if (ftruncate(fd, len)) {}
 	/* we leak opened+locked fd intentionally */
 	return 0;
 }
@@ -448,9 +448,16 @@ int main(int argc, char **argv)
 		switch (fork()) {
 		case 0:	/* child */
 			setsid();
-			freopen("/dev/null", "w", stdout);	/* redirect std output */
-			freopen("/dev/null", "r", stdin);	/* redirect std input */
-			freopen("/dev/null", "w", stderr);	/* redirect std error */
+            FILE *f;
+            f = freopen("/dev/null", "w", stdout);  /* redirect std output */
+            if (NULL == f)
+                die("%s(): f == NULL", __FUNCTION__);
+            f = freopen("/dev/null", "r", stdin);   /* redirect std input */
+            if (NULL == f)
+                die("%s(): f == NULL", __FUNCTION__);
+            f = freopen("/dev/null", "w", stderr);  /* redirect std error */
+            if (NULL == f)
+                die("%s(): f == NULL", __FUNCTION__);
 			signal(SIGUSR2, term_usr2_handler);
 
 			options.logging = 1;

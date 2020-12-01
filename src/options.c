@@ -171,7 +171,7 @@ void loadoptions(void)
 	if (fd < 0)
 		return;
 
-	read(fd, &options, sizeof(struct OPTIONS));
+    if (!read(fd, &options, sizeof(struct OPTIONS))) {}
 
 	close(fd);
 }

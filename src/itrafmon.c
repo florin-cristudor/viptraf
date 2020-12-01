@@ -618,7 +618,6 @@ static void ipmon_process_packet(struct pkt_hdr *pkt, char *ifname,
     struct tcptableent *tcpentry;
 
     int pkt_result = packet_process(pkt, &br, &sport, &dport,
-            MATCH_OPPOSITE_ALWAYS,
             options.v6inv4asv6);
 
     if (pkt_result != PACKET_OK)

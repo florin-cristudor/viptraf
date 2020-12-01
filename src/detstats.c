@@ -436,9 +436,8 @@ static void detstats_process_key(int ch)
 
 static void detstats_process_packet(struct ifcounts *ifcounts, struct pkt_hdr *pkt)
 {
-	int pkt_result = packet_process(pkt, NULL, NULL, NULL,
-					MATCH_OPPOSITE_USECONFIG,
-					options.v6inv4asv6);
+    int pkt_result = packet_process(pkt, NULL, NULL, NULL,
+            options.v6inv4asv6);
 
 	switch (pkt_result) {
 	case PACKET_OK:			/* we only handle these */

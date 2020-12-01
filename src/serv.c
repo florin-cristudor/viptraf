@@ -854,9 +854,8 @@ static void serv_process_packet(struct portlist *table, struct pkt_hdr *pkt,
 	in_port_t sport = 0;
 	in_port_t dport = 0;
 
-	int pkt_result = packet_process(pkt, &tot_br, &sport, &dport,
-					MATCH_OPPOSITE_USECONFIG,
-					options.v6inv4asv6);
+    int pkt_result = packet_process(pkt, &tot_br, &sport, &dport,
+            options.v6inv4asv6);
 
 	if (pkt_result != PACKET_OK)
 		return;

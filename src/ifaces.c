@@ -28,10 +28,10 @@ FILE *open_procnetdev(void)
 	 * Read and discard the table header lines in the file
 	 */
 
-	if (fd != NULL) {
-		fgets(buf, 160, fd);
-		fgets(buf, 160, fd);
-	}
+    if (fd != NULL) {
+        if (fgets(buf, 160, fd) == NULL) {}
+        if (fgets(buf, 160, fd) == NULL) {}
+    }
 
 	return fd;
 }
@@ -47,7 +47,7 @@ int get_next_iface(FILE * fd, char *ifname, int n)
 
 	if (!feof(fd)) {
 		strcpy(buf, "");
-		fgets(buf, 160, fd);
+        if (fgets(buf, 160, fd) == NULL) {}
 		if (strcmp(buf, "") != 0) {
 			memset(ifname, 0, n);
 			strncpy(ifname, skip_whitespace(strtok(buf, ":")), n);

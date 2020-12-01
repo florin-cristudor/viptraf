@@ -471,9 +471,8 @@ static void ifstats_process_key(struct iftab *table, int ch)
 
 static void ifstats_process_packet(struct iftab *table, struct pkt_hdr *pkt)
 {
-	int pkt_result = packet_process(pkt, NULL, NULL, NULL,
-					MATCH_OPPOSITE_USECONFIG,
-					options.v6inv4asv6);
+    int pkt_result = packet_process(pkt, NULL, NULL, NULL,
+            options.v6inv4asv6);
 
 	switch (pkt_result) {
 	case PACKET_OK:			/* we only handle these */

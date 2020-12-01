@@ -129,7 +129,7 @@ static void packet_set_l3_hdrp(struct pkt_hdr *pkt)
 
 int packet_process(struct pkt_hdr *pkt, unsigned int *total_br,
 		   in_port_t *sport, in_port_t *dport,
-		   int match_opposite, int v6inv4asv6)
+		   int v6inv4asv6)
 {
 	/* move packet pointer (pkt->pkt_payload) past data link header */
 	if (packet_adjust(pkt) != 0)
@@ -207,7 +207,7 @@ again:
 			f_dport = dport_tmp;
 		}
 		/* Process IP filter */
-        if ( (ofilter.filtercode != 0) && !ipfilter(ip->saddr, ip->daddr, f_sport, f_dport, ip->protocol,match_opposite) )
+        if ( (ofilter.filtercode != 0) && !ipfilter(ip->saddr, ip->daddr, f_sport, f_dport, ip->protocol) )
         {
             return PACKET_FILTERED;
         }

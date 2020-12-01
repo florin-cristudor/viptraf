@@ -7,7 +7,7 @@ void gethostparams(struct hostparams *data, char *init_saddr, char *init_smask,
 		   char *initinex, char *initmatchop, int *aborted);
 void ipfilterselect(int *faborted);
 int ipfilter(unsigned long saddr, unsigned long daddr, in_port_t sport,
-	     in_port_t dport, unsigned int protocol, int match_opp_mode);
+         in_port_t dport, unsigned int protocol);
 int ip6filter(struct in6_addr *saddr, struct in6_addr *daddr, in_port_t sport,
          in_port_t dport, unsigned int protocol);
 
