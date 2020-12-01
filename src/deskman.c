@@ -79,7 +79,7 @@ void about(void)
 	PANEL *panel;
 	int ch;
 
-	win = newwin(18, 62, (LINES - 17) / 2, (COLS - 62) / 2);
+	win = newwin(17, 52, (LINES - 17) / 2, (COLS - 52) / 2);
 
 	panel = new_panel(win);
 
@@ -90,22 +90,20 @@ void about(void)
 	tx_box(win, ACS_VLINE, ACS_HLINE);
 	wattrset(win, STDATTR);
 	mvwprintw(win, 1, 2, VIPTRAF_NAME);
-	mvwprintw(win, 2, 2, "An IP Network Statistics Utility");
+	mvwprintw(win, 2, 2, "A View IP Traffic Utility");
 	mvwprintw(win, 3, 2, "Version %s", VIPTRAF_VERSION);
-	mvwprintw(win, 5, 2, "Written by Gerard Paul Java");
-	mvwprintw(win, 6, 2, "Copyright (c) Gerard Paul Java 1997-2004");
-	mvwprintw(win, 8, 2, "This program is open-source software released");
-	mvwprintw(win, 9, 2, "under the terms of the GNU General Public");
-	mvwprintw(win, 10, 2, "License Version 2 or any later version.");
-	mvwprintw(win, 11, 2, "See the included LICENSE file for details.");
-	mvwprintw(win, 13, 2,
-		  "IPv6 support by Markus Ullmann <mail@markus-ullmann.de>");
-	mvwprintw(win, 14, 2,
-		  "inspired by 2.7.0 diff by Guy Martin <gmsoft@tuxicoman.be>");
+    mvwprintw(win, 5, 2, "Copyright (c) Florin Cristudor 2020-");
+    mvwprintw(win, 6, 2, "Copyright (c) Markus Ullmann (IPv6) ?-2020");
+    mvwprintw(win, 7, 2, "Copyright (c) Guy Martin ?-?");
+	mvwprintw(win, 8, 2, "Copyright (c) Gerard Paul Java 1997-2004");
+	mvwprintw(win, 10, 2, "This program is open-source software released");
+	mvwprintw(win, 11, 2, "under the terms of the GNU General Public");
+	mvwprintw(win, 12, 2, "License Version 2 or any later version.");
+	mvwprintw(win, 13, 2, "See the included LICENSE file for details.");
 
 	wattrset(win, HIGHATTR);
 
-	mvwprintw(win, 16, 2, ANYKEY_MSG);
+	mvwprintw(win, 15, 2, ANYKEY_MSG);
 
 	update_panels();
 	doupdate();
