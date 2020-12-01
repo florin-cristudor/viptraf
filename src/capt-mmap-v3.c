@@ -190,7 +190,7 @@ int capt_setup_mmap_v3(struct capt *capt)
 
 	data->pbds = (struct tpacket_block_desc **) xmallocz(BLOCKS * sizeof(*data->pbd));
 	for (int i = 0; i < BLOCKS; i++) {
-		data->pbds[i] = (struct tpacket_block_desc* )map + i * req.tp_block_size;
+		data->pbds[i] = (struct tpacket_block_desc* )((uint8_t *)map + i * req.tp_block_size);
 	}
 
 	capt->priv		= data;

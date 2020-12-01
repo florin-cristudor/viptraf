@@ -219,6 +219,7 @@ int dev_get_ifname(int ifindex, char *ifname)
 
 	struct ifreq ifr;
 
+    memset(&ifr, 0, sizeof(struct ifreq));
     ifr.ifr_ifindex = ifindex;
 
 	int ir = ioctl(fd, SIOCGIFNAME, &ifr);
