@@ -114,6 +114,9 @@ viptraf-h += src/capt-recvmsg.h
 viptraf-h += src/capt-recvmmsg.h
 viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
+viptraf-h += " \
+        src/tcp_con.h \
+    "
 
 viptraf-o += src/tui/input.o
 viptraf-o += src/tui/labels.o
@@ -162,6 +165,9 @@ viptraf-o += src/capt-recvmmsg.o
 viptraf-o += src/capt-mmap-v2.o
 viptraf-o += src/capt-mmap-v3.o
 viptraf-o += src/rvnamed.o
+
+viptraf-opp += \
+    src/tcp_con.opp \
 
 ifndef sysconfdir
 ifeq ($(prefix),/usr)
@@ -313,19 +319,20 @@ SHELL = $(SHELL_PATH)
 
 all:: $(ALL_PROGRAMS)
 
-viptraf: $(viptraf-o)
+viptraf: $(viptraf-o) $(viptraf-opp)
 	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ \
-		$(viptraf-o) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
+		$(viptraf-o) $(viptraf-opp) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
 
 src/deskman.o src/iptraf.o: VERSION-FILE
 src/deskman.o src/iptraf.o src/capture-pkt.o: EXTRA_CPPFLAGS = \
 	-DVIPTRAF_VERSION='"$(VIPTRAF_VERSION)"' \
 	-DVIPTRAF_NAME='"viptraf"'
 
-OBJECTS := $(sort $(viptraf-o))
+OBJECTS-C := $(sort $(viptraf-o))
+OBJECTS-CPP := $(sort $(viptraf-opp))
 
-dep_files := $(foreach f,$(OBJECTS),$(dir $f).depend/$(notdir $f).d)
-dep_dirs := $(addsuffix .depend,$(sort $(dir $(OBJECTS))))
+dep_files := $(foreach f,$(OBJECTS-C) $(OBJECTS-CPP),$(dir $f).depend/$(notdir $f).d)
+dep_dirs := $(addsuffix .depend,$(sort $(dir $(OBJECTS-C) $(OBJECTS-CPP))))
 
 ifeq ($(COMPUTE_HEADER_DEPENDENCIES),yes)
 $(dep_dirs):
@@ -343,7 +350,8 @@ endif
 .SUFFIXES:
 
 ifdef PRINT_HEADER_DEPENDENCIES
-$(OBJECTS): %.o: %.c FORCE
+$(OBJECTS-C): %.o: %.c FORCE
+$(OBJECTS-C++): %.opp: %.cpp FORCE
 	echo $^
 
 ifndef CHECK_HEADER_DEPENDENCIES
@@ -354,7 +362,15 @@ endif
 
 ifndef PRINT_HEADER_DEPENDENCIES
 ifdef CHECK_HEADER_DEPENDENCIES
-$(OBJECTS): %.o: %.c $(dep_files) FORCE
+$(OBJECTS-C): %.o: %.c $(dep_files) FORCE
+	@set -e; echo CHECK $@; \
+	missing_deps="$(missing_deps)"; \
+	if test "$$missing_deps"; \
+	then \
+		echo missing dependencies: $$missing_deps; \
+		false; \
+	fi
+$(OBJECTS-CPP): %.opp: %.cpp $(dep_files) FORCE
 	@set -e; echo CHECK $@; \
 	missing_deps="$(missing_deps)"; \
 	if test "$$missing_deps"; \
@@ -366,8 +382,10 @@ endif
 endif
 
 ifndef CHECK_HEADER_DEPENDENCIES
-$(OBJECTS): %.o: %.c $(missing_dep_dirs)
+$(OBJECTS-C): %.o: %.c $(missing_dep_dirs)
 	$(QUIET_CC)$(CC) -o $*.o -c $(dep_args) $(NCURSES_CFLAGS) $(ALL_CFLAGS) $(EXTRA_CPPFLAGS) $<
+$(OBJECTS-CPP): %.opp: %.cpp $(missing_dep_dirs)
+	$(QUIET_CC)$(CC) -o $*.opp -c $(dep_args) $(NCURSES_CFLAGS) $(ALL_CFLAGS) $(EXTRA_CPPFLAGS) $<
 endif
 
 ifdef USE_COMPUTED_HEADER_DEPENDENCIES
@@ -388,7 +406,8 @@ else
 # XXX. Please check occasionally that these include all dependencies
 # gcc detects!
 
-$(OBJECTS): $(viptraf-h)
+$(OBJECTS-C): $(viptraf-h)
+$(OBJECTS-CPP): $(viptraf-h)
 endif
 
 
@@ -436,6 +455,7 @@ clean:
 	$(RM) Documentation/manual.sgml
 	$(RM) Documentation/manual.pdf
 	$(RM) Documentation/*.html
+	$(RM) $(viptraf-opp)
 	$(RM) $(viptraf-o)
 	$(RM) $(ALL_PROGRAMS)
 	$(RM) -r $(dep_dirs)

@@ -1,3 +1,5 @@
 CHANGES file for VIPTraf project
 - Moved working dirs to ../viptraf/ (lib and log)
 - moved pid to /var/run/viptraf.pid
+- switched to C++ build
+- mixed C/C++ build environment
