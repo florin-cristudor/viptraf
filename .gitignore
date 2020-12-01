@@ -42,3 +42,10 @@ ncscope.*
 /iptraf-ng.spec
 VERSION-FILE
 Documentation/version
+
+# QT project files
+viptraf.config
+viptraf.creator
+viptraf.files
+viptraf.includes
+viptraf.creator.user
