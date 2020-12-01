@@ -1,5 +1,5 @@
-#ifndef _VIPTRAF_TCP_CON_H_
-#define _VIPTRAF_TCP_CON_H_
+#ifndef TCP_CON_H
+#define TCP_CON_H
 
 #define     TCP_CON_IPV4    4
 #define     TCP_CON_IPV6    6
@@ -9,18 +9,32 @@
 
 #include "iptraf-ng-compat.h"
 
+#include "traf_rate.h"
+
 class TCPConnection
 {
     public:
-        TCPConnection(int type, struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
+        TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
         ~TCPConnection();
+
+        void SetStat(int new_stat) { stat = new_stat; }
+        bool IsMe(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
+
+        void AddRates(unsigned long ms) { rate.Add(spanbr, ms); }
+
+        TCPConnection *get_next(void) { return next; }
+        TCPConnection *get_prev(void) { return prev; }
+
 
     private:
 
     uint8_t   kind;
 
-    struct sockaddr_storage sa;  //source address
-    struct sockaddr_storage da;  //destination address
+    struct sockaddr_in sa4;  //source address IPv4
+    struct sockaddr_in da4;  //destination address IPv4
+    struct sockaddr_in6 sa6;  //source address IPv6
+    struct sockaddr_in6 da6;  //destination address IPv6
+
 
     char s_fqdn[FQDN_SIZE];   // source fully-qualified domain names
     char d_fqdn[FQDN_SIZE];   // destination fully-qualified domain names
@@ -37,6 +51,11 @@ class TCPConnection
 
     TCPConnection *prev;
     TCPConnection *next;
+
+    Rate rate;
+
+    //to be checked
+    unsigned long spanbr;
 
 };
 
@@ -56,11 +75,14 @@ class TCPConnection
     int inclosed;
     int half_bracket;
     unsigned long spanbr;
-    struct rate rate;
+
     time_t lastupdate;
     time_t conn_starttime;
     struct tcp_hashentry *hash_node;
 
 */
 
-#endif //_VIPTRAF_TCP_CON_H_
+TCPConnection * get_tcp_connection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
+void tcpcon_list_update_flowrates(unsigned long ms);
+
+#endif // TCP_CON_H

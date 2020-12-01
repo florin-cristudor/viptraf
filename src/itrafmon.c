@@ -32,6 +32,8 @@ itrafmon.c - the IP traffic monitor module
 #include "sockaddr.h"
 #include "capt.h"
 
+#include "tcp_con.h"
+
 #define SCROLLUP 0
 #define SCROLLDOWN 1
 
@@ -86,15 +88,6 @@ static void markactive(int curwin, WINDOW * tw, WINDOW * ow)
 	wattrset(win1, BOXATTR);
 	wmove(win2, --y2, COLS - 10);
 	whline(win2, ACS_HLINE, 8);
-}
-
-static void update_flowrates(struct tcptable *table, unsigned long msecs)
-{
-	struct tcptableent *entry;
-	for (entry = table->head; entry != NULL; entry = entry->next_entry) {
-		rate_add_rate(&entry->rate, entry->spanbr, msecs);
-		entry->spanbr = 0;
-	}
 }
 
 static void print_flowrate(struct tcptable *table)
@@ -857,7 +850,7 @@ void ipmon(time_t facilitytime, char *ifptr)
 		if (now.tv_sec > last_time.tv_sec) {
 			unsigned long msecs = timespec_diff_msec(&now, &last_time);
 			/* update all flowrates ... */
-			update_flowrates(&table, msecs);
+            tcpcon_list_update_flowrates(msecs);
 			/* ... and print the current one every second */
 			print_flowrate(&table);
 

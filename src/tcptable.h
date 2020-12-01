@@ -11,6 +11,8 @@
 #include "rate.h"
 #include "fltdefs.h"
 
+#include "traf_rate.h"
+
 /*
  * max() macros that also do
  * strict type-checking.. See the
@@ -57,13 +59,14 @@ struct tcptableent {
 	int inclosed;
 	int half_bracket;
 	unsigned long spanbr;
-	struct rate rate;
+//    Rate traf_rate;
+    struct rate rate;
 	time_t lastupdate;
 	time_t conn_starttime;
 	struct tcp_hashentry *hash_node;
-	struct tcptableent *oth_connection;	/* the other half of the connection */
-	struct tcptableent *prev_entry;
-	struct tcptableent *next_entry;
+    struct tcptableent *oth_connection;	/* the other half of the connection */
+    struct tcptableent *prev_entry;
+    struct tcptableent *next_entry;
 };
 
 struct closedlist {

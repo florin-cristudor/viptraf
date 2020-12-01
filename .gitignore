@@ -49,3 +49,5 @@ viptraf.creator
 viptraf.files
 viptraf.includes
 viptraf.creator.user
+
+run.sh

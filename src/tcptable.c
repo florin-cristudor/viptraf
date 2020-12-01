@@ -992,7 +992,7 @@ static void destroy_tcp_entry(struct tcptable *table, struct tcptableent *ptmp)
 	else
 		table->tail = ptmp->prev_entry;
 
-	rate_destroy(&ptmp->rate);
+//	rate_destroy(&ptmp->rate);
 	free(ptmp);
 
 	if (table->head == NULL) {

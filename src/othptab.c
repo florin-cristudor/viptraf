@@ -9,6 +9,8 @@ othptab.c - non-TCP protocol display module
 
 #include "iptraf-ng-compat.h"
 
+#include "tcp_con.h"
+
 #include "tui/winops.h"
 
 #include "arphdr.h"
@@ -120,7 +122,7 @@ void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt)
 {
 	char *ip_payload = pkt->pkt_payload + pkt_iph_len(pkt);
 	struct tcphdr *tcp;
-	struct tcptableent *tcpentry = NULL;
+    struct tcptableent *tcpentry = NULL;
 
 	switch (pkt_ip_protocol(pkt)) {
 	case IPPROTO_ICMP: {

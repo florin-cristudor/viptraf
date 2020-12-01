@@ -1,6 +1,8 @@
 #ifndef IPTRAF_NG_OPTIONS_H
 #define IPTRAF_NG_OPTIONS_H
 
+#include <time.h>
+
 struct OPTIONS {
 	unsigned int color:1, logging:1, revlook:1, servnames:1, promisc:1,
 	    actmode:1, mac:1, v6inv4asv6:1, dummy:8;

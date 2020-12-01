@@ -136,8 +136,10 @@ void write_daemon_log(const char *format, ...)
 
     va_start(args, format);
 	genatime(time(NULL), atime);
-	fd = fopen(DAEMONLOG, "a");
-	fprintf(fd, "%s iptraf[%u]: ", atime, getpid());
+    fd = fopen(DAEMONLOG, "a");
+    if (fd== NULL)
+        return;
+    fprintf(fd, "%s viptraf[%u]: ", atime, getpid());
 	vfprintf(fd, format, args);
     va_end(args);
 	fprintf(fd, "\n");

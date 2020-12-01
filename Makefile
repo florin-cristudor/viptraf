@@ -115,6 +115,8 @@ viptraf-h += src/capt-recvmmsg.h
 viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
+        src/addr.h \
+        src/traf_rate.h \
         src/tcp_con.h \
     "
 
@@ -165,8 +167,10 @@ viptraf-o += src/capt-recvmmsg.o
 viptraf-o += src/capt-mmap-v2.o
 viptraf-o += src/capt-mmap-v3.o
 viptraf-o += src/rvnamed.o
+viptraf-o += src/addr.o
 
 viptraf-opp += \
+    src/traf_rate.opp \
     src/tcp_con.opp \
 
 ifndef sysconfdir

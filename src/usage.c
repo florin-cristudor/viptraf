@@ -24,11 +24,11 @@ static void error_builtin(const char *err, va_list params)
 
 void die(const char *err, ...)
 {
-	va_list params;
+    va_list params;
 
-	va_start(params, err);
-	die_builtin(err, params);
-	va_end(params);
+    va_start(params, err);
+    die_builtin(err, params);
+    va_end(params);
 }
 
 void error(const char *err, ...)
