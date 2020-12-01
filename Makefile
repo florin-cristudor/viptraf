@@ -13,6 +13,7 @@ all::
 #
 # Define NEEDS_NCURSESW6 if you need linking with ncursesw6.
 
+MAKEFLAGS += --jobs=$(shell cat /proc/cpuinfo | grep processor | wc -l || echo 4)
 
 VERSION-FILE: FORCE
 	@$(SHELL_PATH) ./GEN-VERSION-FILE
@@ -55,8 +56,8 @@ BASIC_CFLAGS = -I. -Isrc/
 BASIC_LDFLAGS =
 
 # Guard against environment variables
-iptraf-h :=
-iptraf-o :=
+viptraf-h :=
+viptraf-o :=
 
 ALL_PROGRAMS := viptraf
 
@@ -64,103 +65,103 @@ ifndef SHELL_PATH
 	SHELL_PATH = /bin/sh
 endif
 
-iptraf-h += src/tui/input.h
-iptraf-h += src/tui/labels.h
-iptraf-h += src/tui/listbox.h
-iptraf-h += src/tui/menurt.h
-iptraf-h += src/tui/msgboxes.h
-iptraf-h += src/tui/winops.h
-iptraf-h += src/iptraf-ng-compat.h
-iptraf-h += src/parse-options.h
-iptraf-h += src/packet.h
-iptraf-h += src/tcptable.h
-iptraf-h += src/othptab.h
-iptraf-h += src/ifstats.h
-iptraf-h += src/deskman.h
-iptraf-h += src/hostmon.h
-iptraf-h += src/fltedit.h
-iptraf-h += src/cidr.h
-iptraf-h += src/fltselect.h
-iptraf-h += src/ipfilter.h
-iptraf-h += src/fltmgr.h
-iptraf-h += src/ipfrag.h
-iptraf-h += src/serv.h
-iptraf-h += src/servname.h
-iptraf-h += src/timer.h
-iptraf-h += src/ifaces.h
-iptraf-h += src/error.h
-iptraf-h += src/revname.h
-iptraf-h += src/log.h
-iptraf-h += src/pktsize.h
-iptraf-h += src/landesc.h
-iptraf-h += src/dirs.h
-iptraf-h += src/getpath.h
-iptraf-h += src/options.h
-iptraf-h += src/promisc.h
-iptraf-h += src/parseproto.h
-iptraf-h += src/addproto.h
-iptraf-h += src/arphdr.h
-iptraf-h += src/attrs.h
-iptraf-h += src/fltdefs.h
-iptraf-h += src/logvars.h
-iptraf-h += src/list.h
-iptraf-h += src/counters.h
-iptraf-h += src/rate.h
-iptraf-h += src/built-in.h
-iptraf-h += src/sockaddr.h
-iptraf-h += src/capt.h
-iptraf-h += src/capt-recvmsg.h
-iptraf-h += src/capt-recvmmsg.h
-iptraf-h += src/capt-mmap-v2.h
-iptraf-h += src/capt-mmap-v3.h
+viptraf-h += src/tui/input.h
+viptraf-h += src/tui/labels.h
+viptraf-h += src/tui/listbox.h
+viptraf-h += src/tui/menurt.h
+viptraf-h += src/tui/msgboxes.h
+viptraf-h += src/tui/winops.h
+viptraf-h += src/iptraf-ng-compat.h
+viptraf-h += src/parse-options.h
+viptraf-h += src/packet.h
+viptraf-h += src/tcptable.h
+viptraf-h += src/othptab.h
+viptraf-h += src/ifstats.h
+viptraf-h += src/deskman.h
+viptraf-h += src/hostmon.h
+viptraf-h += src/fltedit.h
+viptraf-h += src/cidr.h
+viptraf-h += src/fltselect.h
+viptraf-h += src/ipfilter.h
+viptraf-h += src/fltmgr.h
+viptraf-h += src/ipfrag.h
+viptraf-h += src/serv.h
+viptraf-h += src/servname.h
+viptraf-h += src/timer.h
+viptraf-h += src/ifaces.h
+viptraf-h += src/error.h
+viptraf-h += src/revname.h
+viptraf-h += src/log.h
+viptraf-h += src/pktsize.h
+viptraf-h += src/landesc.h
+viptraf-h += src/dirs.h
+viptraf-h += src/getpath.h
+viptraf-h += src/options.h
+viptraf-h += src/promisc.h
+viptraf-h += src/parseproto.h
+viptraf-h += src/addproto.h
+viptraf-h += src/arphdr.h
+viptraf-h += src/attrs.h
+viptraf-h += src/fltdefs.h
+viptraf-h += src/logvars.h
+viptraf-h += src/list.h
+viptraf-h += src/counters.h
+viptraf-h += src/rate.h
+viptraf-h += src/built-in.h
+viptraf-h += src/sockaddr.h
+viptraf-h += src/capt.h
+viptraf-h += src/capt-recvmsg.h
+viptraf-h += src/capt-recvmmsg.h
+viptraf-h += src/capt-mmap-v2.h
+viptraf-h += src/capt-mmap-v3.h
 
-iptraf-o += src/tui/input.o
-iptraf-o += src/tui/labels.o
-iptraf-o += src/tui/listbox.o
-iptraf-o += src/tui/menurt.o
-iptraf-o += src/tui/msgboxes.o
-iptraf-o += src/tui/winops.o
-iptraf-o += src/error.o
-iptraf-o += src/log.o
-iptraf-o += src/getpath.o
-iptraf-o += src/parseproto.o
-iptraf-o += src/fltselect.o
-iptraf-o += src/ipfilter.o
-iptraf-o += src/fltmgr.o
-iptraf-o += src/ipfrag.o
-iptraf-o += src/serv.o
-iptraf-o += src/servname.o
-iptraf-o += src/timer.o
-iptraf-o += src/revname.o
-iptraf-o += src/pktsize.o
-iptraf-o += src/landesc.o
-iptraf-o += src/options.o
-iptraf-o += src/promisc.o
-iptraf-o += src/ifaces.o
-iptraf-o += src/usage.o
-iptraf-o += src/iptraf.o
-iptraf-o += src/itrafmon.o
-iptraf-o += src/wrapper.o
-iptraf-o += src/parse-options.o
-iptraf-o += src/packet.o
-iptraf-o += src/tcptable.o
-iptraf-o += src/othptab.o
-iptraf-o += src/ifstats.o
-iptraf-o += src/detstats.o
-iptraf-o += src/deskman.o
-iptraf-o += src/hostmon.o
-iptraf-o += src/fltedit.o
-iptraf-o += src/cidr.o
-iptraf-o += src/counters.o
-iptraf-o += src/rate.o
-iptraf-o += src/capture-pkt.o
-iptraf-o += src/sockaddr.o
-iptraf-o += src/capt.o
-iptraf-o += src/capt-recvmsg.o
-iptraf-o += src/capt-recvmmsg.o
-iptraf-o += src/capt-mmap-v2.o
-iptraf-o += src/capt-mmap-v3.o
-iptraf-o += src/rvnamed.o
+viptraf-o += src/tui/input.o
+viptraf-o += src/tui/labels.o
+viptraf-o += src/tui/listbox.o
+viptraf-o += src/tui/menurt.o
+viptraf-o += src/tui/msgboxes.o
+viptraf-o += src/tui/winops.o
+viptraf-o += src/error.o
+viptraf-o += src/log.o
+viptraf-o += src/getpath.o
+viptraf-o += src/parseproto.o
+viptraf-o += src/fltselect.o
+viptraf-o += src/ipfilter.o
+viptraf-o += src/fltmgr.o
+viptraf-o += src/ipfrag.o
+viptraf-o += src/serv.o
+viptraf-o += src/servname.o
+viptraf-o += src/timer.o
+viptraf-o += src/revname.o
+viptraf-o += src/pktsize.o
+viptraf-o += src/landesc.o
+viptraf-o += src/options.o
+viptraf-o += src/promisc.o
+viptraf-o += src/ifaces.o
+viptraf-o += src/usage.o
+viptraf-o += src/iptraf.o
+viptraf-o += src/itrafmon.o
+viptraf-o += src/wrapper.o
+viptraf-o += src/parse-options.o
+viptraf-o += src/packet.o
+viptraf-o += src/tcptable.o
+viptraf-o += src/othptab.o
+viptraf-o += src/ifstats.o
+viptraf-o += src/detstats.o
+viptraf-o += src/deskman.o
+viptraf-o += src/hostmon.o
+viptraf-o += src/fltedit.o
+viptraf-o += src/cidr.o
+viptraf-o += src/counters.o
+viptraf-o += src/rate.o
+viptraf-o += src/capture-pkt.o
+viptraf-o += src/sockaddr.o
+viptraf-o += src/capt.o
+viptraf-o += src/capt-recvmsg.o
+viptraf-o += src/capt-recvmmsg.o
+viptraf-o += src/capt-mmap-v2.o
+viptraf-o += src/capt-mmap-v3.o
+viptraf-o += src/rvnamed.o
 
 ifndef sysconfdir
 ifeq ($(prefix),/usr)
@@ -312,16 +313,16 @@ SHELL = $(SHELL_PATH)
 
 all:: $(ALL_PROGRAMS)
 
-viptraf: $(iptraf-o)
+viptraf: $(viptraf-o)
 	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ \
-		$(iptraf-o) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
+		$(viptraf-o) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
 
 src/deskman.o src/iptraf.o: VERSION-FILE
 src/deskman.o src/iptraf.o src/capture-pkt.o: EXTRA_CPPFLAGS = \
 	-DVIPTRAF_VERSION='"$(VIPTRAF_VERSION)"' \
 	-DVIPTRAF_NAME='"viptraf"'
 
-OBJECTS := $(sort $(iptraf-o))
+OBJECTS := $(sort $(viptraf-o))
 
 dep_files := $(foreach f,$(OBJECTS),$(dir $f).depend/$(notdir $f).d)
 dep_dirs := $(addsuffix .depend,$(sort $(dir $(OBJECTS))))
@@ -387,7 +388,7 @@ else
 # XXX. Please check occasionally that these include all dependencies
 # gcc detects!
 
-$(OBJECTS): $(iptraf-h)
+$(OBJECTS): $(viptraf-h)
 endif
 
 
@@ -435,7 +436,7 @@ clean:
 	$(RM) Documentation/manual.sgml
 	$(RM) Documentation/manual.pdf
 	$(RM) Documentation/*.html
-	$(RM) $(iptraf-o)
+	$(RM) $(viptraf-o)
 	$(RM) $(ALL_PROGRAMS)
 	$(RM) -r $(dep_dirs)
 	$(RM) $(VIPTRAF_TARNAME).tar.gz
