@@ -119,8 +119,7 @@ struct ospfhdr {
 
 void init_othp_table(struct othptable *table);
 
-void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt,
-				 char *ifname);
+void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt);
 
 struct othptabent *add_othp_entry(struct othptable *table, struct pkt_hdr *pkt,
 				  struct sockaddr_storage *saddr,

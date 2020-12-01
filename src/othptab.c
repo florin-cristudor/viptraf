@@ -116,8 +116,7 @@ void init_othp_table(struct othptable *table)
 /* Cancel the corresponding TCP entry if an ICMP Destination Unreachable
  * is received.
  */
-void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt,
-				 char *ifname)
+void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt)
 {
 	char *ip_payload = pkt->pkt_payload + pkt_iph_len(pkt);
 	struct tcphdr *tcp;
@@ -144,7 +143,7 @@ void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt,
 		sockaddr_set_port(&daddr, ntohs(tcp->dest));
 
 		/* check if this tcpentry exists */
-		tcpentry = in_table(table, &saddr, &daddr, ifname);
+		tcpentry = in_table(table, &saddr, &daddr);
 
 		break; }
 	case IPPROTO_ICMPV6: {
@@ -167,7 +166,7 @@ void check_icmp_dest_unreachable(struct tcptable *table, struct pkt_hdr *pkt,
 		sockaddr_set_port(&daddr, ntohs(tcp->dest));
 
 		/* check if this tcpentry exists */
-		tcpentry = in_table(table, &saddr, &daddr, ifname);
+		tcpentry = in_table(table, &saddr, &daddr);
 
 		break; }
 	default:

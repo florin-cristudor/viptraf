@@ -665,7 +665,7 @@ static void ipmon_process_packet(struct pkt_hdr *pkt, char *ifname,
             struct tcphdr *tcp = (struct tcphdr *)ip_payload;
             sockaddr_set_port(&saddr, sport);
             sockaddr_set_port(&daddr, dport);
-            tcpentry = in_table(table, &saddr, &daddr, ifname);
+            tcpentry = in_table(table, &saddr, &daddr);
 
             /*
             * Add a new entry if it doesn't exist, and,
@@ -734,7 +734,7 @@ static void ipmon_process_packet(struct pkt_hdr *pkt, char *ifname,
         }
     case IPPROTO_ICMP:
     case IPPROTO_ICMPV6:
-        check_icmp_dest_unreachable(table, pkt, ifname);
+        check_icmp_dest_unreachable(table, pkt);
         /* print this ICMP(v6) and ... */
         /* fall through */
     default:

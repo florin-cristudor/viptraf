@@ -47,47 +47,44 @@ static void setlabels(WINDOW *win, int mode)
  * The hash function for the TCP hash table
  */
 
-static unsigned int tcp_hash(struct sockaddr_storage *saddr,
-			     struct sockaddr_storage *daddr,
-			     char *ifname)
+static unsigned int tcp_hash(struct sockaddr_storage *saddr, struct sockaddr_storage *daddr)
 {
-	size_t i;
-	unsigned int ifsum = 0;
+    size_t i;
+    unsigned int hash = 0;
+    unsigned int hash6 = 0;
 
-	for (i = 0; i < strlen(ifname); i++)
-		ifsum += ifname[i];
-
-	switch (saddr->ss_family) {
-	case AF_INET:
-		ifsum += 4 * ((struct sockaddr_in *)saddr)->sin_addr.s_addr;
-		ifsum += 3 * ((struct sockaddr_in *)saddr)->sin_port;
-		break;
-	case AF_INET6: {
-		unsigned int ip6sum = 0;
-		for (i = 0; i < 4; i++)
-			ip6sum ^= ((struct sockaddr_in6 *)saddr)->sin6_addr.s6_addr32[i];
-		ifsum += 4 * ip6sum;
-		ifsum += 3 * ((struct sockaddr_in6 *)saddr)->sin6_port;
-		break; }
-	default:
-		die("%s(): saddr: unknown address family", __FUNCTION__);
-	}
-	switch (daddr->ss_family) {
-	case AF_INET:
-		ifsum += 2 * ((struct sockaddr_in *)daddr)->sin_addr.s_addr;
-		ifsum +=     ((struct sockaddr_in *)daddr)->sin_port;
-		break;
-	case AF_INET6: {
-		unsigned int ip6sum = 0;
-		for (i = 0; i < 4; i++)
-			ip6sum ^= ((struct sockaddr_in6 *)daddr)->sin6_addr.s6_addr32[i];
-		ifsum += 2 * ip6sum;
-		ifsum +=     ((struct sockaddr_in6 *)daddr)->sin6_port;
-		break; }
-	default:
-		die("%s(): daddr: unknown address family", __FUNCTION__);
-	}
-	return (ifsum % ENTRIES_IN_HASH_TABLE);
+    switch (saddr->ss_family)
+    {
+        case AF_INET:
+            hash += 4 * ((struct sockaddr_in *)saddr)->sin_addr.s_addr;
+            hash += 3 * ((struct sockaddr_in *)saddr)->sin_port;
+            break;
+        case AF_INET6:
+            hash6 = 0;
+            for (i = 0; i < 4; i++)
+                hash6 ^= ((struct sockaddr_in6 *)saddr)->sin6_addr.s6_addr32[i];
+            hash += 4 * hash6;
+            hash += 3 * ((struct sockaddr_in6 *)saddr)->sin6_port;
+            break;
+        default:
+            die("%s(): saddr: unknown address family", __FUNCTION__);
+    }
+    switch (daddr->ss_family)
+    {
+        case AF_INET:
+            hash += 2 * ((struct sockaddr_in *)daddr)->sin_addr.s_addr;
+            hash +=     ((struct sockaddr_in *)daddr)->sin_port;
+            break;
+        case AF_INET6:
+            for (i = 0; i < 4; i++)
+                hash6 ^= ((struct sockaddr_in6 *)daddr)->sin6_addr.s6_addr32[i];
+            hash += 2 * hash6;
+            hash +=     ((struct sockaddr_in6 *)daddr)->sin6_port;
+            break;
+        default:
+            die("%s(): daddr: unknown address family", __FUNCTION__);
+    }
+    return (hash % ENTRIES_IN_HASH_TABLE);
 }
 
 static void print_tcp_num_entries(struct tcptable *table)
@@ -175,38 +172,40 @@ void init_tcp_table(struct tcptable *table)
 
 static void add_tcp_hash_entry(struct tcptable *table, struct tcptableent *entry)
 {
-	unsigned int hp;	/* hash position in table */
-	struct tcp_hashentry *ptmp;
+    unsigned int hp;    /* hash position in table */
+    struct tcp_hashentry *ptmp;
 
-	hp = tcp_hash(&entry->saddr, &entry->daddr, entry->ifname);
-	ptmp = xmallocz(sizeof(struct tcp_hashentry));
-	/*
-	 * Add backpointer from screen node to hash node for deletion later
-	 * (Actually point to its predecessor coz of the header cell).
-	 */
+    hp = tcp_hash(&entry->saddr, &entry->daddr);
+    ptmp = xmallocz(sizeof(struct tcp_hashentry));
+    /*
+     * Add backpointer from screen node to hash node for deletion later
+     * (Actually point to its predecessor coz of the header cell).
+     */
 
-	entry->hash_node = ptmp;
+    entry->hash_node = ptmp;
 
-	/*
-	 * Update hash node and add it to list.
-	 */
+    /*
+     * Update hash node and add it to list.
+     */
 
-	ptmp->tcpnode = entry;
-	ptmp->hp = hp;
+    ptmp->tcpnode = entry;
+    ptmp->hp = hp;
 
-	if (table->hash_table[hp] == NULL) {
-		ptmp->prev_entry = NULL;
-		table->hash_table[hp] = ptmp;
-		ptmp->index = 1;
-	}
+    if (table->hash_table[hp] == NULL)
+    {
+        ptmp->prev_entry = NULL;
+        table->hash_table[hp] = ptmp;
+        ptmp->index = 1;
+    }
 
-	if (table->hash_tails[hp] != NULL) {
-		table->hash_tails[hp]->next_entry = ptmp;
-		ptmp->prev_entry = table->hash_tails[hp];
-		ptmp->index = ptmp->prev_entry->index + 1;
-	}
-	table->hash_tails[hp] = ptmp;
-	ptmp->next_entry = NULL;
+    if (table->hash_tails[hp] != NULL)
+    {
+        table->hash_tails[hp]->next_entry = ptmp;
+        ptmp->prev_entry = table->hash_tails[hp];
+        ptmp->index = ptmp->prev_entry->index + 1;
+    }
+    table->hash_tails[hp] = ptmp;
+    ptmp->next_entry = NULL;
 }
 
 /*
@@ -215,27 +214,27 @@ static void add_tcp_hash_entry(struct tcptable *table, struct tcptableent *entry
 
 static void del_tcp_hash_node(struct tcptable *table, struct tcptableent *entry)
 {
-	struct tcp_hashentry *ptmp;
+    struct tcp_hashentry *ptmp;
 
-	ptmp = entry->hash_node;	/* ptmp now points to the target */
+    ptmp = entry->hash_node;    /* ptmp now points to the target */
 
-	/*
-	 * If the targeted node is the last entry, adjust the corresponding tail
-	 * pointer to the preceeding node;
-	 */
+    /*
+     * If the targeted node is the last entry, adjust the corresponding tail
+     * pointer to the preceeding node;
+     */
 
-	if (ptmp->next_entry == NULL)
-		table->hash_tails[ptmp->hp] = ptmp->prev_entry;
+    if (ptmp->next_entry == NULL)
+        table->hash_tails[ptmp->hp] = ptmp->prev_entry;
 
-	if (ptmp->prev_entry != NULL)
-		ptmp->prev_entry->next_entry = ptmp->next_entry;
-	else
-		table->hash_table[ptmp->hp] = ptmp->next_entry;
+    if (ptmp->prev_entry != NULL)
+        ptmp->prev_entry->next_entry = ptmp->next_entry;
+    else
+        table->hash_table[ptmp->hp] = ptmp->next_entry;
 
-	if (ptmp->next_entry != NULL)
-		ptmp->next_entry->prev_entry = ptmp->prev_entry;
+    if (ptmp->next_entry != NULL)
+        ptmp->next_entry->prev_entry = ptmp->prev_entry;
 
-	free(ptmp);
+    free(ptmp);
 }
 
 static void resolve_entry(struct tcptableent *entry, struct resolver *res)
@@ -516,8 +515,7 @@ void mark_timeouted_entries(struct tcptable *table, int logging, FILE *logfile)
 
 struct tcptableent *in_table(struct tcptable *table,
          struct sockaddr_storage *saddr,
-         struct sockaddr_storage *daddr,
-         char *ifname)
+         struct sockaddr_storage *daddr)
 {
     struct tcp_hashentry *hashptr;
     unsigned int hp;
@@ -530,17 +528,15 @@ struct tcptableent *in_table(struct tcptable *table,
      * Determine hash table index for this set of addresses and ports
      */
 
-    hp = tcp_hash(saddr, daddr, ifname);
+    hp = tcp_hash(saddr, daddr);
     hashptr = table->hash_table[hp];
 
     debug_log("%s: is null %i", __FUNCTION__, hashptr == NULL);
     while (hashptr != NULL)
     {
-        if (sockaddr_is_equal(&hashptr->tcpnode->saddr, saddr)
-            && sockaddr_is_equal(&hashptr->tcpnode->daddr, daddr)
-            && (strcmp(hashptr->tcpnode->ifname, ifname) == 0))
-                break;
-
+        if (sockaddr_is_equal(&hashptr->tcpnode->saddr, saddr) &&
+                sockaddr_is_equal(&hashptr->tcpnode->daddr, daddr))
+            break;
         hashptr = hashptr->next_entry;
     }
 

@@ -30,7 +30,7 @@
 
 #define CLOSED		64
 
-#define ENTRIES_IN_HASH_TABLE	1543
+#define ENTRIES_IN_HASH_TABLE   1543
 
 struct tcptableent {
 	struct sockaddr_storage saddr;
@@ -118,9 +118,8 @@ struct tcptableent *addentry(struct tcptable *table,
 void mark_timeouted_entries(struct tcptable *table, int logging, FILE *logfile);
 
 struct tcptableent *in_table(struct tcptable *table,
-			     struct sockaddr_storage *saddr,
-			     struct sockaddr_storage *daddr,
-			     char *ifname);
+             struct sockaddr_storage *saddr,
+             struct sockaddr_storage *daddr);
 
 void updateentry(struct tcptable *table, struct pkt_hdr *pkt,
 		 struct tcptableent *tableentry, struct tcphdr *transpacket,

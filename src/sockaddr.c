@@ -101,22 +101,16 @@ static bool _sockaddr_is_equal(struct sockaddr_storage const *addr1,
         {
             struct sockaddr_in6 *sa1 = (struct sockaddr_in6 *)addr1;
             struct sockaddr_in6 *sa2 = (struct sockaddr_in6 *)addr2;
-debug_log("%s 1", __FUNCTION__);
             if (memcmp(&sa1->sin6_addr, &sa2->sin6_addr, sizeof(sa1->sin6_addr)) != 0)
                 return false;
-debug_log("%s 2", __FUNCTION__);
             if (check_address_only)
                 return true;
-debug_log("%s 3", __FUNCTION__);
             if (sa1->sin6_port != sa2->sin6_port)
                 return false;
-debug_log("%s 4", __FUNCTION__);
             if (sa1->sin6_flowinfo != sa2->sin6_flowinfo)
                 return false;
-debug_log("%s 5", __FUNCTION__);
             if (sa1->sin6_scope_id != sa2->sin6_scope_id)
                 return false;
-debug_log("%s good", __FUNCTION__);
             /* all equal */
             return true;
         }
@@ -126,9 +120,19 @@ debug_log("%s good", __FUNCTION__);
 }
 
 bool sockaddr_is_equal(struct sockaddr_storage const *addr1,
-		       struct sockaddr_storage const *addr2)
+               struct sockaddr_storage const *addr2)
 {
-	return _sockaddr_is_equal(addr1, addr2, false);
+    bool rc = _sockaddr_is_equal(addr1, addr2, false);
+
+    if (rc)
+    {
+        debug_log("%s good", __FUNCTION__);
+    }
+    else
+    {
+        debug_log("%s bad", __FUNCTION__);
+    }
+    return rc;
 }
 
 bool sockaddr_addr_is_equal(struct sockaddr_storage const *addr1,
