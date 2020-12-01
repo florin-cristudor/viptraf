@@ -295,12 +295,12 @@ static int create_pidfile(void)
 {
 	int fd = open(VIPTRAF_PIDFILE, O_WRONLY|O_CREAT, 0644);
 	if (fd < 0) {
-		perror("can not open "VIPTRAF_PIDFILE);
+		perror("can not open " VIPTRAF_PIDFILE);
 		return -1;
 	}
 
 	if (lockf(fd, F_TLOCK, 0) < 0) {
-		error("The PID file is locked "VIPTRAF_PIDFILE". "
+		error("The PID file is locked " VIPTRAF_PIDFILE ". "
 		      "Maybe other viptraf instance is running?can not acquire ");
 		return -1;
 	}
