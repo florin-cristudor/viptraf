@@ -26,14 +26,18 @@ Discovers LAN hosts and displays packet statistics for them
 #include "options.h"
 #include "logvars.h"
 #include "error.h"
-#include "rate.h"
+
 #include "capt.h"
 
 #define SCROLLUP 0
 #define SCROLLDOWN 1
 
+#include "traf_rate.h"
+
 struct ethtabent {
 	int type;
+    Rate traf_rate_in;
+    Rate traf_rate_out;
 	union {
 		struct {
 			unsigned long long inpcount;
@@ -44,8 +48,10 @@ struct ethtabent {
 			unsigned long long outbcount;
 			unsigned long long outippcount;
 			unsigned long outspanbr;
-			struct rate inrate;
-			struct rate outrate;
+//TODEL			struct rate inrate;
+//TODEL			struct rate outrate;
+
+
 		} figs;
 
 		struct {
@@ -133,11 +139,12 @@ static void writeethlog(struct ethtabent *list, unsigned long nsecs, FILE *fd)
 			fprintf(fd, "%s incoming, %s outgoing\n",
 				buf_in, buf_out);
 
-			if (nsecs > 5) {
-				rate_print(rate_get_average(&ptmp->un.figs.inrate),
-					   buf_in, sizeof(buf_in));
-				rate_print(rate_get_average(&ptmp->un.figs.outrate),
-					   buf_out, sizeof(buf_out));
+            if (nsecs > 5)
+            {
+//TODEL                rate_print(rate_get_average(&ptmp->un.figs.inrate), buf_in, sizeof(buf_in));
+//TODEL                rate_print(rate_get_average(&ptmp->un.figs.outrate), buf_out, sizeof(buf_out));
+                ptmp->traf_rate_in.Print(buf_in, sizeof(buf_in));
+                ptmp->traf_rate_out.Print(buf_out, sizeof(buf_out));
 				fprintf(fd,
 					"\tLast 5-second rates: %s incoming, %s outgoing\n",
 					buf_in, buf_out);
@@ -205,7 +212,12 @@ static struct ethtabent *addethnode(struct ethtab *table)
 {
 	struct ethtabent *ptemp;
 
-	ptemp = (struct ethtabent *) xmalloc(sizeof(struct ethtabent));
+//TODEL	ptemp = (struct ethtabent *) xmalloc(sizeof(struct ethtabent));
+    ptemp = new struct ethtabent;
+    if(!ptemp)
+    {
+        die("%s: Memory error", __FUNCTION__);
+    }
 
 	if (table->head == NULL) {
 		ptemp->prev_entry = NULL;
@@ -228,6 +240,7 @@ static struct ethtabent *addethnode(struct ethtab *table)
 	return ptemp;
 }
 
+//done
 void convmacaddr(char *addr, char *result)
 {
 	u_int8_t *ptmp = (u_int8_t *) addr;
@@ -261,7 +274,7 @@ static struct ethtabent *addethentry(struct ethtab *table,
 	ptemp->un.desc.linktype = linktype;
 	struct eth_desc *desc = NULL;
 
-	list_for_each_entry(desc, &list->hd_list, hd_list)
+    list_for_each_entry(desc, &list->hd_list, hd_list)
 		if (!strcasecmp(desc->hd_mac, ptemp->un.desc.ascaddr))
 			strcpy(ptemp->un.desc.desc, desc->hd_desc);
 
@@ -285,8 +298,10 @@ static struct ethtabent *addethentry(struct ethtab *table,
 	ptemp->un.figs.inspanbr = ptemp->un.figs.outspanbr = 0;
 	ptemp->un.figs.inippcount = ptemp->un.figs.outippcount = 0;
 	ptemp->un.figs.inbcount = ptemp->un.figs.outbcount = 0;
-	rate_alloc(&ptemp->un.figs.inrate, 5);
-	rate_alloc(&ptemp->un.figs.outrate, 5);
+//TODEL	rate_alloc(&ptemp->un.figs.inrate, 5);
+//TODEL	rate_alloc(&ptemp->un.figs.outrate, 5);
+    ptemp->traf_rate_in.Alloc(5);
+    ptemp->traf_rate_out.Alloc(5);
 
 	table->entcount++;
 
@@ -393,10 +408,11 @@ static void destroyethtab(struct ethtab *table)
 		struct ethtabent *next = ptemp->next_entry;
 
 		if (ptemp->type == 1) {
-			rate_destroy(&ptemp->un.figs.outrate);
-			rate_destroy(&ptemp->un.figs.inrate);
+//TODEL			rate_destroy(&ptemp->un.figs.outrate);
+//TODEL			rate_destroy(&ptemp->un.figs.inrate);
 		}
-		free(ptemp);
+//TODEL		free(ptemp);
+        delete ptemp;
 		ptemp = next;
 	}
 
@@ -425,12 +441,12 @@ static void print_entry_rates(struct ethtab *table, struct ethtabent *entry)
 	int target_row = entry->index - table->firstvisible->index;
 
 	wattrset(table->tabwin, HIGHATTR);
-	rate_print_no_units(rate_get_average(&entry->un.figs.inrate),
-		   buf, sizeof(buf));
+//TODEL	rate_print_no_units(rate_get_average(&entry->un.figs.inrate), buf, sizeof(buf));
+    entry->traf_rate_in.PrintNoUnits(buf, sizeof(buf));
 	mvwprintw(table->tabwin, target_row, 32 * COLS / 80, "%s", buf);
 
-	rate_print_no_units(rate_get_average(&entry->un.figs.outrate),
-		   buf, sizeof(buf));
+//TODEL	rate_print_no_units(rate_get_average(&entry->un.figs.outrate), buf, sizeof(buf));
+    entry->traf_rate_out.PrintNoUnits(buf, sizeof(buf));
 	mvwprintw(table->tabwin, target_row, 69 * COLS / 80, "%s", buf);
 }
 
@@ -443,10 +459,12 @@ static void updateethrates(struct ethtab *table, unsigned long msecs)
 
 	while (ptmp != NULL) {
 		if (ptmp->type == 1) {
-			rate_add_rate(&ptmp->un.figs.inrate, ptmp->un.figs.inspanbr, msecs);
+//TODEL			rate_add_rate(&ptmp->un.figs.inrate, ptmp->un.figs.inspanbr, msecs);
+            ptmp->traf_rate_in.Add(ptmp->un.figs.inspanbr, msecs);
 			ptmp->un.figs.inspanbr = 0;
 
-			rate_add_rate(&ptmp->un.figs.outrate, ptmp->un.figs.outspanbr, msecs);
+//TODEL			rate_add_rate(&ptmp->un.figs.outrate, ptmp->un.figs.outspanbr, msecs);
+            ptmp->traf_rate_out.Add(ptmp->un.figs.outspanbr, msecs);
 			ptmp->un.figs.outspanbr = 0;
 		}
 		ptmp = ptmp->next_entry;

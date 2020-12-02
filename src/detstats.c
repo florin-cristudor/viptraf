@@ -25,8 +25,10 @@ detstats.c	- the interface statistics module
 #include "logvars.h"
 #include "error.h"
 #include "detstats.h"
-#include "rate.h"
+
 #include "capt.h"
+
+#include "traf_rate.h"
 
 struct ifcounts {
 	struct proto_counter total;
@@ -46,10 +48,15 @@ struct ifcounts {
 };
 
 struct ifrates {
-	struct rate rate;
-	struct rate rate_in;
-	struct rate rate_out;
-	struct rate rate_bcast;
+//TODEL	struct rate rate;
+//TODEL	struct rate rate_in;
+//TODEL	struct rate rate_out;
+//TODEL	struct rate rate_bcast;
+    Rate traf_rate;
+    Rate traf_rate_in;
+    Rate traf_rate_out;
+    Rate traf_rate_bcast;
+
 	unsigned long activity;
 	unsigned long peakactivity;
 	unsigned long activity_in;
@@ -58,10 +65,15 @@ struct ifrates {
 	unsigned long peakactivity_out;
 	unsigned long activity_bcast;
 
-	struct rate pps_rate;
-	struct rate pps_rate_in;
-	struct rate pps_rate_out;
-	struct rate pps_rate_bcast;
+//TODEL	struct rate pps_rate;
+//TODEL	struct rate pps_rate_in;
+//TODEL	struct rate pps_rate_out;
+//TODEL	struct rate pps_rate_bcast;
+    Rate traf_pps_rate;
+    Rate traf_pps_rate_in;
+    Rate traf_pps_rate_out;
+    Rate traf_pps_rate_bcast;
+
 	unsigned long pps;
 	unsigned long peakpps;
 	unsigned long pps_in;
@@ -163,8 +175,8 @@ static void writedstatlog(char *ifname, struct ifcounts *ts,
 
 		fprintf(fd, "\nAverage rates:\n");
 
-		rate_print(ts->total.proto_total.pc_bytes / nsecs, bps_string, sizeof(bps_string));
-		rate_print_pps(ts->total.proto_total.pc_packets / nsecs, pps_string, sizeof(pps_string));
+        rate_print(ts->total.proto_total.pc_bytes / nsecs, bps_string, sizeof(bps_string));
+        rate_print_pps(ts->total.proto_total.pc_packets / nsecs, pps_string, sizeof(pps_string));
 		fprintf(fd, "  Total:\t%s, %s\n", bps_string, pps_string);
 		rate_print(ts->total.proto_in.pc_bytes / nsecs, bps_string, sizeof(bps_string));
 		rate_print_pps(ts->total.proto_in.pc_packets / nsecs, pps_string, sizeof(pps_string));
@@ -218,10 +230,14 @@ static void ifrates_init(struct ifrates *ifrates)
 	if (ifrates == NULL)
 		return;
 
-	rate_alloc(&ifrates->rate, 5);
-	rate_alloc(&ifrates->rate_in, 5);
-	rate_alloc(&ifrates->rate_out, 5);
-	rate_alloc(&ifrates->rate_bcast, 5);
+//TODEL	rate_alloc(&ifrates->rate, 5);
+//TODEL rate_alloc(&ifrates->rate_in, 5);
+//TODEL	rate_alloc(&ifrates->rate_out, 5);
+//TODEL	rate_alloc(&ifrates->rate_bcast, 5);
+    ifrates->traf_rate.Alloc(5);
+    ifrates->traf_rate_in.Alloc(5);
+    ifrates->traf_rate_out.Alloc(5);
+    ifrates->traf_rate_bcast.Alloc(5);
 
 	ifrates->activity = 0UL;
 	ifrates->peakactivity = 0UL;
@@ -231,10 +247,14 @@ static void ifrates_init(struct ifrates *ifrates)
 	ifrates->peakactivity_out = 0UL;
 	ifrates->activity_bcast = 0UL;
 
-	rate_alloc(&ifrates->pps_rate, 5);
-	rate_alloc(&ifrates->pps_rate_in, 5);
-	rate_alloc(&ifrates->pps_rate_out, 5);
-	rate_alloc(&ifrates->pps_rate_bcast, 5);
+//TODEL	rate_alloc(&ifrates->pps_rate, 5);
+//TODEL	rate_alloc(&ifrates->pps_rate_in, 5);
+//TODEL	rate_alloc(&ifrates->pps_rate_out, 5);
+//TODEL	rate_alloc(&ifrates->pps_rate_bcast, 5);
+    ifrates->traf_pps_rate.Alloc(5);
+    ifrates->traf_pps_rate_in.Alloc(5);
+    ifrates->traf_pps_rate_out.Alloc(5);
+    ifrates->traf_pps_rate_bcast.Alloc(5);
 
 	ifrates->pps = 0UL;
 	ifrates->peakpps = 0UL;
@@ -250,37 +270,53 @@ static void ifrates_destroy(struct ifrates *ifrates)
 	if (ifrates == NULL)
 		return;
 
-	rate_destroy(&ifrates->pps_rate_bcast);
-	rate_destroy(&ifrates->pps_rate_out);
-	rate_destroy(&ifrates->pps_rate_in);
-	rate_destroy(&ifrates->pps_rate);
+//TODEL	rate_destroy(&ifrates->pps_rate_bcast);
+//TODEL	rate_destroy(&ifrates->pps_rate_out);
+//TODEL	rate_destroy(&ifrates->pps_rate_in);
+//TODEL	rate_destroy(&ifrates->pps_rate);
 
-	rate_destroy(&ifrates->rate_bcast);
-	rate_destroy(&ifrates->rate_out);
-	rate_destroy(&ifrates->rate_in);
-	rate_destroy(&ifrates->rate);
+//TODEL	rate_destroy(&ifrates->rate_bcast);
+//TODEL	rate_destroy(&ifrates->rate_out);
+//TODEL	rate_destroy(&ifrates->rate_in);
+//TODEL	rate_destroy(&ifrates->rate);
 }
 
 static void ifrates_update(struct ifrates *ifrates, struct ifcounts *ifcounts,
 			   unsigned long msecs)
 {
-	rate_add_rate(&ifrates->rate, ifcounts->span.proto_total.pc_bytes, msecs);
-	ifrates->activity = rate_get_average(&ifrates->rate);
-	rate_add_rate(&ifrates->rate_in, ifcounts->span.proto_in.pc_bytes, msecs);
-	ifrates->activity_in = rate_get_average(&ifrates->rate_in);
-	rate_add_rate(&ifrates->rate_out, ifcounts->span.proto_out.pc_bytes, msecs);
-	ifrates->activity_out = rate_get_average(&ifrates->rate_out);
-	rate_add_rate(&ifrates->rate_bcast, ifcounts->span_bcast.pc_bytes, msecs);
-	ifrates->activity_bcast = rate_get_average(&ifrates->rate_bcast);
+//TODEL	rate_add_rate(&ifrates->rate, ifcounts->span.proto_total.pc_bytes, msecs);
+//TODEL	ifrates->activity = rate_get_average(&ifrates->rate);
+    ifrates->traf_rate.Add(ifcounts->span.proto_total.pc_bytes, msecs);
+    ifrates->activity = ifrates->traf_rate.GetAverage();
+//TODEL	rate_add_rate(&ifrates->rate_in, ifcounts->span.proto_in.pc_bytes, msecs);
+//TODEL	ifrates->activity_in = rate_get_average(&ifrates->rate_in);
+    ifrates->traf_rate_in.Add(ifcounts->span.proto_in.pc_bytes, msecs);
+    ifrates->activity_in = ifrates->traf_rate_in.GetAverage();
+//TODEL	rate_add_rate(&ifrates->rate_out, ifcounts->span.proto_out.pc_bytes, msecs);
+//TODEL	ifrates->activity_out = rate_get_average(&ifrates->rate_out);
+    ifrates->traf_rate_out.Add(ifcounts->span.proto_out.pc_bytes, msecs);
+    ifrates->activity_out = ifrates->traf_rate_out.GetAverage();
+//TODEL	rate_add_rate(&ifrates->rate_bcast, ifcounts->span_bcast.pc_bytes, msecs);
+//TODEL	ifrates->activity_bcast = rate_get_average(&ifrates->rate_bcast);
+    ifrates->traf_rate_bcast.Add(ifcounts->span_bcast.pc_bytes, msecs);
+    ifrates->activity_bcast = ifrates->traf_rate_bcast.GetAverage();
 
-	rate_add_rate(&ifrates->pps_rate, ifcounts->span.proto_total.pc_packets, msecs);
-	ifrates->pps = rate_get_average(&ifrates->pps_rate);
-	rate_add_rate(&ifrates->pps_rate_in, ifcounts->span.proto_in.pc_packets, msecs);
-	ifrates->pps_in = rate_get_average(&ifrates->pps_rate_in);
-	rate_add_rate(&ifrates->pps_rate_out, ifcounts->span.proto_out.pc_packets, msecs);
-	ifrates->pps_out = rate_get_average(&ifrates->pps_rate_out);
-	rate_add_rate(&ifrates->pps_rate_bcast, ifcounts->span_bcast.pc_packets, msecs);
-	ifrates->pps_bcast = rate_get_average(&ifrates->pps_rate_bcast);
+//TODEL	rate_add_rate(&ifrates->pps_rate, ifcounts->span.proto_total.pc_packets, msecs);
+//TODEL	ifrates->pps = rate_get_average(&ifrates->pps_rate);
+    ifrates->traf_pps_rate.Add(ifcounts->span.proto_total.pc_packets, msecs);
+    ifrates->pps = ifrates->traf_pps_rate.GetAverage();
+//TODEL	rate_add_rate(&ifrates->pps_rate_in, ifcounts->span.proto_in.pc_packets, msecs);
+//TODEL	ifrates->pps_in = rate_get_average(&ifrates->pps_rate_in);
+    ifrates->traf_pps_rate_in.Add(ifcounts->span.proto_in.pc_packets, msecs);
+    ifrates->pps_in = ifrates->traf_pps_rate_in.GetAverage();
+//TODEL	rate_add_rate(&ifrates->pps_rate_out, ifcounts->span.proto_out.pc_packets, msecs);
+//TODEL	ifrates->pps_out = rate_get_average(&ifrates->pps_rate_out);
+    ifrates->traf_pps_rate_out.Add(ifcounts->span.proto_out.pc_packets, msecs);
+    ifrates->pps_out = ifrates->traf_pps_rate_out.GetAverage();
+//TODEL	rate_add_rate(&ifrates->pps_rate_bcast, ifcounts->span_bcast.pc_packets, msecs);
+//TODEL	ifrates->pps_bcast = rate_get_average(&ifrates->pps_rate_bcast);
+    ifrates->traf_pps_rate_bcast.Add(ifcounts->span_bcast.pc_packets, msecs);
+    ifrates->pps_bcast = ifrates->traf_pps_rate_bcast.GetAverage();
 
 	proto_counter_reset(&ifcounts->span);
 	pkt_counter_reset(&ifcounts->span_bcast);
@@ -605,7 +641,8 @@ void detstats(char *iface, time_t facilitytime)
 		log_next = now.tv_sec + options.logspan;
 
 	/* data-gathering loop */
-	while (!exitloop) {
+    while (!exitloop)
+    {
 		clock_gettime(CLOCK_MONOTONIC, &now);
 
 		if (now.tv_sec > last_time.tv_sec) {

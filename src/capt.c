@@ -70,7 +70,7 @@ static int capt_setup_receive_function(struct capt *capt)
 	return -1;
 }
 
-int capt_init(struct capt *capt, char *ifname)
+int capt_init(struct capt *capt, const char *ifname)
 {
 	capt->have_packet = NULL;
 	capt->get_packet = NULL;

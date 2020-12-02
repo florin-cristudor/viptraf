@@ -5,6 +5,7 @@
 # normal rules
 .*
 *.o
+*.opp
 *.lo
 *.la
 *.html

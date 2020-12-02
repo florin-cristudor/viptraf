@@ -7,6 +7,8 @@ log.h - the iptraf logging facility header file
 
 ***/
 
+#include <stdio.h>
+
 #define TIME_TARGET_MAX     30
 
 char *gen_instance_logname(const char *stemplate, int instance_id);

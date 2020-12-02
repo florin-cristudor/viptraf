@@ -1,10 +1,11 @@
 /* For terms of usage/redistribution/modification see the LICENSE file */
 /* For authors and contributors see the AUTHORS file */
 
-#include "iptraf-ng-compat.h"
-#include "options.h"
-#include "rate.h"
+//#include "iptraf-ng-compat.h"
+//#include "options.h"
+//#include "rate.h"
 
+/*
 void rate_init(struct rate *rate)
 {
 	if (!rate)
@@ -52,7 +53,7 @@ void rate_add_rate(struct rate *rate, unsigned long bytes,
 	else
 		rate->index++;
 
-	/* compute the moving average */
+    // compute the moving average
 	unsigned long long sum = 0;
 	for(unsigned int i = 0; i < rate->n; i++)
 		sum += rate->rates[i];
@@ -129,3 +130,4 @@ int rate_print_pps(unsigned long rate, char *buf, unsigned n)
 
 	return chars;
 }
+*/

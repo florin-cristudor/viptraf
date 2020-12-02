@@ -102,7 +102,8 @@ static void print_flowrate(struct tcptable *table)
 			  "TCP flow rate: ");
 
 		char buf[32];
-		rate_print(rate_get_average(&table->barptr->rate), buf, sizeof(buf));
+//TODEL		rate_print(rate_get_average(&table->barptr->rate), buf, sizeof(buf));
+        table->barptr->traf_rate.Print(buf, sizeof(buf));
 		wattrset(table->statwin, IPSTATATTR);
 		mvwprintw(table->statwin, 0, COLS * 52 / 80 + 13, "%s", buf);
 	}
@@ -751,6 +752,7 @@ void ipmon(time_t facilitytime, char *ifptr)
 	unsigned long long total_pkts = 0;
 
 	struct tcptable table;
+    TCPConnection tcp_cons;
 
 	struct othptable othptbl;
 
@@ -850,7 +852,8 @@ void ipmon(time_t facilitytime, char *ifptr)
 		if (now.tv_sec > last_time.tv_sec) {
 			unsigned long msecs = timespec_diff_msec(&now, &last_time);
 			/* update all flowrates ... */
-            tcpcon_list_update_flowrates(msecs);
+            tcp_cons.ListUpdateRates(msecs);
+//TODELETE tcpcon_list_update_flowrates(msecs);
 			/* ... and print the current one every second */
 			print_flowrate(&table);
 

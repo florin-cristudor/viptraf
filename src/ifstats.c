@@ -27,9 +27,11 @@ ifstats.c	- the interface statistics module
 #include "logvars.h"
 #include "error.h"
 #include "ifstats.h"
-#include "rate.h"
+
 #include "capt.h"
 #include "counters.h"
+
+#include "traf_rate.h"
 
 #define SCROLLUP 0
 #define SCROLLDOWN 1
@@ -44,7 +46,9 @@ struct iflist {
 	unsigned long long total;
 	unsigned int spanbr;
 	unsigned long br;
-	struct rate rate;
+//TODEL	struct rate rate;
+    Rate traf_rate;
+
 	unsigned long peakrate;
 	unsigned int index;
 	struct iflist *prev_entry;
@@ -57,8 +61,10 @@ struct iftab {
 	struct iflist *firstvisible;
 	struct iflist *lastvisible;
 	struct pkt_counter totals;
-	struct rate rate_total;
-	struct rate rate_totalpps;
+//TODEL	struct rate rate_total;
+//TODEL	struct rate rate_totalpps;
+    Rate traf_rate_total;
+    Rate traf_rate_totalpps;
 	WINDOW *borderwin;
 	PANEL *borderpanel;
 	WINDOW *statwin;
@@ -95,11 +101,12 @@ static void writegstatlog(struct iftab *table, unsigned long nsecs, FILE *fd)
 		if (nsecs > 5) {
 			char buf[64];
 
-			rate_print(ptmp->br / nsecs, buf, sizeof(buf));
+            rate_print(ptmp->br / nsecs, buf, sizeof(buf));
 			fprintf(fd, ", average activity %s", buf);
-			rate_print(ptmp->peakrate, buf, sizeof(buf));
+            rate_print(ptmp->peakrate, buf, sizeof(buf));
 			fprintf(fd, ", peak activity %s", buf);
-			rate_print(rate_get_average(&ptmp->rate), buf, sizeof(buf));
+//TODEL			rate_print(rate_get_average(&ptmp->rate), buf, sizeof(buf));
+            ptmp->traf_rate.Print(buf, sizeof(buf));
 			fprintf(fd, ", last 5-second average activity %s", buf);
 		}
 		fprintf(fd, "\n");
@@ -133,7 +140,8 @@ static struct iflist *alloc_iflist_entry(void)
 {
 	struct iflist *tmp = (struct iflist *) xmallocz(sizeof(struct iflist));
 
-	rate_alloc(&tmp->rate, 5);
+//TODEL	rate_alloc(&tmp->rate, 5);
+    tmp->traf_rate.Alloc(5);
 
 	return tmp;
 }
@@ -143,7 +151,7 @@ static void free_iflist_entry(struct iflist *ptr)
 	if (!ptr)
 		return;
 
-	rate_destroy(&ptr->rate);
+//TODEL	rate_destroy(&ptr->rate);
 	free(ptr);
 }
 
@@ -272,13 +280,16 @@ static void updaterates(struct iftab *table, unsigned long msecs)
 	struct iflist *ptmp = table->head;
 	unsigned long rate;
 
-	rate_add_rate(&table->rate_total, table->totals.pc_bytes, msecs);
-	rate_add_rate(&table->rate_totalpps, table->totals.pc_packets, msecs);
+//TODEL	rate_add_rate(&table->rate_total, table->totals.pc_bytes, msecs);
+//TODEL	rate_add_rate(&table->rate_totalpps, table->totals.pc_packets, msecs);
+    table->traf_rate_total.Add(table->totals.pc_bytes, msecs);
+    table->traf_rate_totalpps.Add(table->totals.pc_packets, msecs);
 	pkt_counter_reset(&table->totals);
 	while (ptmp != NULL) {
-		rate_add_rate(&ptmp->rate, ptmp->spanbr, msecs);
-		rate = rate_get_average(&ptmp->rate);
-
+//TODEL		rate_add_rate(&ptmp->rate, ptmp->spanbr, msecs);
+        ptmp->traf_rate.Add(ptmp->spanbr, msecs);
+//TODEL		rate = rate_get_average(&ptmp->rate);
+        rate = ptmp->traf_rate.GetAverage();
 		if (rate > ptmp->peakrate)
 			ptmp->peakrate = rate;
 
@@ -291,13 +302,14 @@ static void showrates(struct iftab *table)
 {
 	struct iflist *ptmp = table->firstvisible;
 	unsigned int idx = table->firstvisible->index;
-	unsigned long rate;
+//TODEL	unsigned long rate;
 	char buf[64];
 
 	wattrset(table->statwin, HIGHATTR);
 	do {
-		rate = rate_get_average(&ptmp->rate);
-		rate_print(rate, buf, sizeof(buf));
+//TODEL		rate = rate_get_average(&ptmp->rate);
+//TODEL		rate_print(rate, buf, sizeof(buf));
+        ptmp->traf_rate.Print(buf, sizeof(buf));
 		wmove(table->statwin, ptmp->index - idx, 63 * COLS / 80);
 		wprintw(table->statwin, "%s", buf);
 
@@ -366,8 +378,10 @@ static void initiftab(struct iftab *table)
 	table->borderwin = newwin(LINES - 2, COLS, 1, 0);
 	table->borderpanel = new_panel(table->borderwin);
 
-	rate_alloc(&table->rate_total, 5);
-	rate_alloc(&table->rate_totalpps, 5);
+//TODEL	rate_alloc(&table->rate_total, 5);
+//TODEL	rate_alloc(&table->rate_totalpps, 5);
+    table->traf_rate_total.Alloc(5);
+    table->traf_rate_totalpps.Alloc(5);
 	pkt_counter_reset(&table->totals);
 
 	move(LINES - 1, 1);
@@ -607,12 +621,14 @@ void ifstats(time_t facilitytime)
 
 			wattrset(table.borderwin, BOXATTR);
 			char buf[64];
-			rate_print(rate_get_average(&table.rate_total), buf, sizeof(buf));
+//TODEL			rate_print(rate_get_average(&table.rate_total), buf, sizeof(buf));
+            table.traf_rate_total.Print(buf, sizeof(buf));
 			mvwprintw(table.borderwin,
 				  getmaxy(table.borderwin) - 1, 19,
 				  " Total: %s / %9lu pps ",
 				  buf,
-				  rate_get_average(&table.rate_totalpps));
+//TODEL				  rate_get_average(&table.rate_totalpps));
+                    table.traf_rate_totalpps.GetAverage());
 
 			if (logging && (now.tv_sec > log_next)) {
 				check_rotate_flag(&logfile);
@@ -669,8 +685,8 @@ err:
 	doupdate();
 
 	destroyiflist(table.head);
-	rate_destroy(&table.rate_total);
-	rate_destroy(&table.rate_totalpps);
+//TODEL	rate_destroy(&table.rate_total);
+//TODEL	rate_destroy(&table.rate_totalpps);
 }
 
 void selectiface(char *ifname, int withall, int *aborted)

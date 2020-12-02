@@ -3,7 +3,7 @@
 
 FILE *open_procnetdev(void);
 int get_next_iface(FILE * fd, char *ifname, int n);
-int dev_up(char *iface);
+int dev_up(const char *iface);
 void err_iface_down(void);
 int dev_get_ifindex(const char *iface);
 int dev_get_mtu(const char *iface);

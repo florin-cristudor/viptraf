@@ -30,9 +30,11 @@ serv.c  - TCP/UDP port statistics module
 #include "logvars.h"
 #include "error.h"
 #include "counters.h"
-#include "rate.h"
+
 #include "capt.h"
 #include "timer.h"
+
+#include "traf_rate.h"
 
 #define SCROLLUP 0
 #define SCROLLDOWN 1
@@ -50,9 +52,13 @@ struct portlistent {
 
 	struct timespec proto_starttime;
 
-	struct rate rate;
-	struct rate rate_in;
-	struct rate rate_out;
+//TODEL	struct rate rate;
+//TODEL struct rate rate_in;
+//TODEL	struct rate rate_out;
+    Rate traf_rate;
+    Rate traf_rate_in;
+    Rate traf_rate_out;
+
 
 	struct portlistent *prev_entry;
 	struct portlistent *next_entry;
@@ -197,11 +203,14 @@ static void print_serv_rates(struct portlist *table)
 		mvwprintw(table->statwin, 0, 76, "out");
 
 		wattrset(table->statwin, IPSTATATTR);
-		rate_print(rate_get_average(&table->barptr->rate), buf, sizeof(buf));
+//TODEL		rate_print(rate_get_average(&table->barptr->rate), buf, sizeof(buf));
+        table->barptr->traf_rate.Print(buf, sizeof(buf));
 		mvwprintw(table->statwin, 0, 21, "%s", buf);
-		rate_print(rate_get_average(&table->barptr->rate_in), buf, sizeof(buf));
+//TODEL		rate_print(rate_get_average(&table->barptr->rate_in), buf, sizeof(buf));
+        table->barptr->traf_rate_in.Print(buf, sizeof(buf));
 		mvwprintw(table->statwin, 0, 42, "%s", buf);
-		rate_print(rate_get_average(&table->barptr->rate_out), buf, sizeof(buf));
+//TODEL		rate_print(rate_get_average(&table->barptr->rate_out), buf, sizeof(buf));
+        table->barptr->traf_rate_out.Print(buf, sizeof(buf));
 		mvwprintw(table->statwin, 0, 61, "%s", buf);
 	}
 }
@@ -212,8 +221,12 @@ static struct portlistent *addtoportlist(struct portlist *list,
 {
 	struct portlistent *ptemp;
 
-	ptemp = (struct portlistent *) xmalloc(sizeof(struct portlistent));
-	if (list->head == NULL) {
+//TODEL	ptemp = (struct portlistent *) xmalloc(sizeof(struct portlistent));
+    ptemp = new struct portlistent;
+    if(!ptemp)
+        die("%s: Memory error", __FUNCTION__);
+
+    if (list->head == NULL) {
 		ptemp->prev_entry = NULL;
 		list->head = ptemp;
 		list->firstvisible = ptemp;
@@ -228,9 +241,12 @@ static struct portlistent *addtoportlist(struct portlist *list,
 
 	ptemp->protocol = protocol;
 	ptemp->port = port;	/* This is used in checks later. */
-	rate_alloc(&ptemp->rate, 5);
-	rate_alloc(&ptemp->rate_in, 5);
-	rate_alloc(&ptemp->rate_out, 5);
+//TODEL	rate_alloc(&ptemp->rate, 5);
+//TODEL	rate_alloc(&ptemp->rate_in, 5);
+//TODEL	rate_alloc(&ptemp->rate_out, 5);
+    ptemp->traf_rate.Alloc(5);
+    ptemp->traf_rate_in.Alloc(5);
+    ptemp->traf_rate_out.Alloc(5);
 
 	/*
 	 * Obtain appropriate service name
@@ -353,10 +369,11 @@ static void destroyportlist(struct portlist *list)
 	while (ptmp != NULL) {
 		struct portlistent *ctmp = ptmp->next_entry;
 
-		rate_destroy(&ptmp->rate_out);
-		rate_destroy(&ptmp->rate_in);
-		rate_destroy(&ptmp->rate);
-		free(ptmp);
+//TODEL		rate_destroy(&ptmp->rate_out);
+//TODEL		rate_destroy(&ptmp->rate_in);
+//TODEL		rate_destroy(&ptmp->rate);
+//TODEL		free(ptmp);
+        delete ptmp;
 
 		ptmp = ctmp;
 	}
@@ -779,10 +796,12 @@ static void update_serv_rates(struct portlist *list, unsigned long msecs)
 {
 	/* update rates of all portlistents */
 	for (struct portlistent *ple = list->head; ple != NULL; ple = ple->next_entry) {
-		rate_add_rate(&ple->rate, ple->span.proto_total.pc_bytes, msecs);
-		rate_add_rate(&ple->rate_in, ple->span.proto_in.pc_bytes, msecs);
-		rate_add_rate(&ple->rate_out, ple->span.proto_out.pc_bytes, msecs);
-
+//TODEL		rate_add_rate(&ple->rate, ple->span.proto_total.pc_bytes, msecs);
+//TODEL		rate_add_rate(&ple->rate_in, ple->span.proto_in.pc_bytes, msecs);
+//TODEL		rate_add_rate(&ple->rate_out, ple->span.proto_out.pc_bytes, msecs);
+        ple->traf_rate.Add(ple->span.proto_total.pc_bytes, msecs);
+        ple->traf_rate_in.Add(ple->span.proto_in.pc_bytes, msecs);
+        ple->traf_rate_out.Add(ple->span.proto_out.pc_bytes, msecs);
 		proto_counter_reset(&ple->span);
 	}
 }

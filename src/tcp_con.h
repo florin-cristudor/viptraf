@@ -13,27 +13,31 @@
 
 class TCPConnection
 {
-    public:
+public:
+        TCPConnection();
         TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
         ~TCPConnection();
 
         void SetStat(int new_stat) { stat = new_stat; }
         bool IsMe(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
 
-        void AddRates(unsigned long ms) { rate.Add(spanbr, ms); }
+        void AddRates(unsigned long ms) { rate.Add(spanbr, ms); spanbr = 0l; }
+        void ListUpdateRates(unsigned long ms);
+        TCPConnection * ListGetConnection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
 
-        TCPConnection *get_next(void) { return next; }
-        TCPConnection *get_prev(void) { return prev; }
+        TCPConnection *prev;
+        TCPConnection *next;
 
+private:
 
-    private:
+        void Init();
 
     uint8_t   kind;
 
-    struct sockaddr_in sa4;  //source address IPv4
-    struct sockaddr_in da4;  //destination address IPv4
-    struct sockaddr_in6 sa6;  //source address IPv6
-    struct sockaddr_in6 da6;  //destination address IPv6
+    struct sockaddr_in sa4;     //source address IPv4
+    struct sockaddr_in da4;     //destination address IPv4
+    struct sockaddr_in6 sa6;    //source address IPv6
+    struct sockaddr_in6 da6;    //destination address IPv6
 
 
     char s_fqdn[FQDN_SIZE];   // source fully-qualified domain names
@@ -48,9 +52,6 @@ class TCPConnection
     unsigned int stat;  // TCP flags
 
     int interfaces[20];
-
-    TCPConnection *prev;
-    TCPConnection *next;
 
     Rate rate;
 
@@ -81,8 +82,5 @@ class TCPConnection
     struct tcp_hashentry *hash_node;
 
 */
-
-TCPConnection * get_tcp_connection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr);
-void tcpcon_list_update_flowrates(unsigned long ms);
 
 #endif // TCP_CON_H

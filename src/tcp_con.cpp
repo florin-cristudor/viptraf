@@ -15,15 +15,14 @@
 
 */
 
-TCPConnection::TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr)
+TCPConnection::TCPConnection():rate(5)
 {
-    kind = 0;
-    spanbr = 0l;
+    Init();
+}
 
-    memset(&sa4, 0, sizeof(sa4));
-    memset(&da4, 0, sizeof(da4));
-    memset(&sa6, 0, sizeof(sa6));
-    memset(&da6, 0, sizeof(da6));
+TCPConnection::TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr):rate(5)
+{
+    Init();
 
     if(s_addr)
     {
@@ -50,6 +49,17 @@ TCPConnection::TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_st
             da6 = *((struct sockaddr_in6 *)d_addr);
         }
     }
+}
+
+void TCPConnection::Init()
+{
+    kind = 0;
+    spanbr = 0l;
+
+    memset(&sa4, 0, sizeof(sa4));
+    memset(&da4, 0, sizeof(da4));
+    memset(&sa6, 0, sizeof(sa6));
+    memset(&da6, 0, sizeof(da6));
 
     s_fqdn[0] = 0x00;
     d_fqdn[0] = 0x00;
@@ -64,10 +74,9 @@ TCPConnection::TCPConnection(struct sockaddr_storage *s_addr, struct sockaddr_st
 
     //to be checked
     spanbr = 0l;
-    memset(&rate, 0, sizeof(rate));
 }
 
-::TCPConnection::~TCPConnection(void)
+TCPConnection::~TCPConnection(void)
 {
 }
 
@@ -112,28 +121,27 @@ bool TCPConnection::IsMe(struct sockaddr_storage *s_addr, struct sockaddr_storag
 }
 
 
-TCPConnection *tcp_list;
-
-TCPConnection * get_tcp_connection(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr)
+TCPConnection * TCPConnection::ListGetConnection(sockaddr_storage *s_addr, sockaddr_storage *d_addr)
 {
     if(!s_addr || !d_addr)
         die("%s Bad parameters", __FUNCTION__);
 
-    TCPConnection *ptr = tcp_list;
-    while(ptr)
+    TCPConnection *crs = this;
+    while(crs)
     {
-        if(ptr->IsMe(s_addr, d_addr)) return ptr;
-        ptr = ptr->get_next();
+        if(crs->IsMe(s_addr, d_addr)) return crs;
+        crs = crs->next;
     }
     return NULL;
 }
 
-void tcpcon_list_update_flowrates(unsigned long ms)
+void TCPConnection::ListUpdateRates(unsigned long ms)
 {
-    TCPConnection *ptr = tcp_list;
-    while(ptr)
+    TCPConnection *crs = this;
+    while(crs)
     {
-        ptr->AddRates(ms);
+        crs->AddRates(ms);
+        crs = crs->next;
     }
 }
 

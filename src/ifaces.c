@@ -59,7 +59,7 @@ int get_next_iface(FILE * fd, char *ifname, int n)
 	return 0;
 }
 
-int dev_up(char *iface)
+int dev_up(const char *iface)
 {
 	int fd;
 	int ir;

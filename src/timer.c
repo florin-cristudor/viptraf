@@ -14,11 +14,13 @@ timer.c		- module to display the elapsed time since a facility
 void printelapsedtime(time_t elapsed, int x, WINDOW *win)
 {
 	unsigned int hours = elapsed / 3600;
-	unsigned int mins = (elapsed % 3600) / 60;
 
+
+    unsigned int mins = (elapsed % 3600) / 60;
+    unsigned int sec = (elapsed % 3600) % 60;
 	int y = getmaxy(win) - 1;
 
-	mvwprintw(win, y, x, " Time: %3u:%02u ", hours, mins);
+    mvwprintw(win, y, x, " Time: %3u:%02u:%02u ", hours, mins, sec);
 }
 
 bool time_after(struct timespec const *a, struct timespec const *b)

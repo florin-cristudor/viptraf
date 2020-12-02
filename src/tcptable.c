@@ -306,8 +306,11 @@ struct tcptableent *addentry(struct tcptable *table,
 
 		table->count++;
 
-		rate_alloc(&new_entry->rate, 5);
-		rate_alloc(&new_entry->oth_connection->rate, 5);
+//TODEL	rate_alloc(&new_entry->rate, 5);
+//TODEL	rate_alloc(&new_entry->oth_connection->rate, 5);
+        new_entry->traf_rate.Alloc(5);
+        new_entry->oth_connection->traf_rate.Alloc(5);
+
 	} else {
 		/*
 		 * If we reach this point, we're allocating off the list of closed
@@ -408,8 +411,8 @@ struct tcptableent *addentry(struct tcptable *table,
 	new_entry->conn_starttime = new_entry->oth_connection->conn_starttime =
 	    time(NULL);
 
-	rate_init(&new_entry->rate);
-	rate_init(&new_entry->oth_connection->rate);
+//TODEL	rate_init(&new_entry->rate);
+//TODEL rate_init(&new_entry->oth_connection->rate);
 
 	/*
 	 * Mark flow rate start time and byte counter for flow computation
@@ -934,7 +937,7 @@ static void destroy_tcp_entries(struct tcptable *table)
 	while (ptmp != NULL) {
 		struct tcptableent *ctmp = ptmp->next_entry;
 
-		rate_destroy(&ptmp->rate);
+//TODEL		rate_destroy(&ptmp->rate);
 		free(ptmp);
 		ptmp = ctmp;
 	}

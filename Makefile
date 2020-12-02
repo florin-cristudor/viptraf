@@ -106,7 +106,7 @@ viptraf-h += src/fltdefs.h
 viptraf-h += src/logvars.h
 viptraf-h += src/list.h
 viptraf-h += src/counters.h
-viptraf-h += src/rate.h
+#viptraf-h += src/rate.h
 viptraf-h += src/built-in.h
 viptraf-h += src/sockaddr.h
 viptraf-h += src/capt.h
@@ -117,7 +117,9 @@ viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
         src/addr.h \
         src/traf_rate.h \
+        src/ethernet.h \
         src/tcp_con.h \
+        src/app_host_monitor.h \
     "
 
 viptraf-o += src/tui/input.o
@@ -158,7 +160,7 @@ viptraf-o += src/hostmon.o
 viptraf-o += src/fltedit.o
 viptraf-o += src/cidr.o
 viptraf-o += src/counters.o
-viptraf-o += src/rate.o
+#viptraf-o += src/rate.o
 viptraf-o += src/capture-pkt.o
 viptraf-o += src/sockaddr.o
 viptraf-o += src/capt.o
@@ -171,7 +173,9 @@ viptraf-o += src/addr.o
 
 viptraf-opp += \
     src/traf_rate.opp \
+    src/ethernet.opp \
     src/tcp_con.opp \
+    src/app_host_monitor.opp
 
 ifndef sysconfdir
 ifeq ($(prefix),/usr)

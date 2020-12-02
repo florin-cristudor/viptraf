@@ -8,7 +8,7 @@
 ***/
 
 #include "packet.h"
-#include "rate.h"
+
 #include "fltdefs.h"
 
 #include "traf_rate.h"
@@ -59,8 +59,8 @@ struct tcptableent {
 	int inclosed;
 	int half_bracket;
 	unsigned long spanbr;
-//    Rate traf_rate;
-    struct rate rate;
+    Rate traf_rate;
+//    struct rate rate;
 	time_t lastupdate;
 	time_t conn_starttime;
 	struct tcp_hashentry *hash_node;
