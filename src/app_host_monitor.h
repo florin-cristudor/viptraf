@@ -21,8 +21,6 @@ private:
     int CleanUp(int return_code);
     bool TestForStop(int ch);
 
-    FILE *fd_log;
-
     struct capt     capture;
     struct pkt_hdr  packet;
 
@@ -30,7 +28,6 @@ private:
 
     int capture_enabled:1;
     int packet_enabled:1;
-
 };
 
 #endif // APP_HOST_MONITOR_H

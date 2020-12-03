@@ -11,6 +11,8 @@ public:
     bool IsMe(uint8_t *test_mac);
 
     Ethernet *ListFindMac(uint8_t *test_mac);
+    void UpdateRates(unsigned long ms);
+    void ListUpdateRates(unsigned long ms);
 
     Ethernet *prev;
     Ethernet *next;

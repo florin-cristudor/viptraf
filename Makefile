@@ -115,6 +115,7 @@ viptraf-h += src/capt-recvmmsg.h
 viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
+        src/traf_log.h \
         src/addr.h \
         src/traf_rate.h \
         src/ethernet.h \
@@ -172,6 +173,7 @@ viptraf-o += src/rvnamed.o
 viptraf-o += src/addr.o
 
 viptraf-opp += \
+    src/traf_log.opp \
     src/traf_rate.opp \
     src/ethernet.opp \
     src/tcp_con.opp \

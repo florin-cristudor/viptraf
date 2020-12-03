@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <string.h>
 
+#include "iptraf-ng-compat.h"
 #include "options.h"
 #include "dirs.h"
 #include "logvars.h"
@@ -11,7 +12,11 @@
 #include "error.h"
 #include "packet.h"
 #include "ifaces.h"
+#include "deskman.h"
+#include "timer.h"
 
+#include <mutex>
+#include "traf_log.h"
 #include "app_host_monitor.h"
 
 HostMonitorApp::HostMonitorApp()
@@ -20,7 +25,6 @@ HostMonitorApp::HostMonitorApp()
     packet_enabled = 0;
     memset(&capture, 0, sizeof(struct capt));
     list = NULL;
-    fd_log = NULL;
 }
 
 HostMonitorApp::~HostMonitorApp()
@@ -30,16 +34,12 @@ HostMonitorApp::~HostMonitorApp()
 
 int HostMonitorApp::CleanUp(int return_code)
 {
+    signal(SIGUSR1, SIG_DFL);
+
     if(capture_enabled)
     {
         capt_destroy(&capture);
         capture_enabled = 0;
-    }
-
-    if(fd_log)
-    {
-        fclose(fd_log);
-        fd_log = NULL;
     }
 
     Ethernet *crs = list;
@@ -56,8 +56,6 @@ int HostMonitorApp::CleanUp(int return_code)
         packet_destroy(&packet);
         packet_enabled = 0;
     }
-
-    strcpy(current_logfile, ""); //???
 
     return return_code;
 }
@@ -78,63 +76,55 @@ bool HostMonitorApp::TestForStop(int ch)
     }
 }
 
-/*
- * SIGUSR1 logfile rotation handler
- */
+int hma_log_rotate;
+std::mutex hma_mutex_rotate;
 
-static void rotate_lanlog(int s __unused)
+static void hma_sighandler(int signum __unused)
 {
-    rotate_flag = 1;
-    strcpy(target_logname, current_logfile);
-    signal(SIGUSR1, rotate_lanlog);
+    hma_mutex_rotate.lock();
+     hma_log_rotate = 1;
+    hma_mutex_rotate.unlock();
+
+   return;
 }
+
 
 int HostMonitorApp::Run(time_t facilitytime, const char *itf_name)
 {
-    int logging = options.logging;
     int key;
     struct timespec now;
     struct timespec next_screen_update;
     time_t log_next = INT_MAX;
     time_t endtime = INT_MAX;
+    Log log(options.logging);
+
+//    if (options.logging && !daemonized) //???
+//        input_logfile(current_logfile, &logging);
+    hma_log_rotate = 0;
+    log.Open(gen_instance_logname(LANLOG, getpid()));
+    signal(SIGUSR1, hma_sighandler);
+
+    log.Write("******** LAN traffic monitor started ********");
 
     clock_gettime(CLOCK_MONOTONIC, &now);
+    log_next = now.tv_sec + options.logspan;
+
     memset(&next_screen_update, 0, sizeof(next_screen_update));
 
     struct timespec last_time = now;
-    time_t starttime = now.tv_sec;
-
-    if(logging)
-    {
-        if(current_logfile[0] == 0)
-        {
-            strncpy(current_logfile, gen_instance_logname(LANLOG, getpid()), 80);
-            if (!daemonized)
-                input_logfile(current_logfile, &logging);
-        }
-        if(logging)
-        {
-            opentlog(&fd_log, current_logfile);
-            if(fd_log == NULL)
-                logging = 0;
-        }
-        if(logging)
-        {
-            signal(SIGUSR1, rotate_lanlog);
-            rotate_flag = 0;
-            writelog(logging, fd_log, "******** LAN traffic monitor started ********");
-            log_next = now.tv_sec + options.logspan;
-        }
-    }
+//    time_t starttime = now.tv_sec;
 
     if(itf_name && !dev_up(itf_name))
     {
+        log.Write("Interface %s is down. Abort!", itf_name);
         err_iface_down();
         return CleanUp(-1);
     }
 
     if(capt_init(&capture, itf_name) == -1)
-    {        write_error("Unable to initialize packet capture interface");
+    {
+        log.Write("Error initializing packet capture interface. Abort!");
+        write_error("Unable to initialize packet capture interface");
         return CleanUp(-2);
     }
     capture_enabled = 1;
@@ -150,15 +140,23 @@ int HostMonitorApp::Run(time_t facilitytime, const char *itf_name)
         if(now.tv_sec > last_time.tv_sec)
         {
             unsigned long msecs = timespec_diff_msec(&now, &last_time);
-//            updateethrates(&table, msecs);
+            if(list)
+                list->ListUpdateRates(msecs);
 
 //            printelapsedtime(now.tv_sec - starttime, 15, table.borderwin);
 
 //            print_packet_drops(capt_get_dropped(&capt), table.borderwin, 49);
 
-            if(logging && (now.tv_sec > log_next))
+            if(log.IsOpened() && (now.tv_sec > log_next))
             {
-                check_rotate_flag(&fd_log);
+                hma_mutex_rotate.lock();
+                 if(hma_log_rotate)
+                 {
+                    log.Rotate();
+                    hma_log_rotate = 0;
+                 }
+                hma_mutex_rotate.unlock();
+
 //                writeethlog(table.head, now.tv_sec - starttime, fd_log);
                 log_next = now.tv_sec + options.logspan;
             }
@@ -171,44 +169,36 @@ int HostMonitorApp::Run(time_t facilitytime, const char *itf_name)
 
         if(time_after(&now, &next_screen_update))
         {
-            print_visible_entries(&table);
+//            print_visible_entries(&table);
             update_panels();
             doupdate();
 
             set_next_screen_update(&next_screen_update, &now);
         }
 
-        if(capt_get_packet(&capture, &pkt, &key, table.tabwin) == -1)
+/*        if(capt_get_packet(&capture, &packet, &key, table.tabwin) == -1)
         {
             write_error("Packet receive failed");
             break;
         }
-
+*/
         if(TestForStop(key))
             break;
 
-        if(key != ERR)
-            hostmon_process_key(&table, key);
+//        if(key != ERR)
+//            hostmon_process_key(&table, key);
 
-        if(pkt.pkt_len > 0)
+        key = ERR;
+
+        if(packet.pkt_len > 0)
         {
-            hostmon_process_packet(&table, &pkt);
-            capt_put_packet(&capt, &pkt);
+//            hostmon_process_packet(&table, &packet);
+//            capt_put_packet(&capt, &packet);
         }
     }
 
-    if(logging)
-    {
-        signal(SIGUSR1, SIG_DFL);
-        writeethlog(table.head, time(NULL) - starttime, logfile);
-        writelog(logging, logfile, "******** LAN traffic monitor stopped ********");
-    }
+//        writeethlog(table.head, time(NULL) - starttime, logfile);
+    log.Write("******** LAN traffic monitor stopped ********");
 
-/*
-    struct ethtab table;
-    initethtab(&table);
-*/
     return CleanUp(0);
 }
-
-

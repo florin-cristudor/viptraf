@@ -63,3 +63,22 @@ Ethernet *Ethernet::ListFindMac(uint8_t *test_mac)
 
     return NULL;
 }
+
+void Ethernet::UpdateRates(unsigned long ms)
+{
+    rate_in.Add(bytes_new_in, ms);
+    bytes_new_in = 0l;
+    rate_out.Add(bytes_new_out, ms);
+    bytes_new_out = 0l;
+}
+
+void Ethernet::ListUpdateRates(unsigned long ms)
+{
+    UpdateRates(ms);
+    Ethernet *crs = next;
+    while(crs)
+    {
+        crs->UpdateRates(ms);
+        crs=crs->next;
+    }
+}
