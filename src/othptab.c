@@ -28,6 +28,8 @@ othptab.c - non-TCP protocol display module
 #include "hostmon.h"
 #include "sockaddr.h"
 
+#include "video.h"
+
 #define MSGSTRING_MAX	240
 #define SHORTSTRING_MAX	40
 
@@ -88,8 +90,8 @@ void init_othp_table(struct othptable *table)
 	unsigned int wintop;
 	unsigned int obmaxx __unused;
 
-	wintop = (LINES * 0.6) + 1;
-	winht = LINES - wintop - 2;
+    wintop = (VideoMaxLines * 0.6) + 1;
+    winht = VideoMaxLines - wintop - 2;
 
 	table->count = 0;
 	table->lastpos = 0;
@@ -97,13 +99,13 @@ void init_othp_table(struct othptable *table)
 	table->htstat = NOHTIND;
 	table->head = table->tail = NULL;
 	table->firstvisible = table->lastvisible = NULL;
-	table->borderwin = newwin(winht, COLS, wintop, 0);
+    table->borderwin = newwin(winht, VideoMaxCols, wintop, 0);
 	table->borderpanel = new_panel(table->borderwin);
 	wattrset(table->borderwin, BOXATTR);
 	tx_box(table->borderwin, ACS_VLINE, ACS_HLINE);
 
 	table->head = table->tail = NULL;
-	table->othpwin = newwin(winht - 2, COLS - 2, wintop + 1, 1);
+    table->othpwin = newwin(winht - 2, VideoMaxCols - 2, wintop + 1, 1);
 	table->othppanel = new_panel(table->othpwin);
 	wattrset(table->othpwin, STDATTR);
 	tx_colorwin(table->othpwin);
@@ -593,7 +595,7 @@ void printothpentry(struct othptable *table, struct othptabent *entry,
 		wmove(table->othpwin, target_row, 0);
 		scrollok(table->othpwin, 0);
 		wattrset(table->othpwin, UNKNATTR);
-		wprintw(table->othpwin, "%*c", COLS - 2, ' ');
+        wprintw(table->othpwin, "%*c", VideoMaxCols - 2, ' ');
 		scrollok(table->othpwin, 1);
 		wmove(table->othpwin, target_row, 1);
 
@@ -658,7 +660,7 @@ void printothpentry(struct othptable *table, struct othptabent *entry,
 			strcat(msgstring, scratchpad);
 		}
 		startstr = msgstring + table->strindex;
-		waddnstr(table->othpwin, startstr, COLS - 4);
+        waddnstr(table->othpwin, startstr, VideoMaxCols - 4);
 		writeothplog(logging, logfile, protname, "", "", 0, 0, entry);
 		return;
 	}
@@ -801,11 +803,11 @@ void printothpentry(struct othptable *table, struct othptabent *entry,
 
 
     scrollok(table->othpwin, 0);
-    mvwprintw(table->othpwin, target_row, 0, "%*c", COLS - 2, ' ');
+    mvwprintw(table->othpwin, target_row, 0, "%*c", VideoMaxCols - 2, ' ');
     scrollok(table->othpwin, 1);
     wmove(table->othpwin, target_row, 1);
     startstr = msgstring + table->strindex;
-    waddnstr(table->othpwin, startstr, COLS - 4);
+    waddnstr(table->othpwin, startstr, VideoMaxCols - 4);
 
     if (logging)
         writeothplog(logging, logfile, protname, description,

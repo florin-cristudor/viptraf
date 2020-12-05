@@ -16,39 +16,13 @@ deskman.c - desktop management routines
 #include "deskman.h"
 #include "options.h"
 #include "timer.h"
+#include "log.h"
 
-/* Attribute variables */
+#include "attrs.h"
+#include "video.h"
+#include "dlg_about.h"
 
-int STDATTR;
-int HIGHATTR;
-int BOXATTR;
-int ACTIVEATTR;
-int BARSTDATTR;
-int BARHIGHATTR;
-int BARPTRATTR;
-int DLGTEXTATTR;
-int DLGBOXATTR;
-int DLGHIGHATTR;
-int DESCATTR;
-int STATUSBARATTR;
-int IPSTATLABELATTR;
-int IPSTATATTR;
-int DESKTEXTATTR;
-int PTRATTR;
-int FIELDATTR;
-int ERRBOXATTR;
-int ERRTXTATTR;
-int OSPFATTR;
-int UDPATTR;
-int IGPATTR;
-int IGMPATTR;
-int IGRPATTR;
-int GREATTR;
-int ARPATTR;
-int UNKNIPATTR;
-int UNKNATTR;
-int IPV6ATTR;
-int ICMPV6ATTR;
+//#include "text_box.h"
 
 /*  draw the basic desktop common to my screen-oriented programs */
 
@@ -56,73 +30,33 @@ void draw_desktop(void)
 {
 	int row;		/* counter for desktop construction */
 
-	scrollok(stdscr, 0);
-	attrset(STATUSBARATTR);
-	move(0, 0);
-	printw("%*c", COLS, ' ');	/* these two print the top n' bottom */
-	move(LINES - 1, 0);
-	printw("%*c", COLS, ' ');	/* lines */
-
-	attrset(FIELDATTR);
-
-	for (row = 1; row <= LINES - 2; row++) {	/* draw the background */
-		move(row, 0);
-		printw("%*c", COLS, ' ');
+    scrollok(stdscr, 0);
+    pVideo->SetAttribute(STATUSBARATTR);
+    pVideo->Move(0, 0);
+    pVideo->Print("%*c", VideoMaxCols, ' ');	/* these two print the top n' bottom */
+    pVideo->Move(VideoMaxLines - 1, 0);
+    pVideo->Print("%*c", VideoMaxCols, ' ');	/* lines */
+    pVideo->SetAttribute(FIELDATTR);
+    for (row = 1; row <= VideoMaxLines - 2; row++)
+    {	/* draw the background */
+        pVideo->Move(row, 0);
+        pVideo->Print("%*c", VideoMaxCols, ' ');
 	}
-
-	refresh();
+    pVideo->Refresh();
 }
 
 void about(void)
 {
-	WINDOW *win;
-	PANEL *panel;
-	int ch;
-
-	win = newwin(17, 52, (LINES - 17) / 2, (COLS - 52) / 2);
-
-	panel = new_panel(win);
-
-	tx_stdwinset(win);
-	wtimeout(win, -1);
-	wattrset(win, BOXATTR);
-	tx_colorwin(win);
-	tx_box(win, ACS_VLINE, ACS_HLINE);
-	wattrset(win, STDATTR);
-	mvwprintw(win, 1, 2, VIPTRAF_NAME);
-	mvwprintw(win, 2, 2, "A View IP Traffic Utility");
-	mvwprintw(win, 3, 2, "Version %s", VIPTRAF_VERSION);
-    mvwprintw(win, 5, 2, "Copyright (c) Florin Cristudor 2020-");
-    mvwprintw(win, 6, 2, "Copyright (c) Markus Ullmann (IPv6) ?-2020");
-    mvwprintw(win, 7, 2, "Copyright (c) Guy Martin ?-?");
-	mvwprintw(win, 8, 2, "Copyright (c) Gerard Paul Java 1997-2004");
-	mvwprintw(win, 10, 2, "This program is open-source software released");
-	mvwprintw(win, 11, 2, "under the terms of the GNU General Public");
-	mvwprintw(win, 12, 2, "License Version 2 or any later version.");
-	mvwprintw(win, 13, 2, "See the included LICENSE file for details.");
-
-	wattrset(win, HIGHATTR);
-
-	mvwprintw(win, 15, 2, ANYKEY_MSG);
-
-	update_panels();
-	doupdate();
-
-	do {
-		ch = wgetch(win);
-		if (ch == 12)
-			tx_refresh_screen();
-	} while (ch == 12);
-
-	del_panel(panel);
-	delwin(win);
-	update_panels();
-	doupdate();
+    DlgAbout *pdlg = new DlgAbout();
+    if(!pdlg)
+        return;
+    pdlg->Run();
+    delete pdlg;
 }
 
 void show_sort_statwin(WINDOW ** statwin, PANEL ** panel)
 {
-	*statwin = newwin(5, 30, (LINES - 5) / 2, (COLS - 30) / 2);
+    *statwin = newwin(5, 30, (VideoMaxLines - 5) / 2, (VideoMaxCols - 30) / 2);
 	*panel = new_panel(*statwin);
 
 	wattrset(*statwin, BOXATTR);
@@ -135,7 +69,7 @@ void show_sort_statwin(WINDOW ** statwin, PANEL ** panel)
 
 void printipcerr(void)
 {
-	attrset(ERRTXTATTR);
+    pVideo->SetAttribute(ERRTXTATTR);
 	mvprintw(0, 68, "  IPC Error ");
 }
 
@@ -169,9 +103,9 @@ void tabkeyhelp(WINDOW * win)
 
 void indicate(const char *message)
 {
-	attrset(STATUSBARATTR);
-	mvprintw(LINES - 1, 0, "%*c", COLS, ' ');
-	mvprintw(LINES - 1, 1, "%s", message);
+    pVideo->SetAttribute(STATUSBARATTR);
+    mvprintw(VideoMaxLines - 1, 0, "%*c", VideoMaxCols, ' ');
+    mvprintw(VideoMaxLines - 1, 1, "%s", message);
 	refresh();
 }
 

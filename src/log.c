@@ -14,6 +14,8 @@ log.c - the iptraf logging facility
 #include "dirs.h"
 #include "log.h"
 
+#include "video.h"
+
 #include "tui/input.h"
 #include "tui/msgboxes.h"
 #include "tui/winops.h"
@@ -46,7 +48,7 @@ void input_logfile(char *target, int *logging)
 	struct FIELDLIST fieldlist;
 	int aborted;
 
-	dlgwin = newwin(11, 60, (LINES - 11) / 2, (COLS - 60) / 2);
+    dlgwin = newwin(11, 60, (VideoMaxLines - 11) / 2, (VideoMaxCols - 60) / 2);
 	dlgpanel = new_panel(dlgwin);
 
 	wattrset(dlgwin, DLGBOXATTR);
@@ -63,8 +65,8 @@ void input_logfile(char *target, int *logging)
 	stdkeyhelp(dlgwin);
 	wprintw(dlgwin, " (turns logging off)");
 
-	tx_initfields(&fieldlist, 1, 50, (LINES - 1) / 2 + 2,
-		      (COLS - 50) / 2 - 3, DLGTEXTATTR, FIELDATTR);
+    tx_initfields(&fieldlist, 1, 50, (VideoMaxLines - 1) / 2 + 2,
+              (VideoMaxCols - 50) / 2 - 3, DLGTEXTATTR, FIELDATTR);
 	tx_addfield(&fieldlist, 48, 0, 0, target);
 	tx_fillfields(&fieldlist, &aborted);
 

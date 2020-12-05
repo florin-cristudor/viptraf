@@ -25,6 +25,7 @@ fltedit.c	- the filter editing Facility
 #include "cidr.h"
 #include "log.h"
 
+#include "video.h"
 
 void init_filter_table(struct filterlist *fl)
 {
@@ -209,10 +210,10 @@ void modify_host_parameters(struct filterlist *fl)
 	char inexstr[2];
 	char matchop[2];
 
-	bwin = newwin(15, 80, (LINES - 15) / 2, (COLS - 80) / 2);
+    bwin = newwin(15, 80, (VideoMaxLines - 15) / 2, (VideoMaxCols - 80) / 2);
 
 	bpanel = new_panel(bwin);
-	win = newwin(13, 78, (LINES - 13) / 2, (COLS - 78) / 2);
+    win = newwin(13, 78, (VideoMaxLines - 13) / 2, (VideoMaxCols - 78) / 2);
 	panel = new_panel(win);
 
 	wattrset(bwin, BOXATTR);
@@ -228,7 +229,7 @@ void modify_host_parameters(struct filterlist *fl)
 	wattrset(win, STDATTR);
 	tx_colorwin(win);
 
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	tx_printkeyhelp("Up/Down", "-move ptr ", stdscr, HIGHATTR,
 			STATUSBARATTR);
 	tx_printkeyhelp("I", "-insert ", stdscr, HIGHATTR, STATUSBARATTR);

@@ -27,6 +27,7 @@ ipfilter.c - user interface and filter function for all IP packets
 #include "cidr.h"
 #include "log.h"
 
+#include "video.h"
 
 static in_port_t parse_port(char *buf)
 {
@@ -58,7 +59,7 @@ void gethostparams(struct hostparams *data, const char *init_saddr, const char *
 
 	const char *WILDCARD = "0.0.0.0";
 
-	dlgwin = newwin(22, 80, (LINES - 22) / 2, (COLS - 80) / 2);
+    dlgwin = newwin(22, 80, (VideoMaxLines - 22) / 2, (VideoMaxCols - 80) / 2);
 	dlgpanel = new_panel(dlgwin);
 
 	wattrset(dlgwin, DLGBOXATTR);
@@ -80,8 +81,8 @@ void gethostparams(struct hostparams *data, const char *init_saddr, const char *
 	mvwprintw(dlgwin, 11, 2, "protocol to match.)");
 	mvwprintw(dlgwin, 18, 2, "Include/Exclude (I/E)");
 
-	tx_initfields(&fields, 19, 55, (LINES - 22) / 2 + 1,
-		      (COLS - 80) / 2 + 23, DLGTEXTATTR, FIELDATTR);
+    tx_initfields(&fields, 19, 55, (VideoMaxLines - 22) / 2 + 1,
+              (VideoMaxCols - 80) / 2 + 23, DLGTEXTATTR, FIELDATTR);
 
 	mvwprintw(fields.fieldwin, 5, 6, "to");
 	mvwprintw(fields.fieldwin, 5, 36, "to");

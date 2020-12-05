@@ -21,6 +21,8 @@ options.c - implements the configuration section of the utility
 #include "landesc.h"
 #include "dirs.h"
 
+#include "video.h"
+
 #define ALLOW_ZERO 1
 #define DONT_ALLOW_ZERO 0
 
@@ -28,7 +30,7 @@ struct OPTIONS options;
 
 static void makeoptionmenu(struct MENU *menu)
 {
-	tx_initmenu(menu, 20, 40, (LINES - 19) / 2 - 1, (COLS - 40) / 16,
+    tx_initmenu(menu, 20, 40, (VideoMaxLines - 19) / 2 - 1, (VideoMaxCols - 40) / 16,
 		    BOXATTR, STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR,
 		    DESCATTR);
 	tx_additem(menu, " ^R^everse DNS lookups",
@@ -65,7 +67,7 @@ static void makeoptionmenu(struct MENU *menu)
 
 static void maketimermenu(struct MENU *menu)
 {
-	tx_initmenu(menu, 8, 35, (LINES - 19) / 2 + 7, (COLS - 35) / 2, BOXATTR,
+    tx_initmenu(menu, 8, 35, (VideoMaxLines - 19) / 2 + 7, (VideoMaxCols - 35) / 2, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 
 	tx_additem(menu, " TCP ^t^imeout...",
@@ -203,7 +205,7 @@ static void settimeout(time_t *value, const char *units, int allow_zero,
 	struct FIELDLIST field;
 	time_t tmval = 0;
 
-	dlgwin = newwin(7, 40, (LINES - 7) / 2, (COLS - 40) / 4);
+    dlgwin = newwin(7, 40, (VideoMaxLines - 7) / 2, (VideoMaxCols - 40) / 4);
 	dlgpanel = new_panel(dlgwin);
 
 	wattrset(dlgwin, DLGBOXATTR);
@@ -215,7 +217,7 @@ static void settimeout(time_t *value, const char *units, int allow_zero,
 	wmove(dlgwin, 5, 2);
 	stdkeyhelp(dlgwin);
 
-	tx_initfields(&field, 1, 10, (LINES - 7) / 2 + 3, (COLS - 40) / 4 + 2,
+    tx_initfields(&field, 1, 10, (VideoMaxLines - 7) / 2 + 3, (VideoMaxCols - 40) / 4 + 2,
 		      DLGTEXTATTR, FIELDATTR);
 	tx_addfield(&field, 3, 0, 0, "");
 
@@ -263,7 +265,7 @@ void setoptions(void)
 
 	makeoptionmenu(&menu);
 
-	statwin = newwin(15, 35, (LINES - 19) / 2 - 1, (COLS - 40) / 16 + 40);
+    statwin = newwin(15, 35, (VideoMaxLines - 19) / 2 - 1, (VideoMaxCols - 40) / 16 + 40);
 	statpanel = new_panel(statwin);
 
 	wattrset(statwin, BOXATTR);

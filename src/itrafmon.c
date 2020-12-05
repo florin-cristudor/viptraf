@@ -32,6 +32,7 @@ itrafmon.c - the IP traffic monitor module
 #include "sockaddr.h"
 #include "capt.h"
 
+#include "video.h"
 #include "tcp_con.h"
 
 #define SCROLLUP 0
@@ -48,9 +49,9 @@ static void rotate_ipmon_log(int s __unused)
 
 static void ipmonhelp(void)
 {
-    move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
     tx_printkeyhelp("Up/Dn/PgUp/PgDn/Home/End", "-scroll  ", stdscr, HIGHATTR, STATUSBARATTR);
-    move(LINES - 1, 53);
+    move(VideoMaxLines - 1, 53);
     tx_printkeyhelp("W", "-chg actv win  ", stdscr, HIGHATTR, STATUSBARATTR);
     tx_printkeyhelp("S", "-sort TCP  ", stdscr, HIGHATTR, STATUSBARATTR);
     stdexitkeyhelp();
@@ -58,7 +59,7 @@ static void ipmonhelp(void)
 
 static void uniq_help(int what)
 {
-    move(LINES - 1, 34);
+    move(VideoMaxLines - 1, 34);
     if (!what)
         tx_printkeyhelp("M", "-more TCP info   ", stdscr, HIGHATTR, STATUSBARATTR);
     else
@@ -82,11 +83,11 @@ static void markactive(int curwin, WINDOW * tw, WINDOW * ow)
 	getmaxyx(win1, y1, x1);
 	getmaxyx(win2, y2, x2);
 
-	wmove(win1, --y1, COLS - 10);
+    wmove(win1, --y1, VideoMaxCols - 10);
 	wattrset(win1, ACTIVEATTR);
 	wprintw(win1, " Active ");
 	wattrset(win1, BOXATTR);
-	wmove(win2, --y2, COLS - 10);
+    wmove(win2, --y2, VideoMaxCols - 10);
 	whline(win2, ACS_HLINE, 8);
 }
 
@@ -94,18 +95,18 @@ static void print_flowrate(struct tcptable *table)
 {
 	if (table->barptr == NULL) {
 		wattrset(table->statwin, IPSTATATTR);
-		mvwprintw(table->statwin, 0, COLS * 47 / 80,
+        mvwprintw(table->statwin, 0, VideoMaxCols * 47 / 80,
 			  "No TCP entries              ");
 	} else {
 		wattrset(table->statwin, IPSTATLABELATTR);
-		mvwprintw(table->statwin, 0, COLS * 47 / 80,
+        mvwprintw(table->statwin, 0, VideoMaxCols * 47 / 80,
 			  "TCP flow rate: ");
 
 		char buf[32];
 //TODEL		rate_print(rate_get_average(&table->barptr->rate), buf, sizeof(buf));
         table->barptr->traf_rate.Print(buf, sizeof(buf));
 		wattrset(table->statwin, IPSTATATTR);
-		mvwprintw(table->statwin, 0, COLS * 52 / 80 + 13, "%s", buf);
+        mvwprintw(table->statwin, 0, VideoMaxCols * 52 / 80 + 13, "%s", buf);
 	}
 }
 
@@ -124,7 +125,7 @@ static void scrollupperwin(struct tcptable *table, int direction)
 			wscrl(table->tcpscreen, 1);
 			scrollok(table->tcpscreen, 0);
 			wmove(table->tcpscreen, table->imaxy - 1, 0);
-			wprintw(table->tcpscreen, "%*c", COLS - 2, ' ');
+            wprintw(table->tcpscreen, "%*c", VideoMaxCols - 2, ' ');
 			scrollok(table->tcpscreen, 1);
 
 			printentry(table, table->lastvisible);
@@ -135,7 +136,7 @@ static void scrollupperwin(struct tcptable *table, int direction)
 			table->lastvisible = table->lastvisible->prev_entry;
 
 			wscrl(table->tcpscreen, -1);
-			mvwprintw(table->tcpscreen, 0, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->tcpscreen, 0, 0, "%*c", VideoMaxCols - 2, ' ');
 
 			printentry(table, table->firstvisible);
 		}
@@ -300,7 +301,7 @@ static void scroll_othp(struct othptable *table, int direction, int lines)
 
 static void show_tcpsort_win(WINDOW ** win, PANEL ** panel)
 {
-	*win = newwin(9, 35, (LINES - 8) / 2, COLS - 40);
+    *win = newwin(9, 35, (VideoMaxLines - 8) / 2, VideoMaxCols - 40);
 	*panel = new_panel(*win);
 
 	wattrset(*win, DLGBOXATTR);

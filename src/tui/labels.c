@@ -9,6 +9,7 @@
 #include "iptraf-ng-compat.h"
 
 #include "winops.h"
+#include "video.h"
 
 void tx_printkeyhelp(const char *keytext, const char *desc, WINDOW * win, int highattr,
 		     int textattr)
@@ -21,7 +22,7 @@ void tx_printkeyhelp(const char *keytext, const char *desc, WINDOW * win, int hi
 
 void tx_menukeyhelp(int textattr, int highattr)
 {
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	tx_printkeyhelp("Up/Down", "-Move selector  ", stdscr, highattr,
 			textattr);
 	tx_printkeyhelp("Enter", "-execute", stdscr, highattr, textattr);
@@ -30,7 +31,7 @@ void tx_menukeyhelp(int textattr, int highattr)
 
 void tx_listkeyhelp(int textattr, int highattr)
 {
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	tx_printkeyhelp("Up/Down", "-move pointer  ", stdscr, highattr,
 			textattr);
 	tx_printkeyhelp("Enter", "-select  ", stdscr, highattr, textattr);

@@ -9,6 +9,8 @@
 
 #include "winops.h"
 
+#include "video.h"
+
 int ERR_BORDER_ATTR;
 int ERR_TEXT_ATTR;
 int ERR_PROMPT_ATTR;
@@ -33,7 +35,7 @@ void tx_init_info_attrs(int border, int text, int prompt)
 
 void tui_error_va(const char *prompt, const char *err, va_list vararg)
 {
-	WINDOW *win = newwin(4, 70, (LINES - 4) / 2, (COLS - 70) / 2);
+    WINDOW *win = newwin(4, 70, (VideoMaxLines - 4) / 2, (VideoMaxCols - 70) / 2);
 	PANEL *panel = new_panel(win);
 
 	wattrset(win, ERR_BORDER_ATTR);
@@ -79,7 +81,7 @@ void tx_infobox(const char *text, const char *prompt)
 	PANEL *panel;
 	int ch;
 
-	win = newwin(4, 50, (LINES - 4) / 2, (COLS - 50) / 2);
+    win = newwin(4, 50, (VideoMaxLines - 4) / 2, (VideoMaxCols - 50) / 2);
 	panel = new_panel(win);
 	wattrset(win, INFO_BORDER_ATTR);
 	tx_colorwin(win);

@@ -1,4 +1,9 @@
 CHANGES file for VIPTraf project
+2020-12-05
+- Added TERM Video Interface class(es)
+- Added Dialog and About Dialog Box Clases. Right now the
+About box is build based on the new class structure and video.
+
 - Moved working dirs to ../viptraf/ (lib and log)
 - moved pid to /var/run/viptraf.pid
 - switched to C++ build

@@ -28,6 +28,7 @@ detstats.c	- the interface statistics module
 
 #include "capt.h"
 
+#include "video.h"
 #include "traf_rate.h"
 
 struct ifcounts {
@@ -576,9 +577,9 @@ void detstats(char *iface, time_t facilitytime)
 		return;
 	}
 
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	stdexitkeyhelp();
-	statwin = newwin(LINES - 2, COLS, 1, 0);
+    statwin = newwin(VideoMaxLines - 2, VideoMaxCols, 1, 0);
 	statpanel = new_panel(statwin);
 	tx_stdwinset(statwin);
 	wtimeout(statwin, -1);

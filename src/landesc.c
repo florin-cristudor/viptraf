@@ -21,6 +21,8 @@ landesc.c	- LAN host description management module
 #include "attrs.h"
 #include "dirs.h"
 
+#include "video.h"
+
 static int check_mac_addr(const char *mac)
 {
 	if (strlen(mac) != 17)
@@ -203,7 +205,7 @@ static struct eth_desc *select_eth_desc(const struct eth_desc *hd)
 		return NULL;
 	}
 
-	tx_init_listbox(&slist, COLS, 20, 0, (LINES - 20) / 2, STDATTR, BOXATTR,
+    tx_init_listbox(&slist, VideoMaxCols, 20, 0, (VideoMaxLines - 20) / 2, STDATTR, BOXATTR,
 			BARSTDATTR, HIGHATTR);
 
 	tx_set_listbox_title(&slist, "Address", 1);
@@ -241,22 +243,22 @@ static int dialog_eth_desc(struct FIELDLIST *fields, const char *initaddr,
 			   const char *initdesc)
 {
 	/* TODO: move to tui */
-	WINDOW *win = newwin(8, 70, 8, (COLS - 70) / 2);
+    WINDOW *win = newwin(8, 70, 8, (VideoMaxCols - 70) / 2);
 	PANEL *panel = new_panel(win);
 
 	wattrset(win, DLGBOXATTR);
 	tx_colorwin(win);
 	tx_box(win, ACS_VLINE, ACS_HLINE);
-	wmove(win, 6, 2 * COLS / 80);
+    wmove(win, 6, 2 * VideoMaxCols / 80);
 	tabkeyhelp(win);
-	wmove(win, 6, 20 * COLS / 80);
+    wmove(win, 6, 20 * VideoMaxCols / 80);
 	stdkeyhelp(win);
 
 	wattrset(win, DLGTEXTATTR);
-	mvwprintw(win, 2, 2 * COLS / 80, "MAC Address:");
-	mvwprintw(win, 4, 2 * COLS / 80, "Description:");
+    mvwprintw(win, 2, 2 * VideoMaxCols / 80, "MAC Address:");
+    mvwprintw(win, 4, 2 * VideoMaxCols / 80, "Description:");
 
-	tx_initfields(fields, 3, 52, 10, (COLS - 52) / 2 + 6 * COLS / 80,
+    tx_initfields(fields, 3, 52, 10, (VideoMaxCols - 52) / 2 + 6 * VideoMaxCols / 80,
 		      DLGTEXTATTR, FIELDATTR);
 	tx_addfield(fields, 17, 0, 0, initaddr);
 	tx_addfield(fields, 50, 2, 0, initdesc);
@@ -327,7 +329,7 @@ void manage_eth_desc(unsigned linktype)
 	int row = 1;
 	int aborted = 0;
 
-	tx_initmenu(&menu, 7, 31, (LINES - 6) / 2, (COLS - 31) / 2, BOXATTR,
+    tx_initmenu(&menu, 7, 31, (VideoMaxLines - 6) / 2, (VideoMaxCols - 31) / 2, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 	tx_additem(&menu, " ^A^dd description...",
 		   "Adds a description for a MAC address");

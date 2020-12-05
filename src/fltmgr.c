@@ -24,10 +24,11 @@ fltmgr.c - filter list management routines
 #include "error.h"
 #include "log.h"
 
+#include "video.h"
 
 void makestdfiltermenu(struct MENU *menu)
 {
-	tx_initmenu(menu, 9, 31, (LINES - 8) / 2, (COLS - 31) / 2 + 15, BOXATTR,
+    tx_initmenu(menu, 9, 31, (VideoMaxLines - 8) / 2, (VideoMaxCols - 31) / 2 + 15, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 	tx_additem(menu, " ^D^efine new filter...",
 		   "Defines a new set of IP filter parameters");
@@ -249,8 +250,8 @@ void operate_select(struct ffnode *ffiles, struct ffnode **item, int *aborted)
 
 	pptr = ffiles;
 
-	tx_init_listbox(&list, 60, 10, (COLS - 60) / 2 - 2,
-			(LINES - 10) / 2 - 2, STDATTR, BOXATTR, BARSTDATTR,
+    tx_init_listbox(&list, 60, 10, (VideoMaxCols - 60) / 2 - 2,
+            (VideoMaxLines - 10) / 2 - 2, STDATTR, BOXATTR, BARSTDATTR,
 			HIGHATTR);
 
 	tx_set_listbox_title(&list, "Select Filter", 1);
@@ -322,8 +323,8 @@ void get_filter_description(char *description, int *aborted, const char *pre_edi
 	WINDOW *dlgwin;
 	PANEL *dlgpanel;
 
-	dlgwintop = (LINES - 9) / 2;
-	dlgwin = newwin(7, 42, dlgwintop, (COLS - 42) / 2 - 10);
+    dlgwintop = (VideoMaxLines - 9) / 2;
+    dlgwin = newwin(7, 42, dlgwintop, (VideoMaxCols - 42) / 2 - 10);
 	dlgpanel = new_panel(dlgwin);
 	wattrset(dlgwin, DLGBOXATTR);
 	tx_colorwin(dlgwin);
@@ -336,7 +337,7 @@ void get_filter_description(char *description, int *aborted, const char *pre_edi
 	update_panels();
 	doupdate();
 
-	tx_initfields(&descfield, 1, 35, dlgwintop + 3, (COLS - 42) / 2 - 8,
+    tx_initfields(&descfield, 1, 35, dlgwintop + 3, (VideoMaxCols - 42) / 2 - 8,
 		      DLGTEXTATTR, FIELDATTR);
 	tx_addfield(&descfield, 33, 0, 0, pre_edit);
 

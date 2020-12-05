@@ -32,6 +32,9 @@ An IP Network Statistics Utility
 
 #include "parse-options.h"
 
+#include "video.h"
+#include "video_ncurses.h"
+
 #define WITHALL 1
 #define WITHOUTALL 0
 
@@ -46,6 +49,8 @@ struct cmd_struct {
     const char *help;
 };
 
+
+
 /*
  * Important globals used throughout the
  * program.
@@ -53,6 +58,9 @@ struct cmd_struct {
 int exitloop = 0;
 int daemonized = 0;
 int facility_running = 0;
+
+
+
 
 static void press_enter_to_continue(void)
 {
@@ -112,7 +120,7 @@ static void term_usr2_handler(int s __unused)
 
 static void init_break_menu(struct MENU *break_menu)
 {
-	tx_initmenu(break_menu, 6, 20, (LINES - 6) / 2, COLS / 2, BOXATTR,
+    tx_initmenu(break_menu, 6, 20, (VideoMaxLines - 6) / 2, VideoMaxCols / 2, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 	tx_additem(break_menu, " By packet ^s^ize",
 		   "Displays packet counts by packet size range");
@@ -146,7 +154,7 @@ static void program_interface(void)
 	loadfilters();
 	indicate("");
 
-	tx_initmenu(&menu, 15, 35, (LINES - 16) / 2, (COLS - 35) / 2, BOXATTR,
+    tx_initmenu(&menu, 15, 35, (VideoMaxLines - 16) / 2, (VideoMaxCols - 35) / 2, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 
 	tx_additem(&menu, " IP traffic ^m^onitor",
@@ -340,6 +348,25 @@ static void handle_internal_command(int argc, char **argv,
 	}
 }
 
+int shutdown(int return_code, const char *format, ...)
+{
+    if(pVideo)
+    {
+        delete pVideo;
+        pVideo = NULL;
+    }
+
+    if(return_code)
+    {
+        va_list args;
+        va_start(args, format);
+        die(format, args);
+        va_end(args);
+    }
+
+    exit(return_code);
+}
+
 int main(int argc, char **argv)
 {
 	int current_log_interval = 0;
@@ -469,24 +496,27 @@ int main(int argc, char **argv)
 	sanitize_dir(LOCKDIR);
 	sanitize_dir(WORKDIR);
 
-	setlocale(LC_ALL, "");	/* needed to properly init (n)curses library */
-	initscr();
+//	setlocale(LC_ALL, "");	/* needed to properly init (n)curses library */
+//	initscr();
 
-	if ((LINES < 24) || (COLS < 80)) {
-		endwin();
-		die("This program requires a screen size of at least 80 columns by 24 lines\n" "Please resize your window");
-	}
+    pVideo = new VideoNcurses;
+    if(!pVideo)
+        return shutdown(-1, "Unable to create video object");
+    if(!daemonized)
+    {
+        pVideo->Init();
+        if(!pVideo->IsEnabled())
+            return shutdown(-2, "The video cannot be init");
+    }
+
+    if((VideoMaxLines < 24) || (VideoMaxCols < 80))
+        shutdown(-3, "This program requires a screen size of at least 80(%i) columns by 24(%i) lines\n" "Please resize your window", VideoMaxLines, VideoMaxCols);
+
+    pVideo->InitColors(options.color);
 
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGUSR1, SIG_IGN);
-
-	start_color();
-	standardcolors(options.color);
-	noecho();
-	nonl();
-	cbreak();
-	curs_set(0);
 
 	/*
 	 * Set logfilename variable to NULL if -L was specified without an
@@ -517,9 +547,9 @@ int main(int argc, char **argv)
 	/* bad, bad, bad name draw_desktop()
 	 * hide all into tui_top_panel(char *msg)
 	 * */
-	draw_desktop();
-	attrset(STATUSBARATTR);
-	mvprintw(0, 1, "%s %s", VIPTRAF_NAME, VIPTRAF_VERSION);
+    draw_desktop();
+    pVideo->SetAttribute(STATUSBARATTR);
+    pVideo->MvPrint(0, 1, "%s %s", VIPTRAF_NAME, VIPTRAF_VERSION);
 
 	/* simplify */
 	if (g_opt)
@@ -540,15 +570,11 @@ int main(int argc, char **argv)
 		servmon(s_opt, facilitytime);
 	else if (z_opt)
 		packet_size_breakdown(z_opt, facilitytime);
-	else
-		program_interface();
-
-	erase();
-	update_panels();
-	doupdate();
-	endwin();
+    else
+        program_interface();
 
 cleanup:
+    shutdown(0, "");
 	unlink(VIPTRAF_PIDFILE);
 bailout:
 	return 0;

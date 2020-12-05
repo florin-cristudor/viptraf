@@ -29,6 +29,8 @@ Discovers LAN hosts and displays packet statistics for them
 
 #include "capt.h"
 
+#include "video.h"
+
 #define SCROLLUP 0
 #define SCROLLDOWN 1
 
@@ -160,7 +162,7 @@ static void writeethlog(struct ethtabent *list, unsigned long nsecs, FILE *fd)
 
 static void hostmonhelp(void)
 {
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	scrollkeyhelp();
 	sortkeyhelp();
 	stdexitkeyhelp();
@@ -172,23 +174,23 @@ static void initethtab(struct ethtab *table)
 	table->firstvisible = table->lastvisible = NULL;
 	table->count = table->entcount = 0;
 
-	table->borderwin = newwin(LINES - 2, COLS, 1, 0);
+    table->borderwin = newwin(VideoMaxLines - 2, VideoMaxCols, 1, 0);
 	table->borderpanel = new_panel(table->borderwin);
 
-	table->tabwin = newwin(LINES - 4, COLS - 2, 2, 1);
+    table->tabwin = newwin(VideoMaxLines - 4, VideoMaxCols - 2, 2, 1);
 	table->tabpanel = new_panel(table->tabwin);
 
 	wattrset(table->borderwin, BOXATTR);
 	tx_box(table->borderwin, ACS_VLINE, ACS_HLINE);
 
-	mvwprintw(table->borderwin, 0,  5 * COLS / 80, " PktsIn ");
-	mvwprintw(table->borderwin, 0, 16 * COLS / 80, " IP In ");
-	mvwprintw(table->borderwin, 0, 24 * COLS / 80, " BytesIn ");
-	mvwprintw(table->borderwin, 0, 34 * COLS / 80, " InRate ");
-	mvwprintw(table->borderwin, 0, 42 * COLS / 80, " PktsOut ");
-	mvwprintw(table->borderwin, 0, 53 * COLS / 80, " IP Out ");
-	mvwprintw(table->borderwin, 0, 61 * COLS / 80, " BytesOut ");
-	mvwprintw(table->borderwin, 0, 70 * COLS / 80, " OutRate ");
+    mvwprintw(table->borderwin, 0,  5 * VideoMaxCols / 80, " PktsIn ");
+    mvwprintw(table->borderwin, 0, 16 * VideoMaxCols / 80, " IP In ");
+    mvwprintw(table->borderwin, 0, 24 * VideoMaxCols / 80, " BytesIn ");
+    mvwprintw(table->borderwin, 0, 34 * VideoMaxCols / 80, " InRate ");
+    mvwprintw(table->borderwin, 0, 42 * VideoMaxCols / 80, " PktsOut ");
+    mvwprintw(table->borderwin, 0, 53 * VideoMaxCols / 80, " IP Out ");
+    mvwprintw(table->borderwin, 0, 61 * VideoMaxCols / 80, " BytesOut ");
+    mvwprintw(table->borderwin, 0, 70 * VideoMaxCols / 80, " OutRate ");
 
 	wattrset(table->tabwin, STDATTR);
 	tx_colorwin(table->tabwin);
@@ -234,7 +236,7 @@ static struct ethtabent *addethnode(struct ethtab *table)
 	table->count++;
 	ptemp->index = table->count;
 
-	if (table->count <= (unsigned) LINES - 4)
+    if (table->count <= (unsigned) VideoMaxLines - 4)
 		table->lastvisible = ptemp;
 
 	return ptemp;
@@ -305,7 +307,7 @@ static struct ethtabent *addethentry(struct ethtab *table,
 
 	table->entcount++;
 
-	mvwprintw(table->borderwin, LINES - 3, 1, " %u entries ",
+    mvwprintw(table->borderwin, VideoMaxLines - 3, 1, " %u entries ",
 		  table->entcount);
 
 	return ptemp;
@@ -382,20 +384,20 @@ static void printethent(struct ethtab *table, struct ethtabent *entry)
 
 		/* Inbound traffic counts */
 
-		wmove(table->tabwin, target_row, 2 * COLS / 80);
+        wmove(table->tabwin, target_row, 2 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.inpcount, table->tabwin);
-		wmove(table->tabwin, target_row, 12 * COLS / 80);
+        wmove(table->tabwin, target_row, 12 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.inippcount, table->tabwin);
-		wmove(table->tabwin, target_row, 22 * COLS / 80);
+        wmove(table->tabwin, target_row, 22 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.inbcount, table->tabwin);
 
 		/* Outbound traffic counts */
 
-		wmove(table->tabwin, target_row, 40 * COLS / 80);
+        wmove(table->tabwin, target_row, 40 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.outpcount, table->tabwin);
-		wmove(table->tabwin, target_row, 50 * COLS / 80);
+        wmove(table->tabwin, target_row, 50 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.outippcount, table->tabwin);
-		wmove(table->tabwin, target_row, 60 * COLS / 80);
+        wmove(table->tabwin, target_row, 60 * VideoMaxCols / 80);
 		printlargenum(entry->un.figs.outbcount, table->tabwin);
 	}
 }
@@ -443,11 +445,11 @@ static void print_entry_rates(struct ethtab *table, struct ethtabent *entry)
 	wattrset(table->tabwin, HIGHATTR);
 //TODEL	rate_print_no_units(rate_get_average(&entry->un.figs.inrate), buf, sizeof(buf));
     entry->traf_rate_in.PrintNoUnits(buf, sizeof(buf));
-	mvwprintw(table->tabwin, target_row, 32 * COLS / 80, "%s", buf);
+    mvwprintw(table->tabwin, target_row, 32 * VideoMaxCols / 80, "%s", buf);
 
 //TODEL	rate_print_no_units(rate_get_average(&entry->un.figs.outrate), buf, sizeof(buf));
     entry->traf_rate_out.PrintNoUnits(buf, sizeof(buf));
-	mvwprintw(table->tabwin, target_row, 69 * COLS / 80, "%s", buf);
+    mvwprintw(table->tabwin, target_row, 69 * VideoMaxCols / 80, "%s", buf);
 }
 
 static void updateethrates(struct ethtab *table, unsigned long msecs)
@@ -504,7 +506,7 @@ static void scrollethwin_one(struct ethtab *table, int direction)
 
 			wscrl(table->tabwin, 1);
 			scrollok(table->tabwin, 0);
-			mvwprintw(table->tabwin, LINES - 5, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->tabwin, VideoMaxLines - 5, 0, "%*c", VideoMaxCols - 2, ' ');
 			scrollok(table->tabwin, 1);
 
 			printethent(table, table->lastvisible);
@@ -516,7 +518,7 @@ static void scrollethwin_one(struct ethtab *table, int direction)
 			table->lastvisible = table->lastvisible->prev_entry;
 
 			wscrl(table->tabwin, -1);
-			mvwprintw(table->tabwin, 0, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->tabwin, 0, 0, "%*c", VideoMaxCols - 2, ' ');
 
 			printethent(table, table->firstvisible);
 			print_entry_rates(table, table->firstvisible);
@@ -560,7 +562,7 @@ static void scrollethwin(struct ethtab *table, int direction, int lines)
 
 static void show_hostsort_keywin(WINDOW ** win, PANEL ** panel)
 {
-	*win = newwin(13, 35, (LINES - 10) / 2, COLS - 40);
+    *win = newwin(13, 35, (VideoMaxLines - 10) / 2, VideoMaxCols - 40);
 	*panel = new_panel(*win);
 
 	wattrset(*win, DLGBOXATTR);
@@ -778,11 +780,11 @@ static void hostmon_process_key(struct ethtab *table, int ch)
 			break;
 		case KEY_PPAGE:
 		case '-':
-			scrollethwin(table, SCROLLDOWN, LINES - 4);
+            scrollethwin(table, SCROLLDOWN, VideoMaxLines - 4);
 			break;
 		case KEY_NPAGE:
 		case ' ':
-			scrollethwin(table, SCROLLUP, LINES - 4);
+            scrollethwin(table, SCROLLUP, VideoMaxLines - 4);
 			break;
 		case KEY_HOME:
 			scrollethwin(table, SCROLLDOWN, INT_MAX);

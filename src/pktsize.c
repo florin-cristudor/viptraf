@@ -26,6 +26,8 @@ pktsize.c	- the packet size breakdown facility
 #include "capt.h"
 #include "timer.h"
 
+#include "video.h"
+
 #define SIZES 20
 
 struct psizetab {
@@ -75,14 +77,14 @@ static void write_size_log(struct psizetab *table, unsigned long nsecs,
 
 static void psizetab_init(struct psizetab *table, char *ifname)
 {
-	table->borderwin = newwin(LINES - 2, COLS, 1, 0);
+    table->borderwin = newwin(VideoMaxLines - 2, VideoMaxCols, 1, 0);
 	table->borderpanel = new_panel(table->borderwin);
 
 	wattrset(table->borderwin, BOXATTR);
 	tx_box(table->borderwin, ACS_VLINE, ACS_HLINE);
 	mvwprintw(table->borderwin, 0, 1, " Packet Distribution by Size for interface %s ", ifname);
 
-	table->win = newwin(LINES - 4, COLS - 2, 2, 1);
+    table->win = newwin(VideoMaxLines - 4, VideoMaxCols - 2, 2, 1);
 	table->panel = new_panel(table->win);
 
 	tx_stdwinset(table->win);
@@ -97,7 +99,7 @@ static void psizetab_init(struct psizetab *table, char *ifname)
 	mvwprintw(table->win, 1, 64, "In      Out");
 	wattrset(table->win, HIGHATTR);
 
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	stdexitkeyhelp();
 
 	update_panels();

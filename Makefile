@@ -116,6 +116,13 @@ viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
         src/traf_log.h \
+        src/video.h \
+        src/video_ncurses.h \
+        src/text_field.h \
+        src/text_field_text.h \
+        src/text_box.h \
+        src/dialog.h \
+        src/dlg_about.h \
         src/addr.h \
         src/traf_rate.h \
         src/ethernet.h \
@@ -174,6 +181,13 @@ viptraf-o += src/addr.o
 
 viptraf-opp += \
     src/traf_log.opp \
+    src/video.opp \
+    src/video_ncurses.opp \
+    src/text_field.opp \
+    src/text_field_text.opp \
+    src/text_box.opp \
+    src/dialog.opp \
+    src/dlg_about.opp \
     src/traf_rate.opp \
     src/ethernet.opp \
     src/tcp_con.opp \
@@ -329,14 +343,11 @@ SHELL = $(SHELL_PATH)
 
 all:: $(ALL_PROGRAMS)
 
-viptraf: $(viptraf-o) $(viptraf-opp)
+viptraf: $(viptraf-o) $(viptraf-opp) VERSION-FILE
 	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ \
 		$(viptraf-o) $(viptraf-opp) $(ALL_LDFLAGS) $(NCURSES_LDFLAGS)
 
-src/deskman.o src/iptraf.o: VERSION-FILE
-src/deskman.o src/iptraf.o src/capture-pkt.o: EXTRA_CPPFLAGS = \
-	-DVIPTRAF_VERSION='"$(VIPTRAF_VERSION)"' \
-	-DVIPTRAF_NAME='"viptraf"'
+EXTRA_CPPFLAGS = -DVIPTRAF_VERSION='"$(VIPTRAF_VERSION)"' -DVIPTRAF_NAME='"viptraf"'
 
 OBJECTS-C := $(sort $(viptraf-o))
 OBJECTS-CPP := $(sort $(viptraf-opp))

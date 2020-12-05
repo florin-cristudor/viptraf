@@ -31,6 +31,7 @@ ifstats.c	- the interface statistics module
 #include "capt.h"
 #include "counters.h"
 
+#include "video.h"
 #include "traf_rate.h"
 
 #define SCROLLUP 0
@@ -310,7 +311,7 @@ static void showrates(struct iftab *table)
 //TODEL		rate = rate_get_average(&ptmp->rate);
 //TODEL		rate_print(rate, buf, sizeof(buf));
         ptmp->traf_rate.Print(buf, sizeof(buf));
-		wmove(table->statwin, ptmp->index - idx, 63 * COLS / 80);
+        wmove(table->statwin, ptmp->index - idx, 63 * VideoMaxCols / 80);
 		wprintw(table->statwin, "%s", buf);
 
 		ptmp = ptmp->next_entry;
@@ -322,21 +323,21 @@ static void printifentry(struct iftab *table, struct iflist *ptmp)
 	int target_row = ptmp->index - table->firstvisible->index;
 	WINDOW *win = table->statwin;
 
-	if ((target_row < 0) || (target_row > LINES - 5))
+    if ((target_row < 0) || (target_row > VideoMaxLines - 5))
 		return;
 
 	wattrset(win, STDATTR);
 	mvwprintw(win, target_row, 1, "%s", ptmp->ifname);
 	wattrset(win, HIGHATTR);
-	wmove(win, target_row, 14 * COLS / 80);
+    wmove(win, target_row, 14 * VideoMaxCols / 80);
 	printlargenum(ptmp->total, win);
-	wmove(win, target_row, 24 * COLS / 80);
+    wmove(win, target_row, 24 * VideoMaxCols / 80);
 	printlargenum(ptmp->iptotal, win);
-	wmove(win, target_row, 34 * COLS / 80);
+    wmove(win, target_row, 34 * VideoMaxCols / 80);
 	printlargenum(ptmp->ip6total, win);
-	wmove(win, target_row, 44 * COLS / 80);
+    wmove(win, target_row, 44 * VideoMaxCols / 80);
 	printlargenum(ptmp->noniptotal, win);
-	wmove(win, target_row, 53 * COLS / 80);
+    wmove(win, target_row, 53 * VideoMaxCols / 80);
 	wprintw(win, "%7lu", ptmp->badtotal);
 }
 
@@ -345,7 +346,7 @@ static void print_if_entries(struct iftab *table)
 	struct iflist *ptmp = table->firstvisible;
 	unsigned int i = 1;
 
-	unsigned int winht = LINES - 4;
+    unsigned int winht = VideoMaxLines - 4;
 
 	do {
 		printifentry(table, ptmp);
@@ -365,17 +366,17 @@ static void labelstats(WINDOW *win)
 	/* 10 = strlen(printed number); from printlargenum() */
 	/* 7 = strlen(" Total ") */
 	/* 1 = align the string on 'l' from " Total " */
-	mvwprintw(win, 0, (14 * COLS / 80) + 10 - 7 + 1, " Total ");
-	mvwprintw(win, 0, (24 * COLS / 80) + 10 - 6 + 1, " IPv4 ");
-	mvwprintw(win, 0, (34 * COLS / 80) + 10 - 6 + 1, " IPv6 ");
-	mvwprintw(win, 0, (44 * COLS / 80) + 10 - 7 + 1, " NonIP ");
-	mvwprintw(win, 0, (53 * COLS / 80) + 8 - 7 + 1, " BadIP ");
-	mvwprintw(win, 0, (63 * COLS / 80) + 14 - 10, " Activity ");
+    mvwprintw(win, 0, (14 * VideoMaxCols / 80) + 10 - 7 + 1, " Total ");
+    mvwprintw(win, 0, (24 * VideoMaxCols / 80) + 10 - 6 + 1, " IPv4 ");
+    mvwprintw(win, 0, (34 * VideoMaxCols / 80) + 10 - 6 + 1, " IPv6 ");
+    mvwprintw(win, 0, (44 * VideoMaxCols / 80) + 10 - 7 + 1, " NonIP ");
+    mvwprintw(win, 0, (53 * VideoMaxCols / 80) + 8 - 7 + 1, " BadIP ");
+    mvwprintw(win, 0, (63 * VideoMaxCols / 80) + 14 - 10, " Activity ");
 }
 
 static void initiftab(struct iftab *table)
 {
-	table->borderwin = newwin(LINES - 2, COLS, 1, 0);
+    table->borderwin = newwin(VideoMaxLines - 2, VideoMaxCols, 1, 0);
 	table->borderpanel = new_panel(table->borderwin);
 
 //TODEL	rate_alloc(&table->rate_total, 5);
@@ -384,13 +385,13 @@ static void initiftab(struct iftab *table)
     table->traf_rate_totalpps.Alloc(5);
 	pkt_counter_reset(&table->totals);
 
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	scrollkeyhelp();
 	stdexitkeyhelp();
 	wattrset(table->borderwin, BOXATTR);
 	tx_box(table->borderwin, ACS_VLINE, ACS_HLINE);
 	labelstats(table->borderwin);
-	table->statwin = newwin(LINES - 4, COLS - 2, 2, 1);
+    table->statwin = newwin(VideoMaxLines - 4, VideoMaxCols - 2, 2, 1);
 	table->statpanel = new_panel(table->statwin);
 	tx_stdwinset(table->statwin);
 	wtimeout(table->statwin, -1);
@@ -418,7 +419,7 @@ static void scrollgstatwin(struct iftab *table, int direction, int lines)
 
 			wscrl(table->statwin, 1);
 			scrollok(table->statwin, 0);
-			mvwprintw(table->statwin, LINES - 5, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->statwin, VideoMaxLines - 5, 0, "%*c", VideoMaxCols - 2, ' ');
 			scrollok(table->statwin, 1);
 
 			printifentry(table, table->lastvisible);
@@ -432,7 +433,7 @@ static void scrollgstatwin(struct iftab *table, int direction, int lines)
 			table->lastvisible = table->lastvisible->prev_entry;
 
 			wscrl(table->statwin, -1);
-			mvwprintw(table->statwin, 0, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->statwin, 0, 0, "%*c", VideoMaxCols - 2, ' ');
 
 			printifentry(table, table->firstvisible);
 		}
@@ -451,11 +452,11 @@ static void ifstats_process_key(struct iftab *table, int ch)
 		break;
 	case KEY_PPAGE:
 	case '-':
-		scrollgstatwin(table, SCROLLDOWN, LINES - 5);
+        scrollgstatwin(table, SCROLLDOWN, VideoMaxLines - 5);
 		break;
 	case KEY_NPAGE:
 	case ' ':
-		scrollgstatwin(table, SCROLLUP, LINES - 5);
+        scrollgstatwin(table, SCROLLUP, VideoMaxLines - 5);
 		break;
 	case KEY_HOME:
 		scrollgstatwin(table, SCROLLDOWN, INT_MAX);
@@ -718,8 +719,8 @@ void selectiface(char *ifname, int withall, int *aborted)
 
 	ptmp = list;
 
-	tx_init_listbox(&scrolllist, 24, 14, (COLS - 24) / 2 - 9,
-			(LINES - 14) / 2, STDATTR, BOXATTR, BARSTDATTR,
+    tx_init_listbox(&scrolllist, 24, 14, (VideoMaxCols - 24) / 2 - 9,
+            (VideoMaxLines - 14) / 2, STDATTR, BOXATTR, BARSTDATTR,
 			HIGHATTR);
 
 	tx_set_listbox_title(&scrolllist, "Select Interface", 1);

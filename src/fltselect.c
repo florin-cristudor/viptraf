@@ -24,11 +24,13 @@ fltselect.c - a menu-based module that allows selection of
 #include "deskman.h"
 #include "attrs.h"
 
+#include "video.h"
+
 struct filterstate ofilter;
 
 void makemainfiltermenu(struct MENU *menu)
 {
-	tx_initmenu(menu, 8, 18, (LINES - 8) / 2, (COLS - 31) / 2, BOXATTR,
+    tx_initmenu(menu, 8, 18, (VideoMaxLines - 8) / 2, (VideoMaxCols - 31) / 2, BOXATTR,
 		    STDATTR, HIGHATTR, BARSTDATTR, BARHIGHATTR, DESCATTR);
 	tx_additem(menu, " ^I^P...", "Manages IP packet filters");
 	tx_additem(menu, " ^A^RP",
@@ -125,7 +127,7 @@ void config_filters(void)
 	int row;
 	int aborted;
 
-	statwin = newwin(6, 30, (LINES - 8) / 2, (COLS - 15) / 2 + 10);
+    statwin = newwin(6, 30, (VideoMaxLines - 8) / 2, (VideoMaxCols - 15) / 2 + 10);
 	statpanel = new_panel(statwin);
 	wattrset(statwin, BOXATTR);
 	tx_colorwin(statwin);

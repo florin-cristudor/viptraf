@@ -22,6 +22,8 @@ tcptable.c - table manipulation routines for the IP monitor
 #include "hostmon.h"
 #include "sockaddr.h"
 
+#include "video.h"
+
 #define MSGSTRING_MAX	320
 
 unsigned int bmaxy = 0;
@@ -29,17 +31,17 @@ unsigned int imaxy = 0;
 
 static void setlabels(WINDOW *win, int mode)
 {
-	wmove(win, 0, 42 * COLS / 80);
-	whline(win, ACS_HLINE, 23 * COLS / 80);
+    wmove(win, 0, 42 * VideoMaxCols / 80);
+    whline(win, ACS_HLINE, 23 * VideoMaxCols / 80);
 
 	if (mode == 0) {
-		mvwprintw(win, 0, 47 * COLS / 80, " Packets ");
-		mvwprintw(win, 0, 59 * COLS / 80, " Bytes ");
+        mvwprintw(win, 0, 47 * VideoMaxCols / 80, " Packets ");
+        mvwprintw(win, 0, 59 * VideoMaxCols / 80, " Bytes ");
 	} else if (mode == 1) {
-		mvwprintw(win, 0, 47 * COLS / 80, " Source MAC Addr ");
+        mvwprintw(win, 0, 47 * VideoMaxCols / 80, " Source MAC Addr ");
 	} else if (mode == 2) {
-		mvwprintw(win, 0, 45 * COLS / 80, " Pkt Size ");
-		mvwprintw(win, 0, 56 * COLS / 80, " Win Size ");
+        mvwprintw(win, 0, 45 * VideoMaxCols / 80, " Pkt Size ");
+        mvwprintw(win, 0, 56 * VideoMaxCols / 80, " Win Size ");
 	}
 }
 
@@ -97,13 +99,13 @@ static void prepare_statwin(WINDOW *win)
 {
 	wattrset(win, IPSTATLABELATTR);
 	mvwprintw(win, 0, 1, "Packets captured:");
-	mvwaddch(win, 0, 45 * COLS / 80, ACS_VLINE);
+    mvwaddch(win, 0, 45 * VideoMaxCols / 80, ACS_VLINE);
 }
 
 void show_stats(WINDOW *win, unsigned long long total)
 {
 	wattrset(win, IPSTATATTR);
-	wmove(win, 0, 35 * COLS / 80);
+    wmove(win, 0, 35 * VideoMaxCols / 80);
 	printlargenum(total, win);
 }
 
@@ -111,10 +113,10 @@ void init_tcp_table(struct tcptable *table)
 {
 	int i;
 
-	table->bmaxy = LINES * 0.6;	/* 60% of total screen */
+    table->bmaxy = VideoMaxLines * 0.6;	/* 60% of total screen */
 	table->imaxy = table->bmaxy - 2;
 
-	table->borderwin = newwin(table->bmaxy, COLS, 1, 0);
+    table->borderwin = newwin(table->bmaxy, VideoMaxCols, 1, 0);
 	table->borderpanel = new_panel(table->borderwin);
 
 	wattrset(table->borderwin, BOXATTR);
@@ -124,11 +126,11 @@ void init_tcp_table(struct tcptable *table)
 	setlabels(table->borderwin, 0);	/* initially use mode 0 */
 	table->mode = 0;
 
-	mvwprintw(table->borderwin, 0, 65 * COLS / 80, " Flag ");
-	mvwprintw(table->borderwin, 0, 70 * COLS / 80, " Iface ");
+    mvwprintw(table->borderwin, 0, 65 * VideoMaxCols / 80, " Flag ");
+    mvwprintw(table->borderwin, 0, 70 * VideoMaxCols / 80, " Iface ");
 	update_panels();
 	doupdate();
-	table->ifnamew = COLS - (70 * COLS / 80) - 3;
+    table->ifnamew = VideoMaxCols - (70 * VideoMaxCols / 80) - 3;
 	if (table->ifnamew < 7)
 		table->ifnamew = 7;
 	if (table->ifnamew > IFNAMSIZ)
@@ -136,7 +138,7 @@ void init_tcp_table(struct tcptable *table)
 
 	table->head = table->tail = NULL;
 	table->firstvisible = table->lastvisible = NULL;
-	table->tcpscreen = newwin(table->imaxy, COLS - 2, 2, 1);
+    table->tcpscreen = newwin(table->imaxy, VideoMaxCols - 2, 2, 1);
 	table->tcppanel = new_panel(table->tcpscreen);
 	table->closedentries = table->closedtail = NULL;
 	wattrset(table->tcpscreen, BOXATTR);
@@ -148,10 +150,10 @@ void init_tcp_table(struct tcptable *table)
 	tx_stdwinset(table->tcpscreen);
 	print_tcp_num_entries(table);
 
-	table->statwin = newwin(1, COLS, LINES - 2, 0);
+    table->statwin = newwin(1, VideoMaxCols, VideoMaxLines - 2, 0);
 	table->statpanel = new_panel(table->statwin);
 	wattrset(table->statwin, IPSTATLABELATTR);
-	mvwprintw(table->statwin, 0, 0, "%*c", COLS, ' ');
+    mvwprintw(table->statwin, 0, 0, "%*c", VideoMaxCols, ' ');
 	prepare_statwin(table->statwin);
 	show_stats(table->statwin, 0);
 
@@ -806,7 +808,7 @@ void printentry(struct tcptable *table, struct tcptableent *tableentry)
 	/* clear the target line */
 	wattrset(table->tcpscreen, normalattr);
 	scrollok(table->tcpscreen, 0);
-	mvwprintw(table->tcpscreen, target_row, 0, "%*c", COLS - 2, ' ');
+    mvwprintw(table->tcpscreen, target_row, 0, "%*c", VideoMaxCols - 2, ' ');
 	scrollok(table->tcpscreen, 1);
 
 	/* print half of connection indicator bracket */
@@ -818,7 +820,7 @@ void printentry(struct tcptable *table, struct tcptableent *tableentry)
 	mvwprintw(table->tcpscreen,
 		  target_row, 1,
 		  "%.*s:%.*s",
-		  32 * COLS / 80, tableentry->s_fqdn,
+          32 * VideoMaxCols / 80, tableentry->s_fqdn,
 		  10, tableentry->s_sname);
 
 	wattrset(table->tcpscreen, highattr);
@@ -830,26 +832,26 @@ void printentry(struct tcptable *table, struct tcptableent *tableentry)
 
 	switch (table->mode) {
 	case 0:
-		wmove(table->tcpscreen, target_row, 47 * COLS / 80 - 2);
+        wmove(table->tcpscreen, target_row, 47 * VideoMaxCols / 80 - 2);
 		if (tableentry->partial)
 			wprintw(table->tcpscreen, ">");
 		else
 			wprintw(table->tcpscreen, "=");
 		printlargenum(tableentry->pcount, table->tcpscreen);
-		wmove(table->tcpscreen, target_row, 59 * COLS / 80 - 4);
+        wmove(table->tcpscreen, target_row, 59 * VideoMaxCols / 80 - 4);
 		printlargenum(tableentry->bcount, table->tcpscreen);
 		break;
 	case 1:
-		wmove(table->tcpscreen, target_row, 50 * COLS / 80);
+        wmove(table->tcpscreen, target_row, 50 * VideoMaxCols / 80);
 		if (tableentry->smacaddr[0] == '\0')
 			wprintw(table->tcpscreen, "    N/A    ");
 		else
 			wprintw(table->tcpscreen, "%s", tableentry->smacaddr);
 		break;
 	case 2:
-		wmove(table->tcpscreen, target_row, 45 * COLS / 80 + 3);
+        wmove(table->tcpscreen, target_row, 45 * VideoMaxCols / 80 + 3);
 		wprintw(table->tcpscreen, "%5u  ", tableentry->psize);
-		wmove(table->tcpscreen, target_row, 56 * COLS / 80 - 1);
+        wmove(table->tcpscreen, target_row, 56 * VideoMaxCols / 80 - 1);
 		wprintw(table->tcpscreen, "%9u  ", tableentry->win);
 	}
 
@@ -870,9 +872,9 @@ void printentry(struct tcptable *table, struct tcptableent *tableentry)
 		strcat(stat, (tableentry->stat & FLAG_URG) ? "U" : "-");
 	}
 
-	wmove(table->tcpscreen, target_row, 65 * COLS / 80);
+    wmove(table->tcpscreen, target_row, 65 * VideoMaxCols / 80);
 	wprintw(table->tcpscreen, "%4.4s", stat);
-	wmove(table->tcpscreen, target_row, 70 * COLS / 80);
+    wmove(table->tcpscreen, target_row, 70 * VideoMaxCols / 80);
 	wprintw(table->tcpscreen, "%-*.*s", table->ifnamew, table->ifnamew,
 		tableentry->ifname);
 }

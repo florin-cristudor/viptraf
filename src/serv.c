@@ -34,6 +34,7 @@ serv.c  - TCP/UDP port statistics module
 #include "capt.h"
 #include "timer.h"
 
+#include "video.h"
 #include "traf_rate.h"
 
 #define SCROLLUP 0
@@ -146,13 +147,13 @@ static void writeutslog(struct portlistent *list, unsigned long nsecs, FILE *fd)
 
 static void initportlist(struct portlist *list)
 {
-	float screen_scale = ((float) COLS / 80 + 1) / 2;
+    float screen_scale = ((float) VideoMaxCols / 80 + 1) / 2;
 
 	list->head = list->tail = list->barptr = NULL;
 	list->firstvisible = list->lastvisible = NULL;
 	list->count = 0;
 
-	list->borderwin = newwin(LINES - 3, COLS, 1, 0);
+    list->borderwin = newwin(VideoMaxLines - 3, VideoMaxCols, 1, 0);
 	list->borderpanel = new_panel(list->borderwin);
 	wattrset(list->borderwin, BOXATTR);
 	tx_box(list->borderwin, ACS_VLINE, ACS_HLINE);
@@ -165,21 +166,21 @@ static void initportlist(struct portlist *list)
 	mvwprintw(list->borderwin, 0, 58 * screen_scale, " PktsFrom ");
 	mvwprintw(list->borderwin, 0, 67 * screen_scale, " BytesFrom ");
 
-	list->win = newwin(LINES - 5, COLS - 2, 2, 1);
+    list->win = newwin(VideoMaxLines - 5, VideoMaxCols - 2, 2, 1);
 	list->panel = new_panel(list->win);
 
-	list->statwin = newwin(1, COLS, LINES - 2, 0);
+    list->statwin = newwin(1, VideoMaxCols, VideoMaxLines - 2, 0);
 	list->statpanel = new_panel(list->statwin);
 	scrollok(list->statwin, 0);
 	wattrset(list->statwin, IPSTATLABELATTR);
-	mvwprintw(list->statwin, 0, 0, "%*c", COLS, ' ');
+    mvwprintw(list->statwin, 0, 0, "%*c", VideoMaxCols, ' ');
 
 	tx_stdwinset(list->win);
 	wtimeout(list->win, -1);
 	wattrset(list->win, STDATTR);
 	tx_colorwin(list->win);
 
-	move(LINES - 1, 1);
+    move(VideoMaxLines - 1, 1);
 	scrollkeyhelp();
 	sortkeyhelp();
 	stdexitkeyhelp();
@@ -262,10 +263,10 @@ static struct portlistent *addtoportlist(struct portlist *list,
 
 	clock_gettime(CLOCK_MONOTONIC, &ptemp->proto_starttime);
 
-	if (list->count <= (unsigned) LINES - 5)
+    if (list->count <= (unsigned) VideoMaxLines - 5)
 		list->lastvisible = ptemp;
 
-	mvwprintw(list->borderwin, LINES - 4, 1, " %u entries ", list->count);
+    mvwprintw(list->borderwin, VideoMaxLines - 4, 1, " %u entries ", list->count);
 
 	if (list->barptr == NULL)
 		list->barptr = ptemp;
@@ -311,7 +312,7 @@ static struct portlistent *inportlist(struct portlist *list,
 static void printportent(struct portlist *list, struct portlistent *entry)
 {
 	unsigned int target_row;
-	float screen_scale = ((float) COLS / 80 + 1) / 2;
+    float screen_scale = ((float) VideoMaxCols / 80 + 1) / 2;
 	int tcplabelattr;
 	int udplabelattr;
 	int highattr;
@@ -334,7 +335,7 @@ static void printportent(struct portlist *list, struct portlistent *entry)
 
 	wattrset(list->win, tcplabelattr);
 	scrollok(list->win, 0);
-	mvwprintw(list->win, target_row, 0, "%*c", COLS - 2, ' ');
+    mvwprintw(list->win, target_row, 0, "%*c", VideoMaxCols - 2, ' ');
 	scrollok(list->win, 1);
 
 	wmove(list->win, target_row, 1);
@@ -670,7 +671,7 @@ static void scrollservwin(struct portlist *table, int direction)
 
 			wscrl(table->win, 1);
 			scrollok(table->win, 0);
-			mvwprintw(table->win, LINES - 6, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->win, VideoMaxLines - 6, 0, "%*c", VideoMaxCols - 2, ' ');
 			scrollok(table->win, 1);
 
 			printportent(table, table->lastvisible);
@@ -681,7 +682,7 @@ static void scrollservwin(struct portlist *table, int direction)
 			table->lastvisible = table->lastvisible->prev_entry;
 
 			wscrl(table->win, -1);
-			mvwprintw(table->win, 0, 0, "%*c", COLS - 2, ' ');
+            mvwprintw(table->win, 0, 0, "%*c", VideoMaxCols - 2, ' ');
 
 			printportent(table, table->firstvisible);
 		}
@@ -761,7 +762,7 @@ static void move_bar(struct portlist *table, int direction, int lines)
 
 static void show_portsort_keywin(WINDOW ** win, PANEL ** panel)
 {
-	*win = newwin(14, 35, (LINES - 10) / 2, COLS - 40);
+    *win = newwin(14, 35, (VideoMaxLines - 10) / 2, VideoMaxCols - 40);
 	*panel = new_panel(*win);
 
 	wattrset(*win, DLGBOXATTR);
@@ -823,11 +824,11 @@ static void serv_process_key(struct portlist *table, int ch)
 			break;
 		case KEY_PPAGE:
 		case '-':
-			move_bar(table, SCROLLDOWN, LINES - 5);
+            move_bar(table, SCROLLDOWN, VideoMaxLines - 5);
 			break;
 		case KEY_NPAGE:
 		case ' ':
-			move_bar(table, SCROLLUP, LINES - 5);
+            move_bar(table, SCROLLUP, VideoMaxLines - 5);
 			break;
 		case KEY_HOME:
 			move_bar(table, SCROLLDOWN, INT_MAX);
@@ -1067,10 +1068,10 @@ static void portdlg(in_port_t *port_min, in_port_t *port_max,
 
 	struct FIELDLIST list;
 
-	bw = newwin(14, 50, (LINES - 14) / 2, (COLS - 50) / 2 - 10);
+    bw = newwin(14, 50, (VideoMaxLines - 14) / 2, (VideoMaxCols - 50) / 2 - 10);
 	bp = new_panel(bw);
 
-	win = newwin(12, 48, (LINES - 14) / 2 + 1, (COLS - 50) / 2 - 9);
+    win = newwin(12, 48, (VideoMaxLines - 14) / 2 + 1, (VideoMaxCols - 50) / 2 - 9);
 	panel = new_panel(win);
 
 	wattrset(bw, DLGBOXATTR);
@@ -1093,7 +1094,7 @@ static void portdlg(in_port_t *port_min, in_port_t *port_max,
 	tabkeyhelp(win);
 	stdkeyhelp(win);
 
-	tx_initfields(&list, 1, 20, (LINES - 14) / 2 + 10, (COLS - 50) / 2 - 8,
+    tx_initfields(&list, 1, 20, (VideoMaxLines - 14) / 2 + 10, (VideoMaxCols - 50) / 2 - 8,
 		      DLGTEXTATTR, FIELDATTR);
 	mvwprintw(list.fieldwin, 0, 6, "to");
 
@@ -1261,7 +1262,7 @@ static void operate_portselect(struct porttab **table, struct porttab **node,
 	struct scroll_list list;
 	char listtext[20];
 
-	tx_init_listbox(&list, 25, 22, (COLS - 25) / 2, (LINES - 22) / 2,
+    tx_init_listbox(&list, 25, 22, (VideoMaxCols - 25) / 2, (VideoMaxLines - 22) / 2,
 			STDATTR, BOXATTR, BARSTDATTR, HIGHATTR);
 
 	tx_set_listbox_title(&list, "Select Port/Range", 1);

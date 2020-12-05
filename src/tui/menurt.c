@@ -13,6 +13,8 @@ menurt.c - ncurses-based menu definition module
 #include "winops.h"
 #include "labels.h"
 
+#include "video.h"
+
 /* initialize menu system */
 
 void tx_initmenu(struct MENU *menu, int y1, int x1, int y2, int x2,
@@ -187,7 +189,7 @@ void tx_operatemenu(struct MENU *menu, int *position, int *aborted)
 	*aborted = 0;
 	menumoveto(menu, &itemptr, row);
 
-	menu->descwin = newwin(1, COLS, LINES - 2, 0);
+    menu->descwin = newwin(1, VideoMaxCols, VideoMaxLines - 2, 0);
 	menu->descpanel = new_panel(menu->descwin);
 
 	do {
