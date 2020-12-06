@@ -24,26 +24,27 @@ deskman.c - desktop management routines
 
 //#include "text_box.h"
 
-/*  draw the basic desktop common to my screen-oriented programs */
-
+//  draw the basic desktop common to my screen-oriented programs
+/*
 void draw_desktop(void)
 {
-	int row;		/* counter for desktop construction */
+    int row;		// counter for desktop construction
 
     scrollok(stdscr, 0);
     pVideo->SetAttribute(STATUSBARATTR);
     pVideo->Move(0, 0);
-    pVideo->Print("%*c", VideoMaxCols, ' ');	/* these two print the top n' bottom */
+    pVideo->Print("%*c", VideoMaxCols, ' ');	// these two print the top n' bottom
     pVideo->Move(VideoMaxLines - 1, 0);
-    pVideo->Print("%*c", VideoMaxCols, ' ');	/* lines */
+    pVideo->Print("%*c", VideoMaxCols, ' ');	// lines
     pVideo->SetAttribute(FIELDATTR);
     for (row = 1; row <= VideoMaxLines - 2; row++)
-    {	/* draw the background */
+    {	// draw the background
         pVideo->Move(row, 0);
         pVideo->Print("%*c", VideoMaxCols, ' ');
 	}
     pVideo->Refresh();
 }
+*/
 
 void about(void)
 {

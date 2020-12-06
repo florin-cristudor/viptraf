@@ -22,12 +22,14 @@ public:
 
     virtual int InputTimeout(int value) = 0;
     virtual int WInputTimeout(int descriptor, int value) = 0;
+    virtual int GetCh(void) = 0;
     virtual int WGetCh(int descriptor) = 0;
 
     virtual int SetAttribute(unsigned long attr) = 0;
     virtual int WSetAttribute(int descriptor, unsigned long attr) = 0;
 
     virtual int NewWindow(int nlines, int ncols, int begin_y, int begin_x) = 0;
+    virtual int Clear(void) = 0;
     virtual int ClearWindow(int descriptor) = 0;
 
     virtual int NewPanel(int win_descriptor) = 0;
@@ -44,6 +46,8 @@ public:
     virtual int PrintCh(unsigned long ch) = 0;
     virtual int WPrintCh(int descriptor, unsigned long ch) = 0;
     virtual int MvWPrintCh(int descriptor, int y, int x, unsigned long ch) = 0;
+    virtual int HLine(unsigned long ch, int size) = 0;
+    virtual int MvHLine(int y, int x, unsigned long ch, int size) = 0;
     virtual int WHLine(int descriptor, unsigned long ch, int size) = 0;
     virtual int MvWHLine(int descriptor, int y, int x, unsigned long ch, int size) = 0;
     virtual int WBorder(int descriptor, unsigned long  ls, unsigned long  rs, unsigned long  ts,
@@ -56,6 +60,8 @@ public:
     virtual int Update(void) = 0;
 
 protected:
+    virtual int UpdateScreenSize(void) = 0;
+
     bool enabled;
     int mode;
 };
@@ -63,5 +69,6 @@ protected:
 extern Video *pVideo;
 extern int VideoMaxLines;
 extern int VideoMaxCols;
+extern bool VideoResized;
 
 #endif // VIDEO_H

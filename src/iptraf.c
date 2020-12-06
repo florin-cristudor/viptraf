@@ -35,6 +35,8 @@ An IP Network Statistics Utility
 #include "video.h"
 #include "video_ncurses.h"
 
+#include "desktop.h"
+
 #define WITHALL 1
 #define WITHOUTALL 0
 
@@ -460,7 +462,7 @@ int main(int argc, char **argv)
 
 
 	if (create_pidfile() < 0)
-		goto bailout;
+        return shutdown(-1, "");
 
 	/*
 	 * If a facility is directly invoked from the command line, check for
@@ -486,33 +488,26 @@ int main(int argc, char **argv)
 			options.logging = 1;
 			break;
 		case -1:	/* error */
-			error("Fork error, %s cannot run in background", VIPTRAF_NAME);
-			goto cleanup;
 		default:	/* parent */
-			goto cleanup;
+            return shutdown(-2, "Fork error, %s cannot run in background", VIPTRAF_NAME);
 		}
 	}
 
 	sanitize_dir(LOCKDIR);
 	sanitize_dir(WORKDIR);
 
-//	setlocale(LC_ALL, "");	/* needed to properly init (n)curses library */
-//	initscr();
-
     pVideo = new VideoNcurses;
     if(!pVideo)
-        return shutdown(-1, "Unable to create video object");
+        return shutdown(-3, "Unable to create video object");
     if(!daemonized)
     {
         pVideo->Init();
         if(!pVideo->IsEnabled())
-            return shutdown(-2, "The video cannot be init");
+            return shutdown(-4, "The video cannot be init");
+        if((VideoMaxLines < 24) || (VideoMaxCols < 80))
+            shutdown(-5, "This program requires a screen size of at least 80(%i) columns by 24(%i) lines\n" "Please resize your window", VideoMaxLines, VideoMaxCols);
+        pVideo->InitColors(options.color);
     }
-
-    if((VideoMaxLines < 24) || (VideoMaxCols < 80))
-        shutdown(-3, "This program requires a screen size of at least 80(%i) columns by 24(%i) lines\n" "Please resize your window", VideoMaxLines, VideoMaxCols);
-
-    pVideo->InitColors(options.color);
 
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
@@ -542,16 +537,18 @@ int main(int argc, char **argv)
 	 * Load saved filter
 	 */
 	loadfilters();
-	indicate("");
+//	indicate("");
 
 	/* bad, bad, bad name draw_desktop()
 	 * hide all into tui_top_panel(char *msg)
 	 * */
-    draw_desktop();
-    pVideo->SetAttribute(STATUSBARATTR);
-    pVideo->MvPrint(0, 1, "%s %s", VIPTRAF_NAME, VIPTRAF_VERSION);
 
-	/* simplify */
+    Desktop *pdesk = new Desktop();
+    if(!pdesk)
+        shutdown(-6, "Unable to init the desktop");
+    pdesk->Run();
+
+    /* simplify
 	if (g_opt)
 		ifstats(facilitytime);
 	else if (i_opt)
@@ -572,10 +569,10 @@ int main(int argc, char **argv)
 		packet_size_breakdown(z_opt, facilitytime);
     else
         program_interface();
-
-cleanup:
+*/
+//cleanup:
     shutdown(0, "");
 	unlink(VIPTRAF_PIDFILE);
-bailout:
+//bailout:
 	return 0;
 }

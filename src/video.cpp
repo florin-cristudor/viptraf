@@ -13,6 +13,7 @@ Video::Video()
 Video *pVideo;
 int VideoMaxLines;
 int VideoMaxCols;
+bool VideoResized;
 
 int STDATTR;
 int HIGHATTR;

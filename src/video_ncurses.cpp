@@ -4,12 +4,15 @@
 #include <locale.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "ncurses.h"
-//#include "iptraf-ng-compat.h"
 
 #include "attrs.h"
 #include "video_ncurses.h"
+
+#include "iptraf-ng-compat.h"
+#include "log.h"
 
 VideoNcurses::VideoNcurses()
 {
@@ -30,6 +33,7 @@ VideoNcurses::~VideoNcurses()
         DelPanel(i);
     for(i=0; i<VIDEO_NCURSES_DESCRIPTOR_MAX; i++)
         DelWindow(i);
+
     Down();
 }
 
@@ -46,8 +50,7 @@ int VideoNcurses::Init()
     if(scr)
     {
         enabled = true;
-        VideoMaxLines = LINES;
-        VideoMaxCols = COLS;
+        UpdateScreenSize();
         return 0;
     }
 
@@ -56,6 +59,9 @@ int VideoNcurses::Init()
 
 int VideoNcurses::Down()
 {
+    if(!enabled)
+        return 0;
+
     nodelay(stdscr, false);
     keypad(stdscr, false);
     nocbreak();
@@ -70,22 +76,44 @@ int VideoNcurses::Down()
 
 int VideoNcurses::GetMaxY()
 {
+    if(!enabled)
+        return 0;
+
     return LINES;
 }
 
 int VideoNcurses::GetMaxX()
 {
+    if(!enabled)
+        return 0;
+
     return COLS;
+}
+
+int VideoNcurses::UpdateScreenSize(void)
+{
+    if(!enabled)
+        return 0;
+    VideoMaxLines = GetMaxY();
+    VideoMaxCols = GetMaxX();
+        debug_log("%s: Updated to %i %i", __FUNCTION__, VideoMaxLines, VideoMaxCols);
+    return 0;
 }
 
 int VideoNcurses::InputTimeout(int value)
 {
+    if(!enabled)
+        return 0;
+
     timeout(value);
     return 0;
 }
 
 int VideoNcurses::WInputTimeout(int descriptor, int value)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -95,8 +123,29 @@ int VideoNcurses::WInputTimeout(int descriptor, int value)
     return  0;
 }
 
+int VideoNcurses::GetCh()
+{
+    if(!enabled)
+        return 0;
+
+    int ch = getch();
+    if(ch == ERR)
+        return 0;
+    if(ch == KEY_RESIZE)
+    {
+        VideoResized = true;
+        UpdateScreenSize();
+        return 0;
+    }
+
+    return ch;
+}
+
 int VideoNcurses::WGetCh(int descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -105,17 +154,30 @@ int VideoNcurses::WGetCh(int descriptor)
     int ch = wgetch(win);
     if(ch == ERR)
         return 0;
-    else
-        return ch;
+
+    if(ch == KEY_RESIZE)
+    {
+        VideoResized = true;
+        UpdateScreenSize();
+        return 0;
+    }
+
+    return ch;
 }
 
 int VideoNcurses::SetAttribute(unsigned long attr)
 {
+    if(!enabled)
+        return 0;
+
     return attrset((attr_t)attr);
 }
 
 int VideoNcurses::WSetAttribute(int descriptor, unsigned long attr)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -126,6 +188,9 @@ int VideoNcurses::WSetAttribute(int descriptor, unsigned long attr)
 
 int VideoNcurses::NewWindow(int nlines, int ncols, int begin_y, int begin_x)
 {
+    if(!enabled)
+        return 0;
+
     int i;
     for(i=0; i<VIDEO_NCURSES_DESCRIPTOR_MAX; i++)
     {
@@ -141,8 +206,19 @@ int VideoNcurses::NewWindow(int nlines, int ncols, int begin_y, int begin_x)
     return -1;
 }
 
+int VideoNcurses::Clear()
+{
+    if(!enabled)
+        return 0;
+
+    return clear();
+}
+
 int VideoNcurses::ClearWindow(int descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -157,6 +233,9 @@ int VideoNcurses::ClearWindow(int descriptor)
 
 int VideoNcurses::NewPanel(int win_descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(win_descriptor < 0 || win_descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[win_descriptor].win;
@@ -180,6 +259,9 @@ int VideoNcurses::NewPanel(int win_descriptor)
 
 int VideoNcurses::DelWindow(int descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -191,6 +273,9 @@ int VideoNcurses::DelWindow(int descriptor)
 
 int VideoNcurses::DelPanel(int descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     PANEL *panel = panels[descriptor].panel;
@@ -202,11 +287,17 @@ int VideoNcurses::DelPanel(int descriptor)
 
 int VideoNcurses::Move(int y, int x)
 {
+    if(!enabled)
+        return 0;
+
     return move(y, x);
 }
 
 int VideoNcurses::WMove(int descriptor, int y, int x)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -217,6 +308,9 @@ int VideoNcurses::WMove(int descriptor, int y, int x)
 
 int VideoNcurses::Print(const char *format, ...)
 {
+    if(!enabled)
+        return 0;
+
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, sizeof(buffer), format, args);
@@ -227,6 +321,9 @@ int VideoNcurses::Print(const char *format, ...)
 
 int VideoNcurses::MvPrint(int y, int x, const char *format, ...)
 {
+    if(!enabled)
+        return 0;
+
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, sizeof(buffer), format, args);
@@ -237,6 +334,9 @@ int VideoNcurses::MvPrint(int y, int x, const char *format, ...)
 
 int VideoNcurses::WPrint(int descriptor, const char *format, ...)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -253,6 +353,9 @@ int VideoNcurses::WPrint(int descriptor, const char *format, ...)
 
 int VideoNcurses::MvWPrint(int descriptor, int y, int x, const char *format, ...)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -269,11 +372,17 @@ int VideoNcurses::MvWPrint(int descriptor, int y, int x, const char *format, ...
 
 int VideoNcurses::PrintCh(unsigned long ch)
 {
+    if(!enabled)
+        return 0;
+
     return addch(ch);
 }
 
 int VideoNcurses::WPrintCh(int descriptor, unsigned long ch)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -284,6 +393,9 @@ int VideoNcurses::WPrintCh(int descriptor, unsigned long ch)
 
 int VideoNcurses::MvWPrintCh(int descriptor, int y, int x, unsigned long ch)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -292,8 +404,27 @@ int VideoNcurses::MvWPrintCh(int descriptor, int y, int x, unsigned long ch)
     return mvwaddch(win, y, x, ch);
 }
 
+int VideoNcurses::HLine(unsigned long ch, int size)
+{
+    if(!enabled)
+        return 0;
+
+    return hline(ch, size);
+}
+
+int VideoNcurses::MvHLine(int y, int x, unsigned long ch, int size)
+{
+    if(!enabled)
+        return 0;
+
+    return mvhline(y, x, ch, size);
+}
+
 int VideoNcurses::WHLine(int descriptor, unsigned long ch, int size)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -304,6 +435,9 @@ int VideoNcurses::WHLine(int descriptor, unsigned long ch, int size)
 
 int VideoNcurses::MvWHLine(int descriptor, int y, int x, unsigned long ch, int size)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -314,6 +448,9 @@ int VideoNcurses::MvWHLine(int descriptor, int y, int x, unsigned long ch, int s
 
 int VideoNcurses::WBorder(int descriptor, unsigned long ls, unsigned long rs, unsigned long ts, unsigned long bs, unsigned long tl, unsigned long tr, unsigned long bl, unsigned long br)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -324,6 +461,9 @@ int VideoNcurses::WBorder(int descriptor, unsigned long ls, unsigned long rs, un
 
 int VideoNcurses::InitColors(bool use_colors)
 {
+    if(!enabled)
+        return 0;
+
     if (use_colors && has_colors())
     {
         start_color();
@@ -414,11 +554,17 @@ int VideoNcurses::InitColors(bool use_colors)
 
 int VideoNcurses::Refresh()
 {
+    if(!enabled)
+        return 0;
+
     return refresh();
 }
 
 int VideoNcurses::WRefresh(int descriptor)
 {
+    if(!enabled)
+        return 0;
+
     if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
         return -1;
     WINDOW *win = wins[descriptor].win;
@@ -429,6 +575,9 @@ int VideoNcurses::WRefresh(int descriptor)
 
 int VideoNcurses::Update()
 {
+    if(!enabled)
+        return 0;
+
     update_panels();
     return doupdate();
 }

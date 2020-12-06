@@ -14,10 +14,10 @@
 
 DlgAbout::DlgAbout()
 {
-    tbox = new TextBox(17, 52, (VideoMaxLines - 17) / 2, (VideoMaxCols - 52) / 2, BOXATTR);
+    tbox = new TextBox(16, 49, (VideoMaxLines - 16) / 2, (VideoMaxCols - 49) / 2+1, BOXATTR);
     if(!tbox) return;
 
-    tbox->AddField(new TextFieldText(1, 2, STDATTR, "%s - %s", VIPTRAF_NAME, VIPTRAF_VERSION));
+    tbox->AddField(new TextFieldText(0, 2, STDATTR, "%s - %s", VIPTRAF_NAME, VIPTRAF_VERSION));
     tbox->AddField(new TextFieldText(2, 2, STDATTR, "A View IP Traffic Utility"));
     tbox->AddField(new TextFieldText(4, 2, STDATTR, "Copyright (c) Florin Cristudor 2020-"));
     tbox->AddField(new TextFieldText(5, 2, STDATTR, "Copyright (c) Markus Ullmann (IPv6) ?-2020"));

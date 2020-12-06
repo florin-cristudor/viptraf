@@ -32,12 +32,14 @@ public:
 
     int InputTimeout(int value);
     int WInputTimeout(int descriptor, int value);
+    int GetCh(void);
     int WGetCh(int descriptor);
 
     int SetAttribute(unsigned long attr);
     int WSetAttribute(int descriptor, unsigned long attr);
 
     int NewWindow(int nlines, int ncols, int begin_y, int begin_x);
+    int Clear(void);
     int ClearWindow(int descriptor);
 
     int NewPanel(int win_descriptor);
@@ -54,6 +56,8 @@ public:
     int PrintCh(unsigned long ch);
     int WPrintCh(int descriptor, unsigned long ch);
     int MvWPrintCh(int descriptor, int y, int x, unsigned long ch);
+    int HLine(unsigned long ch, int size);
+    int MvHLine(int y, int x, unsigned long ch, int size);
     int WHLine(int descriptor, unsigned long ch, int size);
     int MvWHLine(int descriptor, int y, int x, unsigned long ch, int size);
     int WBorder(int descriptor, unsigned long  ls, unsigned long  rs, unsigned long  ts,
@@ -66,6 +70,8 @@ public:
     int Update(void);
 
 private:
+    int UpdateScreenSize(void);
+
     WINDOW *scr;
 
     struct nc_window wins[VIDEO_NCURSES_DESCRIPTOR_MAX];

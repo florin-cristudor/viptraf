@@ -124,6 +124,7 @@ viptraf-h += " \
         src/dialog.h \
         src/dlg_about.h \
         src/addr.h \
+        src/desktop.h \
         src/traf_rate.h \
         src/ethernet.h \
         src/tcp_con.h \
@@ -188,6 +189,7 @@ viptraf-opp += \
     src/text_box.opp \
     src/dialog.opp \
     src/dlg_about.opp \
+    src/desktop.opp \
     src/traf_rate.opp \
     src/ethernet.opp \
     src/tcp_con.opp \
