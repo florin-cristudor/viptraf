@@ -3,7 +3,6 @@
  */
 #include <stdio.h>
 #include <stdarg.h>
-//#include <string>
 
 #include "video.h"
 #include "text_field_text.h"
@@ -22,6 +21,6 @@ TextFieldText::TextFieldText(int y, int x, int attributes, const char *format, .
 
 int TextFieldText::Draw(int win_descriptor)
 {
-    pVideo->WSetAttribute(win_descriptor, field_attr);
+    TextField::Draw(win_descriptor);
     return pVideo->MvWPrint(win_descriptor, position_y, position_x, text.c_str());
 }

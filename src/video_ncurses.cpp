@@ -11,9 +11,6 @@
 #include "attrs.h"
 #include "video_ncurses.h"
 
-#include "iptraf-ng-compat.h"
-#include "log.h"
-
 VideoNcurses::VideoNcurses()
 {
     mode = VIDEO_MODE_TERM;
@@ -96,7 +93,7 @@ int VideoNcurses::UpdateScreenSize(void)
         return 0;
     VideoMaxLines = GetMaxY();
     VideoMaxCols = GetMaxX();
-        debug_log("%s: Updated to %i %i", __FUNCTION__, VideoMaxLines, VideoMaxCols);
+
     return 0;
 }
 

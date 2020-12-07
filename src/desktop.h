@@ -12,6 +12,9 @@ public:
 
     int Run(void);
     int Draw(void);
+
+private:
+    int TestScreenSize();
 };
 
 #endif // DESKTOP_H

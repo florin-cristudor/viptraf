@@ -504,8 +504,6 @@ int main(int argc, char **argv)
         pVideo->Init();
         if(!pVideo->IsEnabled())
             return shutdown(-4, "The video cannot be init");
-        if((VideoMaxLines < 24) || (VideoMaxCols < 80))
-            shutdown(-5, "This program requires a screen size of at least 80(%i) columns by 24(%i) lines\n" "Please resize your window", VideoMaxLines, VideoMaxCols);
         pVideo->InitColors(options.color);
     }
 
