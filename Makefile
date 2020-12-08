@@ -118,11 +118,11 @@ viptraf-h += " \
         src/traf_log.h \
         src/video.h \
         src/video_ncurses.h \
-        src/text_field.h \
-        src/text_field_text.h \
+        src/view.h \
+        src/vtext.h \
         src/menu_item_line.h \
         src/menu_item_entry.h \
-        src/text_box.h \
+        src/vbox.h \
         src/dialog.h \
         src/dlg_about.h \
         src/addr.h \
@@ -186,11 +186,11 @@ viptraf-opp += \
     src/traf_log.opp \
     src/video.opp \
     src/video_ncurses.opp \
-    src/text_field.opp \
-    src/text_field_text.opp \
+    src/view.opp \
+    src/vtext.opp \
     src/menu_item_line.opp \
     src/menu_item_entry.opp \
-    src/text_box.opp \
+    src/vbox.opp \
     src/dialog.opp \
     src/dlg_about.opp \
     src/desktop.opp \

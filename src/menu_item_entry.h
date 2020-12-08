@@ -1,9 +1,9 @@
 #ifndef MENU_ITEM_ENTRY_H
 #define MENU_ITEM_ENTRY_H
 
-#include "text_field_text.h"
+#include "vtext.h"
 
-class MenuItemEntry : public TextFieldText
+class MenuItemEntry : public ViewText
 {
 public:
     MenuItemEntry(int y, int x, int attributes, const char *text);

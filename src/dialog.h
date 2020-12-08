@@ -4,7 +4,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include "text_box.h"
+#include "vbox.h"
 
 class Dialog
 {
@@ -18,7 +18,7 @@ public:
     int Show(void);
 
 protected:
-    TextBox *tbox;
+    ViewBox *tbox;
 };
 
 #endif // DIALOG_H

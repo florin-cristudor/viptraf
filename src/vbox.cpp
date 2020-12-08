@@ -7,16 +7,13 @@
 #include "attrs.h"
 #include "video.h"
 
-#include "text_box.h"
+#include "vbox.h"
 
-TextBox::TextBox(int nlines, int ncols, int begin_y, int begin_x, int attributes)
+ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes):
+        View(begin_y, begin_x, attributes)
 {
-    position_x = begin_x;
-    position_y = begin_y;
     number_columns = ncols;
     number_lines = nlines;
-
-    box_attr = attributes;
 
     fields = NULL;
 
@@ -26,12 +23,12 @@ TextBox::TextBox(int nlines, int ncols, int begin_y, int begin_x, int attributes
         panel = pVideo->NewPanel(win);
 }
 
-TextBox::~TextBox()
+ViewBox::~ViewBox()
 {
-    TextField *crs = fields;
+    View *crs = fields;
     while(crs)
     {
-        TextField *bak = crs->next;
+        View *bak = crs->next;
         delete crs;
         crs = bak;
     }
@@ -43,7 +40,7 @@ TextBox::~TextBox()
     pVideo->Update();
 }
 
-int TextBox::AddField(TextField *pfield)
+int ViewBox::AddField(View *pfield)
 {
     if(!pfield)
         return -1;
@@ -52,7 +49,7 @@ int TextBox::AddField(TextField *pfield)
         fields = pfield;
     else
     {
-        TextField *crs = fields;
+        View *crs = fields;
         while(crs->next)
             crs = crs->next;
         crs->next = pfield;
@@ -61,16 +58,16 @@ int TextBox::AddField(TextField *pfield)
     return 0;
 }
 
-int TextBox::Draw()
+int ViewBox::Draw(int win_descriptor)
 {
-    if(win == -1)
+    if(win_descriptor == -1)
         return -1;
 
-    TextField *crs = fields;
-    pVideo->WSetAttribute(win, box_attr);
+    View::Draw(win);
     pVideo->ClearWindow(win);
     pVideo->WBorder(win, 0, 0, 0, 0, 0, 0, 0, 0);
 
+    View *crs = fields;
     while(crs)
     {
         crs->Draw(win);
@@ -79,7 +76,12 @@ int TextBox::Draw()
     return 0;
 }
 
-int TextBox::ReadKeyboard()
+int ViewBox::Draw()
+{
+    return Draw(win);
+}
+
+int ViewBox::ReadKeyboard()
 {
     if(win == -1)
         return 0;

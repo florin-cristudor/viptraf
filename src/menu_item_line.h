@@ -1,9 +1,9 @@
 #ifndef MENU_ITEM_LINE_H
 #define MENU_ITEM_LINE_H
 
-#include "text_field.h"
+#include "view.h"
 
-class MenuItemLine : public TextField
+class MenuItemLine : public View
 {
 public:
     MenuItemLine(int y, int x, int attributes, int size);

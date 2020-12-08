@@ -5,9 +5,10 @@
 #include <stdarg.h>
 
 #include "video.h"
-#include "text_field_text.h"
+#include "view.h"
+#include "vtext.h"
 
-TextFieldText::TextFieldText(int y, int x, int attributes, const char *format, ...):TextField(y, x, attributes)
+ViewText::ViewText(int y, int x, int attributes, const char *format, ...):View(y, x, attributes)
 {
     char buffer[1024];
 
@@ -19,8 +20,8 @@ TextFieldText::TextFieldText(int y, int x, int attributes, const char *format, .
     text = std::string(buffer);
 }
 
-int TextFieldText::Draw(int win_descriptor)
+int ViewText::Draw(int win_descriptor)
 {
-    TextField::Draw(win_descriptor);
+    View::Draw(win_descriptor);
     return pVideo->MvWPrint(win_descriptor, position_y, position_x, text.c_str());
 }
