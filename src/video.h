@@ -20,6 +20,7 @@ public:
     virtual int GetMaxY(void) = 0;
     virtual int GetMaxX(void) = 0;
 
+    virtual int WKeybSetKeypad(int descriptor, bool value) = 0;
     virtual int InputTimeout(int value) = 0;
     virtual int WInputTimeout(int descriptor, int value) = 0;
     virtual int GetCh(void) = 0;

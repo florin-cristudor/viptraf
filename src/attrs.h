@@ -35,4 +35,10 @@ extern int UNKNATTR;
 extern int IPV6ATTR;
 extern int ICMPV6ATTR;
 
+extern int ATTR_MENU_BOX;
+extern int ATTR_MENU_NORMAL;
+extern int ATTR_MENU_NORMAL_HIGHLIGHT;
+extern int ATTR_MENU_COMMAND_NORMAL;
+extern int ATTR_MENU_COMMAND_HIGHLIGHT;
+
 #endif	/* IPTRAF_NG_ATTRS_H */

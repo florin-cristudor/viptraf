@@ -120,8 +120,10 @@ viptraf-h += " \
         src/video_ncurses.h \
         src/view.h \
         src/vtext.h \
-        src/menu_item_line.h \
-        src/menu_item_entry.h \
+        src/mitem.h \
+        src/mi_line.h \
+        src/mi_entry.h \
+        src/menu.h \
         src/vbox.h \
         src/dialog.h \
         src/dlg_about.h \
@@ -188,8 +190,10 @@ viptraf-opp += \
     src/video_ncurses.opp \
     src/view.opp \
     src/vtext.opp \
-    src/menu_item_line.opp \
-    src/menu_item_entry.opp \
+    src/mitem.opp \
+    src/mi_line.opp \
+    src/mi_entry.opp \
+    src/menu.opp \
     src/vbox.opp \
     src/dialog.opp \
     src/dlg_about.opp \

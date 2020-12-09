@@ -30,6 +30,7 @@ public:
     int GetMaxY(void);
     int GetMaxX(void);
 
+    int WKeybSetKeypad(int descriptor, bool value);
     int InputTimeout(int value);
     int WInputTimeout(int descriptor, int value);
     int GetCh(void);

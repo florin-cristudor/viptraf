@@ -11,8 +11,9 @@ public:
     ViewText(int y, int x, int attributes, const char *format, ...);
 
     int Draw(int win_descriptor);
+    int DrawText(int win_descriptor);
 
-private:
+protected:
     std::string text;
 };
 

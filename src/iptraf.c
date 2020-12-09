@@ -535,7 +535,7 @@ int main(int argc, char **argv)
 	 * Load saved filter
 	 */
 	loadfilters();
-//	indicate("");
+//    indicate("");
 
 	/* bad, bad, bad name draw_desktop()
 	 * hide all into tui_top_panel(char *msg)

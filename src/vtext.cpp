@@ -23,5 +23,10 @@ ViewText::ViewText(int y, int x, int attributes, const char *format, ...):View(y
 int ViewText::Draw(int win_descriptor)
 {
     View::Draw(win_descriptor);
+    return DrawText(win_descriptor);
+}
+
+int ViewText::DrawText(int win_descriptor)
+{
     return pVideo->MvWPrint(win_descriptor, position_y, position_x, text.c_str());
 }

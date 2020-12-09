@@ -87,6 +87,20 @@ int VideoNcurses::GetMaxX()
     return COLS;
 }
 
+int VideoNcurses::WKeybSetKeypad(int descriptor, bool value)
+{
+    if(!enabled)
+        return 0;
+
+    if(descriptor < 0 || descriptor >= VIDEO_NCURSES_DESCRIPTOR_MAX)
+        return -1;
+    WINDOW *win = wins[descriptor].win;
+    if(!win)
+        return -1;
+
+    return keypad(win, value);
+}
+
 int VideoNcurses::UpdateScreenSize(void)
 {
     if(!enabled)
@@ -148,6 +162,7 @@ int VideoNcurses::WGetCh(int descriptor)
     WINDOW *win = wins[descriptor].win;
     if(!win)
         return -1;
+
     int ch = wgetch(win);
     if(ch == ERR)
         return 0;
@@ -512,6 +527,12 @@ int VideoNcurses::InitColors(bool use_colors)
         ICMPV6ATTR = COLOR_PAIR(19) | A_BOLD;
         IPV6ATTR = COLOR_PAIR(19);
         UNKNATTR = COLOR_PAIR(4) | A_BOLD;
+
+        ATTR_MENU_BOX = COLOR_PAIR(3);
+        ATTR_MENU_NORMAL = COLOR_PAIR(14) | A_BOLD;
+        ATTR_MENU_NORMAL_HIGHLIGHT = COLOR_PAIR(15) | A_BOLD;
+        ATTR_MENU_COMMAND_NORMAL = COLOR_PAIR(3) | A_BOLD;
+        ATTR_MENU_COMMAND_HIGHLIGHT = COLOR_PAIR(11) | A_BOLD;
     }
     else
     {
@@ -544,6 +565,12 @@ int VideoNcurses::InitColors(bool use_colors)
         UNKNIPATTR = A_BOLD;
         ICMPV6ATTR = A_REVERSE;
         UNKNATTR = A_BOLD;
+
+        ATTR_MENU_BOX = A_REVERSE;
+        ATTR_MENU_NORMAL = A_REVERSE;
+        ATTR_MENU_NORMAL_HIGHLIGHT = A_NORMAL;
+        ATTR_MENU_COMMAND_NORMAL = A_REVERSE;
+        ATTR_MENU_COMMAND_HIGHLIGHT = A_BOLD;
     }
 
     return 0;
