@@ -13,7 +13,7 @@ public:
     int AddItem(MenuItem *pmenuitem);
 
     int Show(void);
-    int Hide(int ret_code);
+    int Hide(void);
 
     int Draw(void);
     int Run(void);

@@ -8,8 +8,8 @@
 
 #include "menu.h"
 
-#include "iptraf-ng-compat.h"
-#include "log.h"
+//#include "iptraf-ng-compat.h"
+//#include "log.h"
 
 Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes):
         ViewBox(nlines, ncols, begin_y, begin_x, attributes)
@@ -57,11 +57,9 @@ int Menu::Show(void)
     return ViewBox::Show();
 }
 
-int Menu::Hide(int ret_code)
+int Menu::Hide(void)
 {
-    ViewBox::Hide();
-
-    return ret_code;
+    return ViewBox::Hide();
 }
 
 int Menu::Draw(void)
@@ -85,7 +83,7 @@ int Menu::Run()
     if(!crsi)
         crsi = entries;
 
-    if(!crsi) return Hide(MENUITEM_ABORT);
+    if(!crsi) return MENUITEM_ABORT;
 
     while(true)
     {
@@ -97,28 +95,25 @@ int Menu::Run()
             redraw = false;
         }
         int ch = ViewBox::ReadKeyboard();
-        debug_log("%s: key %c", __FUNCTION__, ch);
         MenuItem *crsnext = crsi;
         switch(ch)
         {
             case KEY_UP:
-            debug_log("%s: key up", __FUNCTION__);
                 crsnext = GetPrevSelectableEntry(crsi);
                 redraw = true;
                 break;
             case KEY_DOWN:
-            debug_log("%s: key down", __FUNCTION__);
             crsnext = GetNextSelectableEntry(crsi);
                 redraw = true;
                 break;
             case 'x':
             case 'X':
-                return Hide(MENUITEM_ABORT);
+                return MENUITEM_ABORT;
             default:
                 break;
         }
         if(VideoResized)
-            return Hide(MENUITEM_RESIZE);
+            return MENUITEM_RESIZE;
         if(crsnext)
             crsi = crsnext;
     }

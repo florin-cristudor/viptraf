@@ -74,7 +74,9 @@ int Desktop::Run()
     bool run = true;
     while(run)
     {
-        switch(pmenu->Run())
+        int cmd = pmenu->Run();
+        pmenu->Hide();
+        switch(cmd)
         {
             case MENUITEM_ABORT:
                 run = false;
@@ -86,11 +88,6 @@ int Desktop::Run()
                 Draw();
                 break;
         }
-/*
-        int ch = pVideo->GetCh();
-        if(ch == 'x' || ch =='X')
-            break;
-*/
     }
 
     delete pmenu;
