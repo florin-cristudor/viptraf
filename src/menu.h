@@ -3,11 +3,13 @@
 
 #include "vbox.h"
 #include "mitem.h"
+#include "mi_entry.h"
 
-class Menu: public ViewBox
+class Menu: public ViewBox, public MenuItemEntry
 {
 public:
-    Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes);
+    Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
+         int y, int x, int size, const char *text);
     ~Menu();
 
     int AddItem(MenuItem *pmenuitem);

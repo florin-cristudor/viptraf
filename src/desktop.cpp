@@ -9,6 +9,7 @@
 #include "mi_line.h"
 #include "vbox.h"
 #include "menu.h"
+#include "dlg_about.h"
 
 #include "desktop.h"
 
@@ -32,7 +33,8 @@ int Desktop::Run()
 
     int ncols = 31;
     int nlines = 15;
-    Menu *pmenu = new Menu(nlines, ncols, (VideoMaxLines - nlines) / 2, (VideoMaxCols - ncols) / 2, BOXATTR);
+    Menu *pmenu = new Menu(nlines, ncols, (VideoMaxLines - nlines) / 2, (VideoMaxCols - ncols) / 2, BOXATTR,
+                           0, 0, 0, "Main Menu");
     if(!pmenu)
         return shutdown(-10, "Memory error");
     pmenu->AddItem(new MenuItemEntry(1, 1, ncols-2, "IP traffic ^m^onitor", COMMAND_TRAFMON));
@@ -45,7 +47,7 @@ int Desktop::Run()
     pmenu->AddItem(new MenuItemLine(8, 1, ncols-2));
     pmenu->AddItem(new MenuItemEntry(9, 1, ncols-2, "C^o^nfigure...", COMMAND_CONFIGURE));
     pmenu->AddItem(new MenuItemLine(10, 1, ncols-2));
-    pmenu->AddItem(new MenuItemEntry(11, 1, ncols-2, "^A^bout...", COMMAND_ABOUT));
+    pmenu->AddItem(new MenuItemEntry(11, 1, ncols-2, "^A^bout...", MENUITEM_COMMAND_EMPTY, &RunDlgAbout));
     pmenu->AddItem(new MenuItemLine(12, 1, ncols-2));
     pmenu->AddItem(new MenuItemEntry(13, 1, ncols-2, "E^x^it", MENUITEM_ABORT));
 

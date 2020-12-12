@@ -8,11 +8,11 @@
 
 #include "mi_entry.h"
 
-MenuItemEntry::MenuItemEntry(int y, int x, int size, const char *text, int use_command):
+MenuItemEntry::MenuItemEntry(int y, int x, int size, const char *text, int use_command, int (*run)(void)):
         MenuItem(y, x, size, use_command),
         ViewText(y, x, ATTR_MENU_NORMAL, text)
 {
-
+    exec_func = run;
 }
 
 int MenuItemEntry::DrawItem(int win_descriptor)

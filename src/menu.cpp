@@ -11,8 +11,10 @@
 //#include "iptraf-ng-compat.h"
 //#include "log.h"
 
-Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes):
-        ViewBox(nlines, ncols, begin_y, begin_x, attributes)
+Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
+           int y, int x, int size, const char *text):
+        ViewBox(nlines, ncols, begin_y, begin_x, attributes),
+        MenuItemEntry(y, x, size, text, MENUITEM_COMMAND_EMPTY)
 {
     entries = NULL;
     crsi = NULL;
@@ -96,6 +98,7 @@ int Menu::Run()
         }
         int ch = ViewBox::ReadKeyboard();
         MenuItem *crsnext = crsi;
+        int exec_code = 0;
         switch(ch)
         {
             case KEY_UP:
@@ -103,8 +106,24 @@ int Menu::Run()
                 redraw = true;
                 break;
             case KEY_DOWN:
-            crsnext = GetNextSelectableEntry(crsi);
+                crsnext = GetNextSelectableEntry(crsi);
                 redraw = true;
+                break;
+            case KEY_ENTER:
+            case 0x0D:
+                exec_code = crsi->GetCommand();
+                if(exec_code >= 1000)
+                    return exec_code;
+                if(crsi->exec_func)
+                {
+                    exec_code = (*(crsi->exec_func))();
+                    if(exec_code > 1000)
+                        return exec_code;
+                }
+                else
+                {
+
+                }
                 break;
             case 'x':
             case 'X':

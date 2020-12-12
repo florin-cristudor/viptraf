@@ -46,6 +46,7 @@ void draw_desktop(void)
 }
 */
 
+/*
 void about(void)
 {
     DlgAbout *pdlg = new DlgAbout();
@@ -54,7 +55,7 @@ void about(void)
     pdlg->Run();
     delete pdlg;
 }
-
+*/
 void show_sort_statwin(WINDOW ** statwin, PANEL ** panel)
 {
     *statwin = newwin(5, 30, (VideoMaxLines - 5) / 2, (VideoMaxCols - 30) / 2);

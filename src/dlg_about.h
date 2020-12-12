@@ -4,15 +4,19 @@
 #ifndef DLG_ABOUT_H
 #define DLG_ABOUT_H
 
-#include "dialog.h"
+#include "vbox.h"
 
-class DlgAbout: public Dialog
+class DlgAbout: public ViewBox
 {
 public:
-    DlgAbout();
+    DlgAbout(int nlines, int ncols, int begin_y, int begin_x, int attributes);
     ~DlgAbout();
 
-    int Run();
+    int Draw(int win_descriptor);
+
+    int Run(void);
 };
+
+extern int RunDlgAbout(void);
 
 #endif // DLG_ABOUT_H

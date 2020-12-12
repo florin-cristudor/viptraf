@@ -7,7 +7,7 @@
 class MenuItemEntry : public MenuItem, public ViewText
 {
 public:
-    MenuItemEntry(int y, int x, int size, const char *text, int use_command);
+    MenuItemEntry(int y, int x, int size, const char *text, int use_command, int (*run)(void)=NULL);
 
     int DrawItem(int win_descriptor);
 };

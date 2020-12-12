@@ -14,9 +14,12 @@ MenuItem::MenuItem(int y, int x, int size, int use_command):
     command = use_command;
     item_size = size;
     is_selected = false;
+    is_menu = false;
 
     previ = NULL;
     nexti = NULL;
+
+    exec_func = NULL;
 }
 
 int MenuItem::Draw(int win_descriptor)

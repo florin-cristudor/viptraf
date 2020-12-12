@@ -7,7 +7,7 @@
 #include "mi_line.h"
 
 MenuItemLine::MenuItemLine(int y, int x, int size):
-        MenuItem(y, x, size, MENUITEM_COMMAND_NONE)
+        MenuItem(y, x, size, MENUITEM_NONE)
 {
     view_attr = ATTR_MENU_BOX;
 }
