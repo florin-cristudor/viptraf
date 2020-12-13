@@ -44,30 +44,30 @@ int Desktop::Run()
     int ncols = 31;
     int nlines = 15;
     Menu *pmenu = new Menu(nlines, ncols, (VideoMaxLines - nlines) / 2, (VideoMaxCols - ncols) / 2, BOXATTR,
-                           0, 0, 0, "Main Menu", "");
+                           "Main Menu", "");
     if(!pmenu)
         return shutdown(-10, "Memory error");
-    pmenu->AddItem(new MenuItemEntry(1, 1, ncols-2, "IP traffic ^m^onitor",
+    pmenu->AddItem(new MenuItemEntry("IP traffic ^m^onitor",
                 "Displays current IP traffic information", COMMAND_TRAFMON));
-    pmenu->AddItem(new MenuItemEntry(2, 1, ncols-2, "General interface ^s^tatistics",
+    pmenu->AddItem(new MenuItemEntry("General interface ^s^tatistics",
                 "Displays some statistics for attached interfaces", COMMAND_GENITFSTATS));
-    pmenu->AddItem(new MenuItemEntry(3, 1, ncols-2, "^D^etailed interface statistics",
+    pmenu->AddItem(new MenuItemEntry("^D^etailed interface statistics",
                 "Displays more statistics for a selected interface", COMMAND_DETITFSTATS));
-    pmenu->AddItem(new MenuItemEntry(4, 1, ncols-2, "Statistical ^b^reakdowns...",
+    pmenu->AddItem(new MenuItemEntry("Statistical ^b^reakdowns...",
                 "Facilities for traffic counts by packet size or TCP/UDP port", COMMAND_STATBREAKS));
-    pmenu->AddItem(new MenuItemEntry(5, 1, ncols-2, "^L^AN station monitor",
+    pmenu->AddItem(new MenuItemEntry("^L^AN station monitor",
                 "Displays statistics on detected LAN stations", COMMAND_LANMON));
-    pmenu->AddItem(new MenuItemLine(6, 1, ncols-2));
-    pmenu->AddItem(new MenuItemEntry(7, 1, ncols-2, "^F^ilters...",
+    pmenu->AddItem(new MenuItemLine());
+    pmenu->AddItem(new MenuItemEntry("^F^ilters...",
                 "Allows you to select traffic display and logging criteria", COMMAND_FILTERS));
-    pmenu->AddItem(new MenuItemLine(8, 1, ncols-2));
-    pmenu->AddItem(new MenuItemEntry(9, 1, ncols-2, "C^o^nfigure...",
+    pmenu->AddItem(new MenuItemLine());
+    pmenu->AddItem(new MenuItemEntry("C^o^nfigure...",
                 "Set various program options", COMMAND_CONFIGURE));
-    pmenu->AddItem(new MenuItemLine(10, 1, ncols-2));
-    pmenu->AddItem(new MenuItemEntry(11, 1, ncols-2, "^A^bout...",
+    pmenu->AddItem(new MenuItemLine());
+    pmenu->AddItem(new MenuItemEntry("^A^bout...",
                 "Displays program info", MENUITEM_COMMAND_EMPTY, &RunDlgAbout));
-    pmenu->AddItem(new MenuItemLine(12, 1, ncols-2));
-    pmenu->AddItem(new MenuItemEntry(13, 1, ncols-2, "E^x^it",
+    pmenu->AddItem(new MenuItemLine());
+    pmenu->AddItem(new MenuItemEntry("E^x^it",
                 "Exits program", COMMAND_EXIT));
 
     //        tx_initmenu(&menu, 15, 35, (VideoMaxLines - 16) / 2, (VideoMaxCols - 35) / 2, BOXATTR,

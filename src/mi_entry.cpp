@@ -12,9 +12,9 @@
 
 extern TextLine *pHelpBar;
 
-MenuItemEntry::MenuItemEntry(int y, int x, int size, const char *text, const char *help_text, int use_command, int (*call_back_func)(void)):
-        MenuItem(y, x, size, use_command),
-        ViewText(y, x, ATTR_MENU_NORMAL, text)
+MenuItemEntry::MenuItemEntry(const char *text, const char *help_text, int use_command, int (*call_back_func)(void)):
+        MenuItem(use_command),
+        ViewText(0, 0, ATTR_MENU_NORMAL, text)
 {
     hot_key = 0;
     exec_func = call_back_func;
@@ -34,12 +34,12 @@ MenuItemEntry::MenuItemEntry(int y, int x, int size, const char *text, const cha
     help = std::string(help_text);
 }
 
-int MenuItemEntry::Draw(int win_descriptor)
+int MenuItemEntry::Draw(int win_descriptor, int y, int x, int size)
 {
-    MenuItem::Draw(win_descriptor);
+    MenuItem::Draw(win_descriptor, y, x, size);
     bool highlight = false;
-    pVideo->WMove(win_descriptor, MenuItem::pos_y, MenuItem::pos_x);
-    for(unsigned int i=0; i<text.size(); i++)
+    pVideo->WMove(win_descriptor, y, x);
+    for(unsigned int i=0; i<text.size() && (int)i<size; i++)
     {
         if(text.c_str()[i] == '^')
         {
@@ -70,6 +70,7 @@ int MenuItemEntry::Draw(int win_descriptor)
                     highlight = true;
                 }
             }
+            size++;
             continue;
         }
         else

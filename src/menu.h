@@ -9,7 +9,7 @@ class Menu: public ViewBox, public MenuItemEntry
 {
 public:
     Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
-         int y, int x, int size, const char *text, const char *help_text);
+         const char *text, const char *help_text);
     ~Menu();
 
     virtual int Execute(void);

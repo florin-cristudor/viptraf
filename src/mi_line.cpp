@@ -6,15 +6,15 @@
 
 #include "mi_line.h"
 
-MenuItemLine::MenuItemLine(int y, int x, int size):
-        MenuItem(y, x, size, MENUITEM_COMMAND_NONE)
+MenuItemLine::MenuItemLine():
+        MenuItem(MENUITEM_COMMAND_NONE)
 {
 }
 
-int MenuItemLine::Draw(int win_descriptor)
+int MenuItemLine::Draw(int win_descriptor, int y, int x, int size)
 {
     pVideo->WSetAttribute(win_descriptor, ATTR_MENU_BOX);
-    return pVideo->MvWHLine(win_descriptor, pos_y, pos_x, 0, item_size);
+    return pVideo->MvWHLine(win_descriptor, y, x, 0, size);
 }
 
 int MenuItemLine::Execute()

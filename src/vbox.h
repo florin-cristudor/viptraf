@@ -20,12 +20,13 @@ protected:
     int win;
     int panel;
     bool draw_box;
+    int size_x;
+    int size_y;
 
 private:
     int pos_x;
     int pos_y;
-    int size_x;
-    int size_y;
+
 
     int box_attr;
 };

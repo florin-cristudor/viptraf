@@ -6,9 +6,9 @@
 class MenuItemLine : public MenuItem
 {
 public:
-    MenuItemLine(int y, int x, int size);
+    MenuItemLine();
 
-    int Draw(int win_descriptor);
+    int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);
     virtual int ExecuteHotKey(int ch);
 };

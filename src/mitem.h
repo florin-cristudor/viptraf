@@ -12,10 +12,10 @@
 class MenuItem
 {
 public:
-    MenuItem(int y, int x, int size, int use_command);
+    MenuItem(int use_command);
     virtual ~MenuItem() {}
 
-    virtual int Draw(int win_descriptor) = 0;
+    virtual int Draw(int win_descriptor, int y, int x, int size) = 0;
     virtual int Execute(void) = 0;
     virtual int ExecuteHotKey(int ch) = 0;
 
@@ -29,10 +29,6 @@ public:
     MenuItem *nexti;
 
 protected:
-    int pos_x;
-    int pos_y;
-    int item_size;
-
     int command;
     bool is_selected;
     bool is_menu;

@@ -14,10 +14,9 @@ extern TextLine *pHelpBar;
 #include "iptraf-ng-compat.h"
 #include "log.h"
 
-Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
-           int y, int x, int size, const char *text, const char *help_text):
+Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes, const char *text, const char *help_text):
         ViewBox(nlines, ncols, begin_y, begin_x, attributes),
-        MenuItemEntry(y, x, size, text, help_text, MENUITEM_COMMAND_EMPTY)
+        MenuItemEntry(text, help_text, MENUITEM_COMMAND_EMPTY)
 {
     mitems = NULL;
     crsi = NULL;
@@ -147,13 +146,9 @@ int Menu::Draw(void)
 {
     Show();
     ViewBox::Draw();
-
     MenuItem *crs = mitems;
-    while(crs)
-    {
-        crs->Draw(win);
-        crs = crs->nexti;
-    }
+    for(int i=1; crs && i<size_y-1; i++, crs=crs->nexti)
+        crs->Draw(win, i, 1, size_x-2);
 
     return pVideo->Update();
 }
