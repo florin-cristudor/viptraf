@@ -28,6 +28,7 @@ private:
     MenuItem *GetNextSelectableEntry(MenuItem *crs);
     MenuItem *GetLastSelectableEntry(void);
     MenuItem *GetFirstSelectableEntry(void);
+    MenuItem *GetFirstPrintableItem(MenuItem *crs, int size);
 };
 
 #endif // MENU_H

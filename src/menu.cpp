@@ -146,7 +146,7 @@ int Menu::Draw(void)
 {
     Show();
     ViewBox::Draw();
-    MenuItem *crs = mitems;
+    MenuItem *crs = GetFirstPrintableItem(crsi, size_y-2);
     for(int i=1; crs && i<size_y-1; i++, crs=crs->nexti)
         crs->Draw(win, i, 1, size_x-2);
 
@@ -223,4 +223,14 @@ MenuItem *Menu::GetFirstSelectableEntry()
         crs = crs->nexti;
     }
     return NULL;
+}
+
+MenuItem *Menu::GetFirstPrintableItem(MenuItem *crs, int size)
+{
+    if(!crs)
+        return mitems;
+
+    int i = size-1;
+    for(; i>0 && crs->previ; i--, crs=crs->previ);
+    return crs;
 }
