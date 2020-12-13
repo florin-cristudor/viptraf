@@ -9,24 +9,25 @@ class Menu: public ViewBox, public MenuItemEntry
 {
 public:
     Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
-         int y, int x, int size, const char *text);
+         int y, int x, int size, const char *text, const char *help_text);
     ~Menu();
+
+    virtual int Execute(void);
+    virtual int ExecuteHotKey(int ch);
 
     int AddItem(MenuItem *pmenuitem);
 
-    int Show(void);
-    int Hide(void);
-
     int Draw(void);
-    int Run(void);
 
 private:
-    MenuItem *entries;
+    MenuItem *mitems;
     MenuItem *crsi;
 
     void UnselectAll(void);
     MenuItem *GetPrevSelectableEntry(MenuItem *crs);
     MenuItem *GetNextSelectableEntry(MenuItem *crs);
+    MenuItem *GetLastSelectableEntry(void);
+    MenuItem *GetFirstSelectableEntry(void);
 };
 
 #endif // MENU_H

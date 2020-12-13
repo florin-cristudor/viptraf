@@ -4,15 +4,15 @@
 #ifndef DLG_ABOUT_H
 #define DLG_ABOUT_H
 
-#include "vbox.h"
+#include "listviewsbox.h"
 
-class DlgAbout: public ViewBox
+class DlgAbout: public ListViewsBox
 {
 public:
     DlgAbout(int nlines, int ncols, int begin_y, int begin_x, int attributes);
     ~DlgAbout();
 
-    int Draw(int win_descriptor);
+    int Draw(void);
 
     int Run(void);
 };

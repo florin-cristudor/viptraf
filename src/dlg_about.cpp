@@ -7,42 +7,30 @@
 #include "attrs.h"
 
 #include "vtext.h"
-#include "vbox.h"
+#include "listviewsbox.h"
 #include "mitem.h"
 
 #include "dlg_about.h"
 
-#include "iptraf-ng-compat.h"
-#include "log.h"
-
 DlgAbout::DlgAbout(int nlines, int ncols, int begin_y, int begin_x, int attributes):
-    ViewBox(nlines, ncols, begin_y, begin_x, attributes)
+    ListViewsBox(nlines, ncols, begin_y, begin_x, attributes)
 {
-
-
-/*
-//    tx_stdwinset(win);
-//    pVideo->WInputTimeout(win, -1);
-//        if (ch == 12)
-//            tx_refresh_screen();
-} while (ch == 12);
-*/
 }
 
 DlgAbout::~DlgAbout()
 {
 }
 
-int DlgAbout::Draw(int win_descriptor)
+int DlgAbout::Draw(void)
 {
-    ViewBox::Draw(win_descriptor);
+    ListViewsBox::Draw();
     return pVideo->Update();
 }
 
 int DlgAbout::Run(void)
 {
     Show();
-    Draw(win);
+    Draw();
     while(true)
     {   int rc = ReadKeyboard();
         if(VideoResized)
@@ -57,7 +45,6 @@ int DlgAbout::Run(void)
 
 int RunDlgAbout(void)
 {
-    debug_log("%s: In run", __FUNCTION__);
     DlgAbout *dlg = new DlgAbout(16, 49, (VideoMaxLines - 16) / 2, (VideoMaxCols - 49) / 2+1, BOXATTR);
     if(!dlg) return 0;
 
@@ -75,7 +62,6 @@ int RunDlgAbout(void)
     dlg->AddField(new ViewText(14,2, HIGHATTR, "Press a key to continue"));
 
     int rc = dlg->Run();
-    dlg->Hide();
     delete dlg;
 
     return rc;

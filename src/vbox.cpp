@@ -1,5 +1,5 @@
 /*
- * VIPTraf Text Box Class
+ * VIPTraf View Box Class
  */
 #include <stdio.h>
 #include <ncurses.h>
@@ -9,13 +9,16 @@
 
 #include "vbox.h"
 
-ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes):
-        View(begin_y, begin_x, attributes)
+ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes)
 {
-    number_columns = ncols;
-    number_lines = nlines;
+    pos_x = begin_x;
+    pos_y = begin_y;
+    size_x = ncols;
+    size_y = nlines;
 
-    fields = NULL;
+    draw_box = true;
+
+    box_attr = attributes;
 
     win = -1;
     panel = -1;
@@ -24,32 +27,6 @@ ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes
 ViewBox::~ViewBox()
 {
     Hide();
-
-    View *crs = fields;
-    while(crs)
-    {
-        View *bak = crs->next;
-        delete crs;
-        crs = bak;
-    }
-}
-
-int ViewBox::AddField(View *pfield)
-{
-    if(!pfield)
-        return -1;
-
-    if(!fields)
-        fields = pfield;
-    else
-    {
-        View *crs = fields;
-        while(crs->next)
-            crs = crs->next;
-        crs->next = pfield;
-    }
-
-    return 0;
 }
 
 int ViewBox::Show()
@@ -57,7 +34,7 @@ int ViewBox::Show()
     if(win != -1)
         return -1;
 
-    win = pVideo->NewWindow(number_lines, number_columns, position_y, position_x);
+    win = pVideo->NewWindow(size_y, size_x, pos_y, pos_x);
     if(win != -1)
         panel = pVideo->NewPanel(win);
 
@@ -67,7 +44,7 @@ int ViewBox::Show()
     return pVideo->WKeybSetKeypad(win, true);
 }
 
-int ViewBox::Hide()
+int ViewBox::Hide(void)
 {
     if(win == -1)
         return -1;
@@ -79,53 +56,42 @@ int ViewBox::Hide()
         pVideo->DelWindow(win);
     win = -1;
 
-    pVideo->Update();
+    return pVideo->Update();
+}
+
+int ViewBox::Draw(void)
+{
+    if(win == -1)
+        return -1;
+
+    pVideo->WSetAttribute(win, box_attr);
+    pVideo->ClearWindow(win);
+    if(draw_box)
+        return pVideo->WBorder(win, 0, 0, 0, 0, 0, 0, 0, 0);
 
     return 0;
 }
 
 int ViewBox::Move(int begin_y, int begin_x)
 {
-    position_y = begin_y;
-    position_x = begin_x;
+    pos_y = begin_y;
+    pos_x = begin_x;
 
-    return 0;
-}
-
-int ViewBox::DrawBox(int win_descriptor)
-{
-    if(win_descriptor == -1)
-        return -1;
-
-    View::Draw(win_descriptor);
-    pVideo->ClearWindow(win_descriptor);
-    return pVideo->WBorder(win_descriptor, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-int ViewBox::Draw(int win_descriptor)
-{
-    if(win_descriptor == -1)
-        return -1;
-
-    DrawBox(win_descriptor);
-
-    View *crs = fields;
-    while(crs)
+    if(win != -1)
     {
-        crs->Draw(win);
-        crs = crs->next;
+        Hide();
+        Show();
     }
+
     return 0;
 }
 
-int ViewBox::DrawBox()
+int ViewBox::Resize(int nlines, int ncols, int begin_y, int begin_x)
 {
-    return DrawBox(win);
-}
+    size_y = nlines;
+    size_x = ncols;
 
-int ViewBox::Draw()
-{
-    return Draw(win);
+    return Move(begin_y, begin_x);
 }
 
 int ViewBox::ReadKeyboard()

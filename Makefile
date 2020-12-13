@@ -125,6 +125,8 @@ viptraf-h += " \
         src/mi_entry.h \
         src/menu.h \
         src/vbox.h \
+        src/listviewsbox.h \
+        src/text_line.h \
         src/dialog.h \
         src/dlg_about.h \
         src/addr.h \
@@ -195,6 +197,8 @@ viptraf-opp += \
     src/mi_entry.opp \
     src/menu.opp \
     src/vbox.opp \
+    src/listviewsbox.opp \
+    src/text_line.opp \
     src/dialog.opp \
     src/dlg_about.opp \
     src/desktop.opp \

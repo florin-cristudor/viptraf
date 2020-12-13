@@ -97,7 +97,12 @@ int VideoNcurses::WKeybSetKeypad(int descriptor, bool value)
     WINDOW *win = wins[descriptor].win;
     if(!win)
         return -1;
-
+/*
+    nodelay(win, value);
+    if(value)
+        WInputTimeout(descriptor, 5);
+    else
+        WInputTimeout(descriptor, -1);*/
     return keypad(win, value);
 }
 
@@ -533,6 +538,8 @@ int VideoNcurses::InitColors(bool use_colors)
         ATTR_MENU_NORMAL_HIGHLIGHT = COLOR_PAIR(15) | A_BOLD;
         ATTR_MENU_COMMAND_NORMAL = COLOR_PAIR(3) | A_BOLD;
         ATTR_MENU_COMMAND_HIGHLIGHT = COLOR_PAIR(11) | A_BOLD;
+
+        ATTR_HELP_BAR = COLOR_PAIR(2);
     }
     else
     {
@@ -571,6 +578,8 @@ int VideoNcurses::InitColors(bool use_colors)
         ATTR_MENU_NORMAL_HIGHLIGHT = A_NORMAL;
         ATTR_MENU_COMMAND_NORMAL = A_REVERSE;
         ATTR_MENU_COMMAND_HIGHLIGHT = A_BOLD;
+
+        ATTR_HELP_BAR = A_BOLD;
     }
 
     return 0;

@@ -41,4 +41,6 @@ extern int ATTR_MENU_NORMAL_HIGHLIGHT;
 extern int ATTR_MENU_COMMAND_NORMAL;
 extern int ATTR_MENU_COMMAND_HIGHLIGHT;
 
+extern int ATTR_HELP_BAR;
+
 #endif	/* IPTRAF_NG_ATTRS_H */
