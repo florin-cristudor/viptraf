@@ -17,6 +17,7 @@ public:
 
     virtual int Draw(int win_descriptor, int y, int x, int size) = 0;
     virtual int Execute(void) = 0;
+    virtual bool IsMyHotKey(int ch) = 0;
     virtual int ExecuteHotKey(int ch) = 0;
 
     bool IsSelected(void) { return is_selected; }

@@ -39,8 +39,6 @@ An IP Network Statistics Utility
 
 #include "desktop.h"
 
-Options opts;
-
 #define WITHALL 1
 #define WITHOUTALL 0
 

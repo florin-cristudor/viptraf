@@ -12,8 +12,9 @@ public:
     MenuItemEntry(const char *text, const char *help_text,
                   int use_command, int (*call_back_func)(void)=NULL);
 
-    int Draw(int win_descriptor, int y, int x, int size);
+    virtual int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);
+    virtual bool IsMyHotKey(int ch);
     virtual int ExecuteHotKey(int ch);
 
     virtual void Select(void);

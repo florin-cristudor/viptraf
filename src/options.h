@@ -34,12 +34,12 @@ typedef struct {
 #define OPTION_V6INV4ASV6   6
 //filling 9 bits
 //special bits
-#define OPTION_ACTMODE      32
+#define OPTION_ACTMODE      16
 
-#define OPTION_TIMEOUT      64
-#define OPTION_LOGSPAN      65
-#define OPTION_UPDRATE      66
-#define OPTION_CLOSEDINT    67
+#define OPTION_TIMEOUT      32
+#define OPTION_LOGSPAN      33
+#define OPTION_UPDRATE      34
+#define OPTION_CLOSEDINT    35
 
 class Options
 {
@@ -59,5 +59,7 @@ private:
     TOPTIONS options;
     char buffer[50];
 };
+
+extern Options opts;
 
 #endif // OPTIONS_H

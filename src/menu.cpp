@@ -85,32 +85,33 @@ int Menu::Execute(void)
             case KEY_ENTER:
             case 0x0D:
                 exec_code = crsi->Execute();
+                if(crsi->IsMenu())
+                    ((Menu *)crsi)->Hide();
                 if(exec_code >= 1000 || exec_code == MENUITEM_RESIZE)
                     return exec_code;
+                redraw = true;
                 break;
             case 'x':
             case 'X':
             case 27: //Esc
                 return MENUITEM_ABORT;
             default:
-                MenuItem *crs = mitems;
-                while(crs)
-                {
-                    exec_code = crs->ExecuteHotKey(ch);
-                    if(exec_code >= 1000 || exec_code == MENUITEM_RESIZE || exec_code == MENUITEM_EXECUTE_DONE)
-                    {
-                        crsi = crs;
-                        crsnext = crs;
-                        redraw = true;
-                        UnselectAll();
-                        crs->Select();
-                        if(exec_code == MENUITEM_EXECUTE_DONE)
-                            break;
-                        return exec_code;
-                    }
-                    crs = crs->nexti;
-                }
-                break;
+                MenuItem *crs = GetItemHotKey(ch);
+                if(!crs)
+                    break;
+                UnselectAll();
+                crs->Select();
+                crsi = crs;
+                crsnext = crs;
+                Draw();
+                exec_code = crs->ExecuteHotKey(ch);
+                if(crs->IsMenu())
+                    ((Menu *)crs)->Hide();
+                if(exec_code == MENUITEM_RESIZE || exec_code >= 1000)
+                    return exec_code;
+                if(exec_code == MENUITEM_EXECUTE_DONE || exec_code == MENUITEM_ABORT)
+                    break;
+                return exec_code;
         }
         if(crsnext && crsi != crsnext)
         {
@@ -233,4 +234,16 @@ MenuItem *Menu::GetFirstPrintableItem(MenuItem *crs, int size)
     int i = size-1;
     for(; i>0 && crs->previ; i--, crs=crs->previ);
     return crs;
+}
+
+MenuItem *Menu::GetItemHotKey(int ch)
+{
+    MenuItem *crs = mitems;
+    while(crs)
+    {
+        if(crs->IsMyHotKey(ch))
+            return crs;
+        crs = crs->nexti;
+    }
+    return NULL;
 }

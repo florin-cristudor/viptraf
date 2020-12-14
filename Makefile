@@ -124,6 +124,7 @@ viptraf-h += " \
         src/mitem.h \
         src/mi_line.h \
         src/mi_entry.h \
+        src/mi_option_bit.h \
         src/menu.h \
         src/vbox.h \
         src/listviewsbox.h \
@@ -197,6 +198,7 @@ viptraf-opp += \
     src/mitem.opp \
     src/mi_line.opp \
     src/mi_entry.opp \
+    src/mi_option_bit.opp \
     src/menu.opp \
     src/vbox.opp \
     src/listviewsbox.opp \

@@ -10,6 +10,7 @@ public:
 
     int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);
+    virtual bool IsMyHotKey(int ch __attribute__((unused)) ) {  return false; }
     virtual int ExecuteHotKey(int ch);
 };
 

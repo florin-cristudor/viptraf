@@ -7,7 +7,7 @@
 #include "dirs.h"
 #include "options.h"
 
-
+Options opts;
 
 Options::Options()
 {
@@ -62,6 +62,7 @@ void Options::ToggleBit(int bit_idx)
         else
             options.un.integer |= 1 << bit_idx;
     }
+    SaveOptionsToConfigFile();
 }
 
 void Options::SetValue(int opt_idx, int value)

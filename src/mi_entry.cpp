@@ -109,3 +109,10 @@ int MenuItemEntry::Execute(void)
 
     return MENUITEM_COMMAND_EMPTY;
 }
+
+bool MenuItemEntry::IsMyHotKey(int ch)
+{
+    if(hot_key == ch)
+        return true;
+    return false;
+}

@@ -29,6 +29,7 @@ private:
     MenuItem *GetLastSelectableEntry(void);
     MenuItem *GetFirstSelectableEntry(void);
     MenuItem *GetFirstPrintableItem(MenuItem *crs, int size);
+    MenuItem *GetItemHotKey(int ch);
 };
 
 #endif // MENU_H
