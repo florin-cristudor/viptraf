@@ -25,7 +25,7 @@ serv.c  - TCP/UDP port statistics module
 #include "servname.h"
 #include "log.h"
 #include "timer.h"
-#include "options.h"
+#include "options_old.h"
 #include "packet.h"
 #include "logvars.h"
 #include "error.h"

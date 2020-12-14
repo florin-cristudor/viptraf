@@ -12,7 +12,7 @@ packet.c - routines to open the raw socket, read socket data and
 
 #include "deskman.h"
 #include "error.h"
-#include "options.h"
+#include "options_old.h"
 #include "fltdefs.h"
 #include "fltselect.h"
 #include "ipfilter.h"

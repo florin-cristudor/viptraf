@@ -11,7 +11,7 @@ tcptable.c - table manipulation routines for the IP monitor
 
 #include "tui/winops.h"
 
-#include "options.h"
+#include "options_old.h"
 #include "revname.h"
 #include "tcptable.h"
 #include "deskman.h"

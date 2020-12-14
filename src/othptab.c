@@ -14,7 +14,7 @@ othptab.c - non-TCP protocol display module
 #include "tui/winops.h"
 
 #include "arphdr.h"
-#include "options.h"
+#include "options_old.h"
 #include "revname.h"
 #include "tcptable.h"
 #include "othptab.h"

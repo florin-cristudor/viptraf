@@ -96,7 +96,7 @@ viptraf-h += src/pktsize.h
 viptraf-h += src/landesc.h
 viptraf-h += src/dirs.h
 viptraf-h += src/getpath.h
-viptraf-h += src/options.h
+viptraf-h += src/options_old.h
 viptraf-h += src/promisc.h
 viptraf-h += src/parseproto.h
 viptraf-h += src/addproto.h
@@ -115,6 +115,7 @@ viptraf-h += src/capt-recvmmsg.h
 viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
+        src/options.h \
         src/traf_log.h \
         src/video.h \
         src/video_ncurses.h \
@@ -157,7 +158,7 @@ viptraf-o += src/timer.o
 viptraf-o += src/revname.o
 viptraf-o += src/pktsize.o
 viptraf-o += src/landesc.o
-viptraf-o += src/options.o
+viptraf-o += src/options_old.o
 viptraf-o += src/promisc.o
 viptraf-o += src/ifaces.o
 viptraf-o += src/usage.o
@@ -187,6 +188,7 @@ viptraf-o += src/rvnamed.o
 viptraf-o += src/addr.o
 
 viptraf-opp += \
+    src/options.opp \
     src/traf_log.opp \
     src/video.opp \
     src/video_ncurses.opp \

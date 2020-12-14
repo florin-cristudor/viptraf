@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "options.h"
+#include "options_old.h"
 #include "log.h"
 
 #include "traf_rate.h"

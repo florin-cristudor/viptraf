@@ -17,7 +17,7 @@ ifstats.c	- the interface statistics module
 #include "ifaces.h"
 #include "fltdefs.h"
 #include "packet.h"
-#include "options.h"
+#include "options_old.h"
 #include "log.h"
 #include "dirs.h"
 #include "deskman.h"

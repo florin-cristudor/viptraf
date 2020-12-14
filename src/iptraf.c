@@ -19,7 +19,7 @@ An IP Network Statistics Utility
 #include "fltmgr.h"
 #include "fltedit.h"
 #include "serv.h"
-#include "options.h"
+#include "options_old.h"
 #include "attrs.h"
 #include "rvnamed.h"
 #include "logvars.h"
@@ -35,7 +35,11 @@ An IP Network Statistics Utility
 #include "video.h"
 #include "video_ncurses.h"
 
+#include "options.h"
+
 #include "desktop.h"
+
+Options opts;
 
 #define WITHALL 1
 #define WITHOUTALL 0

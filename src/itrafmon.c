@@ -12,7 +12,7 @@ itrafmon.c - the IP traffic monitor module
 #include "tui/labels.h"
 #include "tui/winops.h"
 
-#include "options.h"
+#include "options_old.h"
 #include "revname.h"
 #include "tcptable.h"
 #include "othptab.h"

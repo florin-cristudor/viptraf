@@ -23,7 +23,7 @@ Discovers LAN hosts and displays packet statistics for them
 #include "log.h"
 #include "timer.h"
 #include "landesc.h"
-#include "options.h"
+#include "options_old.h"
 #include "logvars.h"
 #include "error.h"
 

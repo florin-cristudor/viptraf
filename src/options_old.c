@@ -15,7 +15,7 @@ options.c - implements the configuration section of the utility
 #include "tui/winops.h"
 
 #include "serv.h"
-#include "options.h"
+#include "options_old.h"
 #include "deskman.h"
 #include "attrs.h"
 #include "landesc.h"

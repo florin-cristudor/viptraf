@@ -14,7 +14,7 @@ deskman.c - desktop management routines
 #include "tui/winops.h"
 
 #include "deskman.h"
-#include "options.h"
+#include "options_old.h"
 #include "timer.h"
 #include "log.h"
 

@@ -104,6 +104,7 @@
  */
 
 #define CONFIGFILE	get_path(T_WORKDIR, "viptraf.cfg")
+#define OPTSFILE	get_path(T_WORKDIR, "viptraf_opt.cfg")
 
 /*
  * The IPTraf log files

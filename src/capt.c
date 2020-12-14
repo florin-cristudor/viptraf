@@ -3,7 +3,7 @@
 
 #include "iptraf-ng-compat.h"
 
-#include "options.h"
+#include "options_old.h"
 #include "promisc.h"
 #include "error.h"
 #include "ifaces.h"

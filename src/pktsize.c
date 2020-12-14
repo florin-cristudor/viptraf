@@ -19,7 +19,7 @@ pktsize.c	- the packet size breakdown facility
 #include "deskman.h"
 #include "error.h"
 #include "pktsize.h"
-#include "options.h"
+#include "options_old.h"
 #include "timer.h"
 #include "log.h"
 #include "logvars.h"

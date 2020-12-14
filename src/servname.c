@@ -9,7 +9,7 @@ servname.c	- lookup module for TCP and UDP service names based on
 ***/
 
 #include "iptraf-ng-compat.h"
-#include "options.h"
+#include "options_old.h"
 
 void servlook(in_port_t port, unsigned int protocol, char *target, int maxlen)
 {

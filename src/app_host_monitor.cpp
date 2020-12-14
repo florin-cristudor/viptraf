@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "iptraf-ng-compat.h"
-#include "options.h"
+#include "options_old.h"
 #include "dirs.h"
 #include "logvars.h"
 #include "log.h"
