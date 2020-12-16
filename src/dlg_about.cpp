@@ -40,7 +40,7 @@ int DlgAbout::Run(void)
     }
 
     Hide();
-    return MENUITEM_ABORT;
+    return MENU_ABORT;
 }
 
 int RunDlgAbout(void)

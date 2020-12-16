@@ -176,7 +176,7 @@ int VideoNcurses::WGetCh(int descriptor)
     {
         VideoResized = true;
         UpdateScreenSize();
-        return 0;
+        return KEY_RESIZE;
     }
 
     return ch;
@@ -540,6 +540,9 @@ int VideoNcurses::InitColors(bool use_colors)
         ATTR_MENU_COMMAND_HIGHLIGHT = COLOR_PAIR(11) | A_BOLD;
 
         ATTR_HELP_BAR = COLOR_PAIR(2);
+
+        ATTR_ERR_BOX = COLOR_PAIR(5) | A_BOLD;
+        ATTR_ERR_BOX_REVERSED = COLOR_PAIR(9) | A_BOLD;
     }
     else
     {
@@ -580,6 +583,9 @@ int VideoNcurses::InitColors(bool use_colors)
         ATTR_MENU_COMMAND_HIGHLIGHT = A_BOLD;
 
         ATTR_HELP_BAR = A_BOLD;
+
+        ATTR_ERR_BOX = A_BOLD;
+        ATTR_ERR_BOX_REVERSED = A_REVERSE;
     }
 
     return 0;

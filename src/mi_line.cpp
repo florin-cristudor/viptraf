@@ -7,7 +7,7 @@
 #include "mi_line.h"
 
 MenuItemLine::MenuItemLine():
-        MenuItem(MENUITEM_COMMAND_NONE)
+        MenuItem(MENU_COMMAND_NONE)
 {
 }
 
@@ -19,10 +19,10 @@ int MenuItemLine::Draw(int win_descriptor, int y, int x, int size)
 
 int MenuItemLine::Execute()
 {
-    return MENUITEM_COMMAND_EMPTY;
+    return MENU_COMMAND_EMPTY;
 }
 
 int MenuItemLine::ExecuteHotKey(int ch __attribute__((unused)))
 {
-    return MENUITEM_COMMAND_EMPTY;
+    return MENU_COMMAND_EMPTY;
 }

@@ -43,7 +43,7 @@ const char *Options::GetValueString(int opt_idx)
         snprintf(buffer, sizeof(buffer), "%i mins", options.logspan);
         return buffer;
     case OPTION_UPDRATE:
-        snprintf(buffer, sizeof(buffer), "%i mins", options.updrate);
+        snprintf(buffer, sizeof(buffer), "%i secs", options.updrate);
         return buffer;
     case OPTION_CLOSEDINT:
         snprintf(buffer, sizeof(buffer), "%i mins", options.closedint);

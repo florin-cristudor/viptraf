@@ -9,10 +9,12 @@
 
 #include "vbox.h"
 
-ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes)
+ViewBox::ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes, int offset_y, int offset_x)
 {
-    pos_x = begin_x;
-    pos_y = begin_y;
+    origin_x = begin_x;
+    origin_y = begin_y;
+    ofs_x = offset_x;
+    ofs_y = offset_y;
     size_x = ncols;
     size_y = nlines;
 
@@ -34,7 +36,7 @@ int ViewBox::Show()
     if(win != -1)
         return -1;
 
-    win = pVideo->NewWindow(size_y, size_x, pos_y, pos_x);
+    win = pVideo->NewWindow(size_y, size_x, origin_y + ofs_y, origin_x + ofs_x);
     if(win != -1)
         panel = pVideo->NewPanel(win);
 
@@ -72,10 +74,18 @@ int ViewBox::Draw(void)
     return 0;
 }
 
-int ViewBox::Move(int begin_y, int begin_x)
+int ViewBox::SetWindowOffset(int offset_y, int offset_x)
 {
-    pos_y = begin_y;
-    pos_x = begin_x;
+    ofs_y = offset_y;
+    ofs_x = offset_x;
+
+    return MoveOrigin(origin_y, origin_x);
+}
+
+int ViewBox::MoveOrigin(int begin_y, int begin_x)
+{
+    origin_y = begin_y;
+    origin_x = begin_x;
 
     if(win != -1)
     {
@@ -91,7 +101,7 @@ int ViewBox::Resize(int nlines, int ncols, int begin_y, int begin_x)
     size_y = nlines;
     size_x = ncols;
 
-    return Move(begin_y, begin_x);
+    return MoveOrigin(begin_y, begin_x);
 }
 
 int ViewBox::ReadKeyboard()

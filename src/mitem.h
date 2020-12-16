@@ -1,11 +1,11 @@
 #ifndef MITEM_H
 #define MITEM_H
 
-#define MENUITEM_COMMAND_NONE       0
-#define MENUITEM_COMMAND_EMPTY      1
-#define MENUITEM_EXECUTE_DONE       2
-#define MENUITEM_ABORT              3
-#define MENUITEM_RESIZE             4
+#define MENU_COMMAND_NONE       0
+#define MENU_COMMAND_EMPTY      1
+#define MENU_EXECUTE_DONE       2
+#define MENU_ABORT              3
+#define MENU_RESIZE             4
 
 //define executable commands with IDs higher than 1000
 
@@ -21,7 +21,7 @@ public:
     virtual int ExecuteHotKey(int ch) = 0;
 
     bool IsSelected(void) { return is_selected; }
-    bool IsSelectable(void) { return command != MENUITEM_COMMAND_NONE; }
+    bool IsSelectable(void) { return command != MENU_COMMAND_NONE; }
     virtual void Select() { is_selected = true; }
     void Unselect() { is_selected = false; }
     bool IsMenu() { return is_menu; }

@@ -8,11 +8,13 @@
 
 #include "mi_entry.h"
 #include "mi_option_bit.h"
+#include "mi_option_value.h"
 #include "mi_line.h"
 #include "vbox.h"
 #include "menu.h"
 #include "text_line.h"
 
+#include "err_box.h"
 #include "dlg_about.h"
 
 #include "desktop.h"
@@ -45,8 +47,6 @@ tx_initmenu(menu, 20, 40, (VideoMaxLines - 19) / 2 - 1, (VideoMaxCols - 40) / 16
         DESCATTR);
 
 tx_additem(menu, NULL, NULL);
-tx_additem(menu, " ^T^imers...", "Configures timeouts and intervals");
-tx_additem(menu, NULL, NULL);
 tx_additem(menu, " ^A^dditional ports...",
        "Allows you to add port numbers higher than 1023 for the service stats");
 tx_additem(menu, " ^D^elete port/range...",
@@ -59,59 +59,85 @@ tx_additem(menu, " ^F^DDI host descriptions...",
 tx_additem(menu, NULL, NULL);
 tx_additem(menu, " E^x^it configuration", "Returns to main menu");
 */
+#define MENU_MAIN_SIZE_Y        15
+#define MENU_MAIN_SIZE_X        31
 
 int Desktop::Run()
 {
     Draw();
 
-    Menu *pmenucfg = new Menu(20, 45, (VideoMaxLines - 19) / 2 - 1, (VideoMaxCols - 40) / 16, BOXATTR,
-                              "C^o^nfigure...", "Set various program options");
-    if(!pmenucfg)
+    ErrorBox *pb = new ErrorBox("Sets the length of time before inactive");
+    if(!pb)
         return shutdown(-10, "Memory error");
-    pmenucfg->AddItem((new MenuOptionBit("^R^everse DNS lookups",
-                "Toggles resolution of IP addresses into host names", OPTION_REVLOOK)));
-    pmenucfg->AddItem(new MenuOptionBit("TCP/UDP ^s^ervice names",
-                "Displays TCP/UDP service names instead of numeric ports", OPTION_SERVNAMES));
-    pmenucfg->AddItem(new MenuOptionBit("Force ^p^romiscuous mode",
-                "Toggles capture of all packets by LAN interfaces", OPTION_PROMISC));
-    pmenucfg->AddItem(new MenuOptionBit("^C^olor",
-                "Turns color on or off (restart IPTraf to effect change)", OPTION_COLOR));
-    pmenucfg->AddItem(new MenuOptionBit("^L^ogging",
-                "Toggles logging of traffic to a data file", OPTION_LOGGING));
-    pmenucfg->AddItem(new MenuOptionBit("Acti^v^ity mode",
-                "Toggles activity indicators between kbits/s and kbytes/s", OPTION_ACTMODE));
-    pmenucfg->AddItem(new MenuOptionBit("Source ^M^AC addrs in traffic monitor",
-                "Toggles display of source MAC addresses in the IP Traffic Monitor", OPTION_MAC));
-    pmenucfg->AddItem(new MenuOptionBit("^S^how v6-in-v4 traffic as IPv6",
-                "Toggled display of IPv6 tunnel in IPv4 as IPv6 traffic", OPTION_V6INV4ASV6));
-    pmenucfg->AddItem(new MenuItemLine());
+    pb->Execute();
+    delete pb;
+    int pos_x;
+    int pos_y;
 
-    int ncols = 31;
-    int nlines = 15;
-    Menu *pmenu = new Menu(nlines, ncols, (VideoMaxLines - nlines) / 2, (VideoMaxCols - ncols) / 2, BOXATTR,
-                           "Main Menu", "");
-    if(!pmenu)
+    pos_y = (VideoMaxLines - MENU_MAIN_SIZE_Y) / 2;
+    pos_x = (VideoMaxCols - MENU_MAIN_SIZE_X) / 2;
+
+    Menu *pmntimers = new Menu(6, 41, pos_y, pos_x, ATTR_MENU_BOX, 2, 3,
+                               "^T^imers...", "Configures timeouts and intervals");
+    if(!pmntimers)
         return shutdown(-10, "Memory error");
-    pmenu->AddItem(new MenuItemEntry("IP traffic ^m^onitor",
+    pmntimers->AddItem(new MenuOptionValue("TCP ^t^imeout...",
+            "Sets the length of time before inactive TCP entries are considered idle", OPTION_TIMEOUT));
+    pmntimers->AddItem(new MenuOptionValue("^L^ogging interval...",
+            "Sets the time between loggings for interface, host, and service stats", OPTION_LOGSPAN));
+    pmntimers->AddItem(new MenuOptionValue("^S^creen update interval...",
+            "Sets the screen update interval in seconds (set to 0 for fastest updates)", OPTION_UPDRATE));
+    pmntimers->AddItem(new MenuOptionValue("TCP closed/idle ^p^ersistence...",
+            "Determines how long closed/idle/reset entries stay onscreen", OPTION_CLOSEDINT));
+
+    Menu *pmncfg = new Menu(20, 41, pos_y, pos_x, ATTR_MENU_BOX, -3, -18,
+                              "C^o^nfigure...", "Set various program options");
+    if(!pmncfg)
+        return shutdown(-10, "Memory error");
+    pmncfg->AddItem((new MenuOptionBit("^R^everse DNS lookups",
+                "Toggles resolution of IP addresses into host names", OPTION_REVLOOK)));
+    pmncfg->AddItem(new MenuOptionBit("TCP/UDP ^s^ervice names",
+                "Displays TCP/UDP service names instead of numeric ports", OPTION_SERVNAMES));
+    pmncfg->AddItem(new MenuOptionBit("Force ^p^romiscuous mode",
+                "Toggles capture of all packets by LAN interfaces", OPTION_PROMISC));
+    pmncfg->AddItem(new MenuOptionBit("^C^olor",
+                "Turns color on or off (restart IPTraf to effect change)", OPTION_COLOR));
+    pmncfg->AddItem(new MenuOptionBit("^L^ogging",
+                "Toggles logging of traffic to a data file", OPTION_LOGGING));
+    pmncfg->AddItem(new MenuOptionBit("Acti^v^ity mode",
+                "Toggles activity indicators between kbits/s and kbytes/s", OPTION_ACTMODE));
+    pmncfg->AddItem(new MenuOptionBit("Source ^M^AC addrs in traffic monitor",
+                "Toggles display of source MAC addresses in the IP Traffic Monitor", OPTION_MAC));
+    pmncfg->AddItem(new MenuOptionBit("^S^how v6-in-v4 traffic as IPv6",
+                "Toggled display of IPv6 tunnel in IPv4 as IPv6 traffic", OPTION_V6INV4ASV6));
+    pmncfg->AddItem(new MenuItemLine());
+    pmncfg->AddItem(pmntimers);
+    pmncfg->AddItem(new MenuItemLine());
+
+    Menu *pMenu = new Menu(MENU_MAIN_SIZE_Y, MENU_MAIN_SIZE_X, pos_y, pos_x, ATTR_MENU_BOX, 0, 0,
+                           "Main Menu", "");
+    if(!pMenu)
+        return shutdown(-10, "Memory error");
+    pMenu->AddItem(new MenuItemEntry("IP traffic ^m^onitor",
                 "Displays current IP traffic information", COMMAND_TRAFMON));
-    pmenu->AddItem(new MenuItemEntry("General interface ^s^tatistics",
+    pMenu->AddItem(new MenuItemEntry("General interface ^s^tatistics",
                 "Displays some statistics for attached interfaces", COMMAND_GENITFSTATS));
-    pmenu->AddItem(new MenuItemEntry("^D^etailed interface statistics",
+    pMenu->AddItem(new MenuItemEntry("^D^etailed interface statistics",
                 "Displays more statistics for a selected interface", COMMAND_DETITFSTATS));
-    pmenu->AddItem(new MenuItemEntry("Statistical ^b^reakdowns...",
+    pMenu->AddItem(new MenuItemEntry("Statistical ^b^reakdowns...",
                 "Facilities for traffic counts by packet size or TCP/UDP port", COMMAND_STATBREAKS));
-    pmenu->AddItem(new MenuItemEntry("^L^AN station monitor",
+    pMenu->AddItem(new MenuItemEntry("^L^AN station monitor",
                 "Displays statistics on detected LAN stations", COMMAND_LANMON));
-    pmenu->AddItem(new MenuItemLine());
-    pmenu->AddItem(new MenuItemEntry("^F^ilters...",
+    pMenu->AddItem(new MenuItemLine());
+    pMenu->AddItem(new MenuItemEntry("^F^ilters...",
                 "Allows you to select traffic display and logging criteria", COMMAND_FILTERS));
-    pmenu->AddItem(new MenuItemLine());
-    pmenu->AddItem(pmenucfg);
-    pmenu->AddItem(new MenuItemLine());
-    pmenu->AddItem(new MenuItemEntry("^A^bout...",
-                "Displays program info", MENUITEM_COMMAND_EMPTY, &RunDlgAbout));
-    pmenu->AddItem(new MenuItemLine());
-    pmenu->AddItem(new MenuItemEntry("E^x^it",
+    pMenu->AddItem(new MenuItemLine());
+    pMenu->AddItem(pmncfg);
+    pMenu->AddItem(new MenuItemLine());
+    pMenu->AddItem(new MenuItemEntry("^A^bout...",
+                "Displays program info", MENU_COMMAND_EMPTY, &RunDlgAbout));
+    pMenu->AddItem(new MenuItemLine());
+    pMenu->AddItem(new MenuItemEntry("E^x^it",
                 "Exits program", COMMAND_EXIT));
 
     //        tx_initmenu(&menu, 15, 35, (VideoMaxLines - 16) / 2, (VideoMaxCols - 35) / 2, BOXATTR,
@@ -120,27 +146,29 @@ int Desktop::Run()
     bool run = true;
     while(run)
     {
-        int cmd = pmenu->Execute();
-        pmenu->Hide();
+        int cmd = pMenu->Execute();
+        pMenu->Hide();
         debug_log("%s: Command %i", __FUNCTION__, cmd);
         switch(cmd)
         {
             case COMMAND_EXIT:
-            case MENUITEM_ABORT:
+            case MENU_ABORT:
                 run = false;
                 break;
-            case MENUITEM_RESIZE:
+            case MENU_RESIZE:
                 VideoResized = false;
                 TestScreenSize();
                 if(pHelpBar)
                     pHelpBar->Resize(1, VideoMaxCols, VideoMaxLines - 2, 0);
-                pmenu->Move((VideoMaxLines - nlines) / 2, (VideoMaxCols - ncols) / 2);
+                pos_y = (VideoMaxLines - MENU_MAIN_SIZE_Y) / 2;
+                pos_x = (VideoMaxCols - MENU_MAIN_SIZE_X) / 2;
+                pMenu->MoveOrigin(pos_y, pos_x);
                 Draw();
                 break;
         }
     }
 
-    delete pmenu;
+    delete pMenu;
     return 0;
 }
 

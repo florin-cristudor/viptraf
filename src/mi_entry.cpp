@@ -83,7 +83,7 @@ int MenuItemEntry::ExecuteHotKey(int ch)
 {
     if(toupper(hot_key) == toupper(ch))
         return Execute();
-    return MENUITEM_COMMAND_EMPTY;
+    return MENU_COMMAND_EMPTY;
 }
 
 void MenuItemEntry::Select()
@@ -104,10 +104,10 @@ int MenuItemEntry::Execute(void)
     if(exec_func)
     {
         (*exec_func)();
-        return MENUITEM_EXECUTE_DONE;
+        return MENU_EXECUTE_DONE;
     }
 
-    return MENUITEM_COMMAND_EMPTY;
+    return MENU_COMMAND_EMPTY;
 }
 
 bool MenuItemEntry::IsMyHotKey(int ch)

@@ -4,14 +4,15 @@
 class ViewBox
 {
 public:
-    ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes);
+    ViewBox(int nlines, int ncols, int begin_y, int begin_x, int attributes, int offset_y, int offset_x);
     ~ViewBox();
 
     int Show(void);
     int Hide(void);
     int Draw(void);
 
-    int Move(int begin_y, int begin_x);
+    int SetWindowOffset(int offset_y, int offset_x);
+    int MoveOrigin(int begin_y, int begin_x);
     int Resize(int nlines, int ncols, int begin_y, int begin_x);
 
     int ReadKeyboard(void);
@@ -22,10 +23,12 @@ protected:
     bool draw_box;
     int size_x;
     int size_y;
+    int origin_x;
+    int origin_y;
+    int ofs_x;
+    int ofs_y;
 
 private:
-    int pos_x;
-    int pos_y;
 
 
     int box_attr;

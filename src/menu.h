@@ -9,13 +9,16 @@ class Menu: public ViewBox, public MenuItemEntry
 {
 public:
     Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
+         int offset_y, int offset_x,
          const char *text, const char *help_text);
     ~Menu();
 
     virtual int Execute(void);
     virtual int ExecuteHotKey(int ch);
 
+    int MoveOrigin(int begin_y, int begin_x);
     int AddItem(MenuItem *pmenuitem);
+
 
     int Draw(void);
 

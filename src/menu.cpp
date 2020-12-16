@@ -14,12 +14,13 @@ extern TextLine *pHelpBar;
 #include "iptraf-ng-compat.h"
 #include "log.h"
 
-Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes, const char *text, const char *help_text):
-        ViewBox(nlines, ncols, begin_y, begin_x, attributes),
-        MenuItemEntry(text, help_text, MENUITEM_COMMAND_EMPTY)
+Menu::Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes, int offset_y, int offset_x, const char *text, const char *help_text):
+        ViewBox(nlines, ncols, begin_y, begin_x, attributes, offset_y, offset_x),
+        MenuItemEntry(text, help_text, MENU_COMMAND_EMPTY)
 {
     mitems = NULL;
     crsi = NULL;
+
     is_menu = true;
 }
 
@@ -39,7 +40,20 @@ int Menu::ExecuteHotKey(int ch)
 {
     if(toupper(hot_key) == toupper(ch))
         return Execute();
-    return MENUITEM_COMMAND_EMPTY;
+    return MENU_COMMAND_EMPTY;
+}
+
+int Menu::MoveOrigin(int begin_y, int begin_x)
+{
+    ViewBox::MoveOrigin(begin_y, begin_x);
+    MenuItem *crs = mitems;
+    while(crs)
+    {
+        if(crs->IsMenu())
+            ((Menu*)crs)->MoveOrigin(begin_y, begin_x);
+        crs = crs->nexti;
+    }
+    return 0;
 }
 
 int Menu::Execute(void)
@@ -47,7 +61,7 @@ int Menu::Execute(void)
     bool redraw = true;
     if(!crsi)
         crsi = mitems;
-    if(!crsi) return MENUITEM_ABORT;
+    if(!crsi) return MENU_ABORT;
 
     while(true)
     {
@@ -58,16 +72,20 @@ int Menu::Execute(void)
             Draw();
             redraw = false;
         }
+        if(VideoResized)
+            return MENU_RESIZE;
         int ch = ViewBox::ReadKeyboard();
         if(VideoResized)
-            return MENUITEM_RESIZE;
+            return MENU_RESIZE;
         debug_log("%s ch %i", __FUNCTION__, ch);
         MenuItem *crsnext = crsi;
-        int exec_code = 0;
+        int rc = 0;
         switch(ch)
         {
             case 0:
                 break;
+            case KEY_RESIZE:
+                return MENU_RESIZE;
             case KEY_UP:
                 crsnext = GetPrevSelectableEntry(crsi);
                 break;
@@ -84,17 +102,17 @@ int Menu::Execute(void)
                 break;
             case KEY_ENTER:
             case 0x0D:
-                exec_code = crsi->Execute();
+                rc = crsi->Execute();
                 if(crsi->IsMenu())
                     ((Menu *)crsi)->Hide();
-                if(exec_code >= 1000 || exec_code == MENUITEM_RESIZE)
-                    return exec_code;
+                if(rc >= 1000)
+                    return rc;
                 redraw = true;
                 break;
             case 'x':
             case 'X':
             case 27: //Esc
-                return MENUITEM_ABORT;
+                return MENU_ABORT;
             default:
                 MenuItem *crs = GetItemHotKey(ch);
                 if(!crs)
@@ -104,14 +122,15 @@ int Menu::Execute(void)
                 crsi = crs;
                 crsnext = crs;
                 Draw();
-                exec_code = crs->ExecuteHotKey(ch);
+                rc = crs->ExecuteHotKey(ch);
                 if(crs->IsMenu())
                     ((Menu *)crs)->Hide();
-                if(exec_code == MENUITEM_RESIZE || exec_code >= 1000)
-                    return exec_code;
-                if(exec_code == MENUITEM_EXECUTE_DONE || exec_code == MENUITEM_ABORT)
+                Draw();
+                if(rc >= 1000)
+                    return rc;
+                if(rc == MENU_EXECUTE_DONE || rc == MENU_ABORT)
                     break;
-                return exec_code;
+                return rc;
         }
         if(crsnext && crsi != crsnext)
         {

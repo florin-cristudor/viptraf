@@ -1,5 +1,5 @@
 /*
- * VIPTraf Menu Option bit Class
+ * VIPTraf Menu Option Value Class
  */
 #include <stdio.h>
 #include <string.h>
@@ -9,15 +9,15 @@
 
 #include "options.h"
 
-#include "mi_option_bit.h"
+#include "mi_option_value.h"
 
-MenuOptionBit::MenuOptionBit(const char *text, const char *help_text, int opt_idx):
+MenuOptionValue::MenuOptionValue(const char *text, const char *help_text, int opt_idx):
         MenuItemEntry(text, help_text, MENU_COMMAND_EMPTY)
 {
     index = opt_idx;
 }
 
-int MenuOptionBit::Draw(int win_descriptor, int y, int x, int size)
+int MenuOptionValue::Draw(int win_descriptor, int y, int x, int size)
 {
     MenuItemEntry::Draw(win_descriptor, y, x, size);
     const char *value = opts.GetValueString(index);
@@ -31,9 +31,7 @@ int MenuOptionBit::Draw(int win_descriptor, int y, int x, int size)
     return pVideo->MvWPrint(win_descriptor, y, x + size - strlen(value), value);
 }
 
-int MenuOptionBit::Execute()
+int MenuOptionValue::Execute()
 {
-    opts.ToggleBit(index);
-
     return MENU_EXECUTE_DONE;
 }

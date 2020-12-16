@@ -6,7 +6,7 @@
 #include "listviewsbox.h"
 
 ListViewsBox::ListViewsBox(int nlines, int ncols, int begin_y, int begin_x, int attributes):
-        ViewBox(nlines, ncols, begin_y, begin_x, attributes)
+        ViewBox(nlines, ncols, begin_y, begin_x, attributes, 0, 0)
 {
     views = NULL;
 }
