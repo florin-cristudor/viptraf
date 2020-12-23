@@ -66,7 +66,7 @@ int Desktop::Run()
 {
     Draw();
 
-    ErrorBox *pb = new ErrorBox("Sets the length of time before inactive");
+    ErrorBox *pb = new ErrorBox("Sets the length of time\n before inactive\nMemory error");
     if(!pb)
         return shutdown(-10, "Memory error");
     pb->Execute();

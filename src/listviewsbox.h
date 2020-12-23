@@ -7,7 +7,7 @@
 class ListViewsBox: public ViewBox
 {
 public:
-    ListViewsBox(int nlines, int ncols, int begin_y, int begin_x, int attributes);
+    ListViewsBox(int nlines, int ncols, int begin_y, int begin_x, int box_attributes);
     ~ListViewsBox();
 
     int AddField(View *pfield);

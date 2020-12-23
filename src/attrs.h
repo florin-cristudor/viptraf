@@ -44,5 +44,8 @@ extern int ATTR_MENU_COMMAND_HIGHLIGHT;
 extern int ATTR_HELP_BAR;
 extern int ATTR_ERR_BOX;
 extern int ATTR_ERR_BOX_REVERSED;
+extern int ATTR_DLG_BOX;
+extern int ATTR_DLG_BOX_REVERSED;
+extern int ATTR_DLG_INPUT;
 
 #endif	/* IPTRAF_NG_ATTRS_H */

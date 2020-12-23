@@ -28,9 +28,6 @@ protected:
     int ofs_x;
     int ofs_y;
 
-private:
-
-
     int box_attr;
 };
 

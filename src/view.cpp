@@ -13,5 +13,7 @@ View::View(int y, int x)
     position_x = x;
     position_y = y;
 
+    is_input = 0;
+
     nextv = NULL;
 }

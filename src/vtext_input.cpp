@@ -1,0 +1,74 @@
+/*
+ * VIPTraf View Text Input Class
+ */
+#include <string>
+#include <ncurses.h>
+
+#include "attrs.h"
+#include "video.h"
+
+#include "vtext_input.h"
+
+ViewTextInput::ViewTextInput(int y, int x, int size, const char *new_text):
+        ViewText(y, x, ATTR_DLG_INPUT, 0, new_text)
+{
+    is_input = true;
+
+    crs = 0;
+    crs_view = 0;
+    size_x = size;
+}
+
+int ViewTextInput::Draw(int win_descriptor, int size)
+{
+    pVideo->WMove(win_descriptor, position_y, position_x);
+    pVideo->WSetAttribute(win_descriptor, text_attr);
+
+    for(unsigned int i=crs_view; i<(unsigned int)size+crs_view && i<text.size(); i++)
+        pVideo->WPrintCh(win_descriptor, text.c_str()[i]);
+
+    return 0;
+}
+
+int ViewTextInput::MoveCursor(int win_descriptor)
+{
+    return pVideo->WMove(win_descriptor, position_y, position_x+crs);
+}
+
+int ViewTextInput::ProcessChar(int ch)
+{
+    switch(ch)
+    {
+        case KEY_BACKSPACE:
+            if(crs >= 1)
+            {
+                text.erase(crs-1, 1);
+                crs--;
+                return VIEW_NEEDS_REDRAW;
+            }
+            break;
+        case 127: //delete
+            if(crs < text.size())
+            {
+                text.erase(crs, 1);
+                return VIEW_NEEDS_REDRAW;
+            }
+            break;
+        case KEY_LEFT:
+            if(crs >= 1)
+            {
+                crs--;
+                return VIEW_NEEDS_REDRAW;
+            }
+            break;
+        case KEY_RIGHT:
+            if(crs < text.size())
+            {
+                crs++;
+                return VIEW_NEEDS_REDRAW;
+            }
+            break;
+    }
+
+    return 0;
+}

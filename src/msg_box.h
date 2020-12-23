@@ -1,26 +1,16 @@
 #ifndef MSG_BOX_H
 #define MSG_BOX_H
 
-#include "listviewsbox.h"
 #include "vtext.h"
+#include "dialog.h"
 
-#define MB_NO_BUTTONS       0x00
-#define MB_BUTTON_OK        0x01
-#define MB_BUTTON_CANCEL    0x02
-
-class MessageBox: public ListViewsBox, public ViewText
+class MessageBox: public Dialog
 {
 public:
-    MessageBox(const char *new_text, int text_a, int button_a, unsigned int opts);
-
-    int Execute(void);
-
-    int Draw(void);
+    MessageBox(const char *new_text, int box_attributes, unsigned int opts);
 
 private:
-    int attr_buttons;
-    int nr_buttons;
-    unsigned int options;
+    int ParseText(const char *new_text);
 };
 
 #endif // MSG_BOX_H

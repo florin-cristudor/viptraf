@@ -7,7 +7,7 @@
 
 TextLine::TextLine(int nlines, int ncols, int begin_y, int begin_x, int attributes, const char *text):
         ViewBox(nlines, ncols, begin_y, begin_x, attributes, 0, 0),
-        ViewText(0, 0, attributes, text)
+        ViewText(0, 0, attributes, 0, text)
 {
     draw_box = false;
 }
@@ -21,5 +21,5 @@ int TextLine::Draw()
 {
     Show();
     ViewBox::Draw();
-    return ViewText::Draw(win);
+    return ViewText::Draw(win, size_x - 2);
 }

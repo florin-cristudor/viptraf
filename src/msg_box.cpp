@@ -9,28 +9,56 @@
 
 #include "msg_box.h"
 
-MessageBox::MessageBox(const char *new_text, int text_a, int button_a, unsigned int opts):
-        ListViewsBox(0, 0, 0, 0, text_a),
-        ViewText(2, 2, text_a, new_text)
+MessageBox::MessageBox(const char *new_text, int box_attributes, unsigned int opts):
+        Dialog(0, 0, 0, 0, opts)
 {
-    attr_buttons = button_a;
-    options = opts;
-
-    nr_buttons = 0;
-    if(opts & MB_BUTTON_CANCEL)
-        nr_buttons++;
-    if(opts & MB_BUTTON_OK)
-        nr_buttons++;
+    box_attr = box_attributes;
 
     size_y = 6;
     size_x = 4;
 
-    if(!new_text)
-        return;
+    ParseText(new_text);
 
-    size_x = strlen(new_text) + 4;
+    origin_x = VideoMaxCols / 2;
+    origin_y = VideoMaxLines / 2;
+    ofs_x = -size_x / 2;
+    ofs_y = -size_y / 2;
+}
+
+int MessageBox::ParseText(const char *new_text)
+{
+    if(!new_text)
+        return -1;
+
+    size_y = 2;
+    size_x = 0;
+    unsigned int start = 0, icrs = 0;
+    for(; icrs<strlen(new_text); icrs++)
+    {
+        if(new_text[icrs] != '\n')
+            continue;
+        //I'm on new line char
+        ViewText *pntext = new ViewText(size_y, 1, box_attr, VIEW_TEXT_CENTER, std::string(&new_text[start], icrs-start));
+        if(size_x < (int)(icrs - start) + 2)
+            size_x = icrs - start + 2;
+        start = icrs + 1;
+        size_y++;
+        AddField(pntext);
+    }
+    if(start != icrs)
+    {
+        ViewText *pntext = new ViewText(size_y, 1, box_attr, VIEW_TEXT_CENTER, std::string(&new_text[start], icrs-start));
+        if(size_x < (int)(icrs-start) + 2)
+            size_x = icrs - start + 2;
+        size_y++;
+        AddField(pntext);
+    }
+    size_y += 3;
+
     if(size_x > VideoMaxCols)
         size_x = VideoMaxCols;
+    if(size_y > VideoMaxLines)
+        size_y = VideoMaxLines;
     switch(nr_buttons)
     {
         case 1:
@@ -40,62 +68,6 @@ MessageBox::MessageBox(const char *new_text, int text_a, int button_a, unsigned 
         case 2:
             if(size_x < 19)
                 size_x = 19;
-    }
-
-    origin_x = VideoMaxCols / 2;
-    origin_y = VideoMaxLines / 2;
-    ofs_x = -size_x / 2;
-    ofs_y = -size_y / 2;
-}
-
-int MessageBox::Execute(void)
-{
-    Draw();
-    while(true)
-    {
-        int ch = ReadKeyboard();
-        switch(ch)
-        {
-            case KEY_RESIZE:
-                return ch;
-            case KEY_ENTER:
-            case 0x0D:
-                return KEY_ENTER;
-            case 'x':
-            case 'X':
-            case 27:
-                return 0;
-
-        }
-    }
-}
-
-int MessageBox::Draw(void)
-{
-    Show();
-    ListViewsBox::Draw();
-    ViewText::position_x = (size_x - text.size())/2;
-    ViewText::Draw(win);
-    int space = (size_x - nr_buttons * 8) / (nr_buttons + 1);
-    int opts = options;
-    for(int i=space; i<size_x; i+=space)
-    {
-        pVideo->WSetAttribute(win, attr_buttons);
-        pVideo->WMove(win, 4, i+1);
-        if(opts & MB_BUTTON_OK)
-        {
-            pVideo->WPrint(win, "   OK   ");
-            opts &= ~MB_BUTTON_OK;
-            i += 8;
-            continue;
-        }
-        if(opts & MB_BUTTON_CANCEL)
-        {
-            pVideo->WPrint(win, " Cancel ");
-            opts &= ~MB_BUTTON_CANCEL;
-            i += 8;
-            continue;
-        }
     }
 
     return 0;

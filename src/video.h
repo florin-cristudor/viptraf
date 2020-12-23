@@ -72,4 +72,8 @@ extern int VideoMaxLines;
 extern int VideoMaxCols;
 extern bool VideoResized;
 
+#ifndef CTRL
+#define CTRL(c) ((c) & 037)
+#endif
+
 #endif // VIDEO_H

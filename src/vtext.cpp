@@ -10,10 +10,11 @@
 
 #define BUFFER_SIZE 2048
 
-ViewText::ViewText(int y, int x, int attributes, const char *format, ...):
+ViewText::ViewText(int y, int x, int new_attr, unsigned int opts, const char *format, ...):
         View(y, x)
 {
-    text_attr = attributes;
+    text_attr = new_attr;
+    options = opts;
 
     char buffer[BUFFER_SIZE];
 
@@ -25,10 +26,25 @@ ViewText::ViewText(int y, int x, int attributes, const char *format, ...):
     text = std::string(buffer);
 }
 
-int ViewText::Draw(int win_descriptor)
+ViewText::ViewText(int y, int x, int new_attr, unsigned int opts, std::string new_text):
+        View(y, x)
+{
+    text_attr = new_attr;
+    options = opts;
+
+    text = new_text;
+}
+
+int ViewText::Draw(int win_descriptor, int size)
 {
     pVideo->WSetAttribute(win_descriptor, text_attr);
-    return pVideo->MvWPrint(win_descriptor, position_y, position_x, text.c_str());
+    int x = position_x;
+    if(options & VIEW_TEXT_CENTER)
+        x = (size - text.size())/2 + 1;
+    pVideo->WMove(win_descriptor, position_y, x);
+    for(unsigned int i=0; i<text.size() && x<size+1; i++, x++)
+        pVideo->WPrintCh(win_descriptor, text.c_str()[i]);
+    return 0;
 }
 
 int ViewText::SetText(const char *format, ...)
@@ -47,3 +63,4 @@ int ViewText::SetText(const char *format, ...)
 
     return 0;
 }
+

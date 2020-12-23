@@ -543,6 +543,9 @@ int VideoNcurses::InitColors(bool use_colors)
 
         ATTR_ERR_BOX = COLOR_PAIR(5) | A_BOLD;
         ATTR_ERR_BOX_REVERSED = COLOR_PAIR(9) | A_BOLD;
+        ATTR_DLG_BOX = COLOR_PAIR(2);
+        ATTR_DLG_BOX_REVERSED = COLOR_PAIR(11);
+        ATTR_DLG_INPUT = COLOR_PAIR(1);
     }
     else
     {
@@ -586,6 +589,9 @@ int VideoNcurses::InitColors(bool use_colors)
 
         ATTR_ERR_BOX = A_BOLD;
         ATTR_ERR_BOX_REVERSED = A_REVERSE;
+        ATTR_DLG_BOX = A_REVERSE;
+        ATTR_DLG_BOX_REVERSED = A_BOLD;
+        ATTR_DLG_INPUT = A_BOLD;
     }
 
     return 0;

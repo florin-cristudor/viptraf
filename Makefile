@@ -121,6 +121,7 @@ viptraf-h += " \
         src/video_ncurses.h \
         src/view.h \
         src/vtext.h \
+        src/vtext_input.h \
         src/mitem.h \
         src/mi_line.h \
         src/mi_entry.h \
@@ -198,6 +199,7 @@ viptraf-opp += \
     src/video_ncurses.opp \
     src/view.opp \
     src/vtext.opp \
+    src/vtext_input.opp \
     src/mitem.opp \
     src/mi_line.opp \
     src/mi_entry.opp \

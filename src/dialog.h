@@ -4,21 +4,28 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include "vbox.h"
+#include "listviewsbox.h"
 
-class Dialog
+#define DLG_NO_BUTTONS      0x00
+#define DLG_BUTTON_OK       0x01
+#define DLG_BUTTON_CANCEL   0x02
+
+#define DLG_ESC             27
+
+class Dialog: public ListViewsBox
 {
 public:
-    Dialog();
-    virtual ~Dialog() {}
+    Dialog(int nlines, int ncols, int begin_y, int begin_x, unsigned int opts);
 
-    virtual int Run() = 0;
+    int Execute(void);
 
-    int ReadKeyboard(void);
-    int Show(void);
+    int Draw(void);
 
 protected:
-    ViewBox *tbox;
+    int nr_buttons;
+    unsigned int options;
+
+    int button_attr;
 };
 
 #endif // DIALOG_H

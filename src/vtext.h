@@ -5,20 +5,25 @@
 
 #include "view.h"
 
+#define VIEW_TEXT_CENTER    0x01
+
 class ViewText : public View
 {
 public:
-    ViewText(int y, int x, int attributes, const char *format, ...);
+    ViewText(int y, int x, int new_attr, unsigned int opts, const char *format, ...);
+    ViewText(int y, int x, int new_attr, unsigned int opts, std::string new_text);
 
-    virtual int Draw(int win_descriptor);
+    virtual int Draw(int win_descriptor, int size);
 
     int SetText(const char *format, ...);
+    int GetSize(void) { return text.size(); }
 
 protected:
     std::string text;
+    int text_attr;
 
 private:
-    int text_attr;
+    unsigned int options;
 };
 
 #endif // VTEXT_H

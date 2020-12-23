@@ -5,8 +5,8 @@
 
 #include "listviewsbox.h"
 
-ListViewsBox::ListViewsBox(int nlines, int ncols, int begin_y, int begin_x, int attributes):
-        ViewBox(nlines, ncols, begin_y, begin_x, attributes, 0, 0)
+ListViewsBox::ListViewsBox(int nlines, int ncols, int begin_y, int begin_x, int box_attributes):
+        ViewBox(nlines, ncols, begin_y, begin_x, box_attributes, 0, 0)
 {
     views = NULL;
 }
@@ -46,7 +46,7 @@ int ListViewsBox::Draw(void)
     View *crs = views;
     while(crs)
     {
-        crs->Draw(win);
+        crs->Draw(win, size_x - 2);
         crs = crs->nextv;
     }
     return 0;

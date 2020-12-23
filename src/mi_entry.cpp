@@ -14,7 +14,7 @@ extern TextLine *pHelpBar;
 
 MenuItemEntry::MenuItemEntry(const char *text, const char *help_text, int use_command, int (*call_back_func)(void)):
         MenuItem(use_command),
-        ViewText(0, 0, ATTR_MENU_NORMAL, text)
+        ViewText(0, 0, ATTR_MENU_NORMAL, 0, text)
 {
     hot_key = 0;
     exec_func = call_back_func;
