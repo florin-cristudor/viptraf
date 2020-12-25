@@ -4,6 +4,10 @@
 #define VIDEO_MODE_TERM 1
 #define VIDEO_MODE_X    2
 
+#define CURSOR_HIDDEN       0
+#define CURSOR_VISIBLE      1
+#define CURSOR_MORE_VISIBLE 2
+
 class Video
 {
 public:
@@ -25,6 +29,7 @@ public:
     virtual int WInputTimeout(int descriptor, int value) = 0;
     virtual int GetCh(void) = 0;
     virtual int WGetCh(int descriptor) = 0;
+    virtual int SetCursor(int value) = 0;
 
     virtual int SetAttribute(unsigned long attr) = 0;
     virtual int WSetAttribute(int descriptor, unsigned long attr) = 0;

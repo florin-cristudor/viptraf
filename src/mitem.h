@@ -6,6 +6,7 @@
 #define MENU_EXECUTE_DONE       2
 #define MENU_ABORT              3
 #define MENU_RESIZE             4
+#define MENU_ERROR              5
 
 //define executable commands with IDs higher than 1000
 

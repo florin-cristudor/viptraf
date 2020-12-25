@@ -1,8 +1,10 @@
 /*
  * VIPTraf View Text Input Class
  */
+#include <string.h>
 #include <string>
 #include <ncurses.h>
+#include <ctype.h>
 
 #include "attrs.h"
 #include "video.h"
@@ -14,15 +16,17 @@ ViewTextInput::ViewTextInput(int y, int x, int size, const char *new_text):
 {
     is_input = true;
 
-    crs = 0;
+    crs = strlen(new_text);
     crs_view = 0;
     size_x = size;
 }
 
 int ViewTextInput::Draw(int win_descriptor, int size)
 {
-    pVideo->WMove(win_descriptor, position_y, position_x);
     pVideo->WSetAttribute(win_descriptor, text_attr);
+    pVideo->MvWHLine(win_descriptor, position_y, position_x, ' ', size_x);
+
+    pVideo->WMove(win_descriptor, position_y, position_x);
 
     for(unsigned int i=crs_view; i<(unsigned int)size+crs_view && i<text.size(); i++)
         pVideo->WPrintCh(win_descriptor, text.c_str()[i]);
@@ -68,6 +72,13 @@ int ViewTextInput::ProcessChar(int ch)
                 return VIEW_NEEDS_REDRAW;
             }
             break;
+        default:
+            if(isalnum(ch))
+            {
+                text.insert(crs, 1, ch);
+                crs++;
+                return VIEW_NEEDS_REDRAW;
+            }
     }
 
     return 0;

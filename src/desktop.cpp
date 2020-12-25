@@ -14,7 +14,6 @@
 #include "menu.h"
 #include "text_line.h"
 
-#include "err_box.h"
 #include "dlg_about.h"
 
 #include "desktop.h"
@@ -66,11 +65,6 @@ int Desktop::Run()
 {
     Draw();
 
-    ErrorBox *pb = new ErrorBox("Sets the length of time\n before inactive\nMemory error");
-    if(!pb)
-        return shutdown(-10, "Memory error");
-    pb->Execute();
-    delete pb;
     int pos_x;
     int pos_y;
 

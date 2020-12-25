@@ -13,7 +13,7 @@ public:
     int AddField(View *pfield);
     int Draw(void);
 
-private:
+protected:
     View *views;
 };
 

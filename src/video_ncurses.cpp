@@ -182,6 +182,14 @@ int VideoNcurses::WGetCh(int descriptor)
     return ch;
 }
 
+int VideoNcurses::SetCursor(int value)
+{
+    if(!enabled)
+        return 0;
+
+    return curs_set(value);
+}
+
 int VideoNcurses::SetAttribute(unsigned long attr)
 {
     if(!enabled)

@@ -13,6 +13,7 @@ public:
 
 private:
     int index;
+
 };
 
 #endif // MI_OPTION_VALUE_H

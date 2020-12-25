@@ -35,6 +35,7 @@ public:
     int WInputTimeout(int descriptor, int value);
     int GetCh(void);
     int WGetCh(int descriptor);
+    int SetCursor(int value);
 
     int SetAttribute(unsigned long attr);
     int WSetAttribute(int descriptor, unsigned long attr);

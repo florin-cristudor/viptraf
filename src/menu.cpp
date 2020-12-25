@@ -109,6 +109,7 @@ int Menu::Execute(void)
                     return rc;
                 redraw = true;
                 break;
+            case CTRL('x'):
             case 'x':
             case 'X':
             case 27: //Esc

@@ -12,12 +12,11 @@ public:
     virtual int Draw(int win_descriptor, int size) = 0;
 
     View *nextv;
+    bool is_input;
 
 protected:
     int position_x;
     int position_y;
-
-    bool is_input;
 };
 
 #endif // VIEW_H

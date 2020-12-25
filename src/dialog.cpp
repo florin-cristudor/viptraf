@@ -7,6 +7,7 @@
 #include "attrs.h"
 #include "video.h"
 
+#include "vtext_input.h"
 #include "dialog.h"
 
 Dialog::Dialog(int nlines, int ncols, int begin_y, int begin_x, unsigned int opts):
@@ -20,11 +21,20 @@ Dialog::Dialog(int nlines, int ncols, int begin_y, int begin_x, unsigned int opt
         nr_buttons++;
     if(opts & DLG_BUTTON_OK)
         nr_buttons++;
+
+    focused = NULL;
+}
+
+Dialog::~Dialog()
+{
+    HideCursor();
 }
 
 int Dialog::Execute(void)
 {
+    focused = GetFirstFocused();
     Draw();
+
     while(true)
     {
         int ch = ReadKeyboard();
@@ -34,11 +44,14 @@ int Dialog::Execute(void)
                 return ch;
             case KEY_ENTER:
             case 0x0D:
-                return KEY_ENTER;
+                return DLG_OK_PRESSED;
             case CTRL('x'):
             case 27:
-                return DLG_ESC;
-
+                return DLG_ESC_PRESSED;
+            default:
+                if(focused && (((ViewTextInput*)focused)->ProcessChar(ch) == VIEW_NEEDS_REDRAW))
+                    Draw();
+                break;
         }
     }
 }
@@ -68,6 +81,33 @@ int Dialog::Draw(void)
             continue;
         }
     }
+    if(focused)
+    {
+        ShowCursor();
+        ((ViewTextInput*)focused)->MoveCursor(win);
+    }
 
     return 0;
+}
+
+void Dialog::ShowCursor()
+{
+    pVideo->SetCursor(CURSOR_MORE_VISIBLE);
+}
+
+void Dialog::HideCursor()
+{
+    pVideo->SetCursor(CURSOR_HIDDEN);
+}
+
+View *Dialog::GetFirstFocused()
+{
+    View *crsv = views;
+    while(crsv)
+    {
+        if(crsv->is_input)
+            break;
+        crsv = crsv->nextv;
+    }
+    return crsv;
 }

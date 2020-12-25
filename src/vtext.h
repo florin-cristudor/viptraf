@@ -17,6 +17,7 @@ public:
 
     int SetText(const char *format, ...);
     int GetSize(void) { return text.size(); }
+    const char *GetText(void) { return text.c_str(); }
 
 protected:
     std::string text;
