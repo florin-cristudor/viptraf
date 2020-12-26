@@ -22,7 +22,7 @@ tcptable.c - table manipulation routines for the IP monitor
 #include "hostmon.h"
 #include "sockaddr.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #define MSGSTRING_MAX	320
 

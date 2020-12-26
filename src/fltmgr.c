@@ -24,7 +24,7 @@ fltmgr.c - filter list management routines
 #include "error.h"
 #include "log.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 void makestdfiltermenu(struct MENU *menu)
 {

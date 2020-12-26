@@ -28,7 +28,7 @@ detstats.c	- the interface statistics module
 
 #include "capt.h"
 
-#include "video.h"
+#include "interface/video.h"
 #include "traf_rate.h"
 
 struct ifcounts {

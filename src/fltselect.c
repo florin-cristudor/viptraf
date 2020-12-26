@@ -24,7 +24,7 @@ fltselect.c - a menu-based module that allows selection of
 #include "deskman.h"
 #include "attrs.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 struct filterstate ofilter;
 

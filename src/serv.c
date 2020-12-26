@@ -34,7 +34,7 @@ serv.c  - TCP/UDP port statistics module
 #include "capt.h"
 #include "timer.h"
 
-#include "video.h"
+#include "interface/video.h"
 #include "traf_rate.h"
 
 #define SCROLLUP 0

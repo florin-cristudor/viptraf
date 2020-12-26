@@ -32,8 +32,8 @@ An IP Network Statistics Utility
 
 #include "parse-options.h"
 
-#include "video.h"
-#include "video_ncurses.h"
+#include "interface/video.h"
+#include "interface/video_ncurses.h"
 
 #include "options.h"
 

@@ -25,7 +25,7 @@ fltedit.c	- the filter editing Facility
 #include "cidr.h"
 #include "log.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 void init_filter_table(struct filterlist *fl)
 {

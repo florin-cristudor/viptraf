@@ -28,7 +28,7 @@ othptab.c - non-TCP protocol display module
 #include "hostmon.h"
 #include "sockaddr.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #define MSGSTRING_MAX	240
 #define SHORTSTRING_MAX	40

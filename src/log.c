@@ -14,7 +14,7 @@ log.c - the iptraf logging facility
 #include "dirs.h"
 #include "log.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #include "tui/input.h"
 #include "tui/msgboxes.h"

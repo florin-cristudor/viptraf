@@ -29,7 +29,7 @@ Discovers LAN hosts and displays packet statistics for them
 
 #include "capt.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #define SCROLLUP 0
 #define SCROLLDOWN 1

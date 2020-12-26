@@ -19,8 +19,8 @@ deskman.c - desktop management routines
 #include "log.h"
 
 #include "attrs.h"
-#include "video.h"
-#include "dlg_about.h"
+#include "interface/video.h"
+#include "interface/dlg_about.h"
 
 //#include "text_box.h"
 

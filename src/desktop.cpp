@@ -2,19 +2,19 @@
  * VIPTraf Desktop Class
  */
 #include "iptraf.h"
-#include "video.h"
+#include "interface/video.h"
 #include "attrs.h"
 #include "options.h"
 
-#include "mi_entry.h"
-#include "mi_option_bit.h"
-#include "mi_option_value.h"
-#include "mi_line.h"
-#include "vbox.h"
-#include "menu.h"
-#include "text_line.h"
+#include "interface/mi_entry.h"
+#include "interface/mi_option_bit.h"
+#include "interface/mi_option_value.h"
+#include "interface/mi_line.h"
+#include "interface/vbox.h"
+#include "interface/menu.h"
+#include "interface/text_line.h"
 
-#include "dlg_about.h"
+#include "interface/dlg_about.h"
 
 #include "desktop.h"
 

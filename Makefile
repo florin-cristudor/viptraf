@@ -117,24 +117,24 @@ viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
         src/options.h \
         src/traf_log.h \
-        src/video.h \
-        src/video_ncurses.h \
-        src/view.h \
-        src/vtext.h \
-        src/vtext_input.h \
-        src/mitem.h \
-        src/mi_line.h \
-        src/mi_entry.h \
-        src/mi_option_bit.h \
-        src/mi_option_value.h \
-        src/menu.h \
-        src/vbox.h \
-        src/listviewsbox.h \
-        src/msg_box.h \
-        src/err_box.h \
-        src/text_line.h \
-        src/dialog.h \
-        src/dlg_about.h \
+        src/interface/video.h \
+        src/interface/video_ncurses.h \
+        src/interface/view.h \
+        src/interface/vtext.h \
+        src/interface/vtext_input.h \
+        src/interface/mitem.h \
+        src/interface/mi_line.h \
+        src/interface/mi_entry.h \
+        src/interface/mi_option_bit.h \
+        src/interface/mi_option_value.h \
+        src/interface/menu.h \
+        src/interface/vbox.h \
+        src/interface/listviewsbox.h \
+        src/interface/msg_box.h \
+        src/interface/err_box.h \
+        src/interface/text_line.h \
+        src/interface/dialog.h \
+        src/interface/dlg_about.h \
         src/addr.h \
         src/desktop.h \
         src/traf_rate.h \
@@ -195,24 +195,24 @@ viptraf-o += src/addr.o
 viptraf-opp += \
     src/options.opp \
     src/traf_log.opp \
-    src/video.opp \
-    src/video_ncurses.opp \
-    src/view.opp \
-    src/vtext.opp \
-    src/vtext_input.opp \
-    src/mitem.opp \
-    src/mi_line.opp \
-    src/mi_entry.opp \
-    src/mi_option_bit.opp \
-    src/mi_option_value.opp \
-    src/menu.opp \
-    src/vbox.opp \
-    src/listviewsbox.opp \
-    src/msg_box.opp \
-    src/err_box.opp \
-    src/text_line.opp \
-    src/dialog.opp \
-    src/dlg_about.opp \
+    src/interface/video.opp \
+    src/interface/video_ncurses.opp \
+    src/interface/view.opp \
+    src/interface/vtext.opp \
+    src/interface/vtext_input.opp \
+    src/interface/mitem.opp \
+    src/interface/mi_line.opp \
+    src/interface/mi_entry.opp \
+    src/interface/mi_option_bit.opp \
+    src/interface/mi_option_value.opp \
+    src/interface/menu.opp \
+    src/interface/vbox.opp \
+    src/interface/listviewsbox.opp \
+    src/interface/msg_box.opp \
+    src/interface/err_box.opp \
+    src/interface/text_line.opp \
+    src/interface/dialog.opp \
+    src/interface/dlg_about.opp \
     src/desktop.opp \
     src/traf_rate.opp \
     src/ethernet.opp \

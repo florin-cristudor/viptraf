@@ -21,7 +21,7 @@ options.c - implements the configuration section of the utility
 #include "landesc.h"
 #include "dirs.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #define ALLOW_ZERO 1
 #define DONT_ALLOW_ZERO 0

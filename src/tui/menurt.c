@@ -13,7 +13,7 @@ menurt.c - ncurses-based menu definition module
 #include "winops.h"
 #include "labels.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 /* initialize menu system */
 

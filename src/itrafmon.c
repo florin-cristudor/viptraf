@@ -32,7 +32,7 @@ itrafmon.c - the IP traffic monitor module
 #include "sockaddr.h"
 #include "capt.h"
 
-#include "video.h"
+#include "interface/video.h"
 #include "tcp_con.h"
 
 #define SCROLLUP 0

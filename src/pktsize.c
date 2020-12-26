@@ -26,7 +26,7 @@ pktsize.c	- the packet size breakdown facility
 #include "capt.h"
 #include "timer.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 #define SIZES 20
 

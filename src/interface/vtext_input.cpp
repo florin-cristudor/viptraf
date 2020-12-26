@@ -73,7 +73,7 @@ int ViewTextInput::ProcessChar(int ch)
             }
             break;
         default:
-            if(isalnum(ch))
+            if(isalnum(ch) || ch == '.' || ch == ':')
             {
                 text.insert(crs, 1, ch);
                 crs++;

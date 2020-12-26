@@ -31,7 +31,7 @@ ifstats.c	- the interface statistics module
 #include "capt.h"
 #include "counters.h"
 
-#include "video.h"
+#include "interface/video.h"
 #include "traf_rate.h"
 
 #define SCROLLUP 0

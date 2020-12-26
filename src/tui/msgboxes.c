@@ -9,7 +9,7 @@
 
 #include "winops.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 int ERR_BORDER_ATTR;
 int ERR_TEXT_ATTR;

@@ -21,7 +21,7 @@ landesc.c	- LAN host description management module
 #include "attrs.h"
 #include "dirs.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 static int check_mac_addr(const char *mac)
 {

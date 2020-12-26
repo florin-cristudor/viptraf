@@ -9,7 +9,7 @@
 #include "iptraf-ng-compat.h"
 
 #include "winops.h"
-#include "video.h"
+#include "interface/video.h"
 
 void tx_printkeyhelp(const char *keytext, const char *desc, WINDOW * win, int highattr,
 		     int textattr)

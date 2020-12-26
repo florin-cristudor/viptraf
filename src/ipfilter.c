@@ -27,7 +27,7 @@ ipfilter.c - user interface and filter function for all IP packets
 #include "cidr.h"
 #include "log.h"
 
-#include "video.h"
+#include "interface/video.h"
 
 static in_port_t parse_port(char *buf)
 {
