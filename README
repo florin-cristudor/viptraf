@@ -40,27 +40,27 @@ Important changes are detailed in the CHANGES file, please take some
 time to read it.  There are some changes in the log file names, and
 the policies on multiple instances have been somewhat relaxed.
 
-DISTRIBUTION NOTICE
+DISTRIBUTION NOTICE ABOUT IPTRAF
 -------------------
 
-This is the general release of VIPTraf.  VIPTraf has been incorporated into
+This is the general release of IPTraf.  IPTraf has been incorporated into
 the Fedora, RHEL-7.0, Centos-7.0, Ubuntu, Debian GNU/Linux, Turbolinux and S.u.S.E.
 distributions, as well as the Trinux security toolkit distribution.
 
-Linux distributions may have tailored the VIPTraf package to suit their
+Linux distributions may have tailored the IPTraf package to suit their
 purposes.  Send direct questions, comments or inquiries about a
 distribution-specific package to its maintainer.
 
 SYSTEM REQUIREMENTS
 -------------------
 
-VIPTraf 1.1.x and later  requires at least Linux kernel 2.2.  It uses the new
+IPTraf 1.1.x and later  requires at least Linux kernel 2.2.  It uses the new
 PF_PACKET socket family as its capture mechanism.  This feature is new to
 the 2.2 kernel.  Make sure you have the Packet Socket driver compiled in or
-installed as a module, or VIPTraf will fail (and so will others like it:
+installed as a module, or IPTraf will fail (and so will others like it:
 tcpdump, netwatch, etc).
 
-VIPTraf also requires glibc 2.1 or later.
+IPTraf also requires glibc 2.1 or later.
 
 COPYING AND DISTRIBUTION
 ------------------------
@@ -77,5 +77,5 @@ FOR FURTHER INFORMATION
 
 Full information is in the manual in the Documentation directory.  See
 also the CHANGES file for a record of fixes and new features.  Updates and
-announcements are in the VIPTraf Web page indicated above.  Other README
+announcements are in the IPTraf Web page indicated above.  Other README
 files contain some other bits of information.
