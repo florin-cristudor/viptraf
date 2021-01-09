@@ -140,7 +140,9 @@ viptraf-h += " \
         src/traf_rate.h \
         src/ethernet.h \
         src/tcp_con.h \
+        src/interfaces.h \
         src/app_host_monitor.h \
+        src/mon_packetsize.h \
     "
 
 viptraf-o += src/tui/input.o
@@ -216,8 +218,11 @@ viptraf-opp += \
     src/desktop.opp \
     src/traf_rate.opp \
     src/ethernet.opp \
+    src/interfaces.opp \
     src/tcp_con.opp \
-    src/app_host_monitor.opp
+    src/app_host_monitor.opp \
+    src/mon_packetsize.opp
+
 
 ifndef sysconfdir
 ifeq ($(prefix),/usr)
