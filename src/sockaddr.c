@@ -4,13 +4,15 @@
 #include "iptraf-ng-compat.h"
 
 #include "log.h"
-
+//end odl inc
+#include "close.h"
+#include "viptraf.h"
 
 void sockaddr_make_ipv4(struct sockaddr_storage *sockaddr,
 			u_int32_t addr)
 {
 	if (!sockaddr)
-		die("%s(): sockaddr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "sockaddr == NULL");
 
 	memset(sockaddr, 0, sizeof(*sockaddr));
 	struct sockaddr_in *sockaddr_in = (struct sockaddr_in *)sockaddr;
@@ -23,9 +25,9 @@ void sockaddr_make_ipv6(struct sockaddr_storage *sockaddr,
 			struct in6_addr *addr)
 {
 	if (!sockaddr)
-		die("%s(): sockaddr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "sockaddr == NULL");
 	if (!addr)
-		die("%s(): addr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "addr == NULL");
 
 	memset(sockaddr, 0, sizeof(*sockaddr));
 	struct sockaddr_in6 *sockaddr_in6 = (struct sockaddr_in6 *)sockaddr;
@@ -39,7 +41,7 @@ void sockaddr_make_ipv6(struct sockaddr_storage *sockaddr,
 in_port_t sockaddr_get_port(struct sockaddr_storage *sockaddr)
 {
 	if (!sockaddr)
-		die("%s(): sockaddr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "sockaddr == NULL");
 
 	switch (sockaddr->ss_family) {
 	case AF_INET:
@@ -47,14 +49,15 @@ in_port_t sockaddr_get_port(struct sockaddr_storage *sockaddr)
 	case AF_INET6:
 		return ((struct sockaddr_in6 *)sockaddr)->sin6_port;
 	default:
-		die("%s(): Unknown address family", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Unknown address family");
 	}
+    return 0;
 }
 
 void sockaddr_set_port(struct sockaddr_storage *sockaddr, in_port_t port)
 {
 	if (!sockaddr)
-		die("%s(): sockaddr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "sockaddr == NULL");
 
 	switch (sockaddr->ss_family) {
 	case AF_INET:
@@ -64,7 +67,7 @@ void sockaddr_set_port(struct sockaddr_storage *sockaddr, in_port_t port)
 		((struct sockaddr_in6 *)sockaddr)->sin6_port = port;
 		break;
 	default:
-		die("%s(): Unknown address family", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Unknown address family");
 	}
 }
 
@@ -73,9 +76,9 @@ static bool _sockaddr_is_equal(struct sockaddr_storage const *addr1,
            bool check_address_only)
 {
     if (!addr1)
-        die("%s(): addr1 == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "addr1 == NULL");
     if (!addr2)
-        die("%s(): addr2 == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "addr2 == NULL");
 
     if (addr1->ss_family != addr2->ss_family)
         return false;
@@ -115,8 +118,9 @@ static bool _sockaddr_is_equal(struct sockaddr_storage const *addr1,
             return true;
         }
         default:
-            die("%s(): Unknown address family", __FUNCTION__);
+            exit_program(ERROR_GENERAL, "Unknown address family");
     }
+    return false;
 }
 
 bool sockaddr_is_equal(struct sockaddr_storage const *addr1,
@@ -144,7 +148,7 @@ bool sockaddr_addr_is_equal(struct sockaddr_storage const *addr1,
 void sockaddr_ntop(const struct sockaddr_storage *addr, char *buf, size_t buflen)
 {
 	if(!addr)
-		die("%s(): addr == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "addr == NULL");
 
 	const char *ret;
 	size_t minlen;
@@ -160,14 +164,17 @@ void sockaddr_ntop(const struct sockaddr_storage *addr, char *buf, size_t buflen
 		ret = inet_ntop(AF_INET6, &((struct sockaddr_in6 *)addr)->sin6_addr, buf, buflen - 1);
 		break;
 	default:
-		die("%s(): Unknown address family", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Unknown address family");
+        return;
 	}
 	if (ret == NULL) {
 		switch (errno) {
 		case ENOSPC:
-			die("%s(): buffer too small (must be at least %zu bytes)", __FUNCTION__, minlen);
+            exit_program(ERROR_GENERAL, "buffer too small (must be at least %zu bytes)", minlen);
+            break;
 		case EAFNOSUPPORT:
-			die("%s(): Unknown address family", __FUNCTION__);
+            exit_program(ERROR_GENERAL, "Unknown address family");
+            break;
 		}
 	}
 }
@@ -191,9 +198,9 @@ void sockaddr_gethostbyaddr(const struct sockaddr_storage *addr,
 void sockaddr_copy(struct sockaddr_storage *dest, struct sockaddr_storage *src)
 {
 	if (!src)
-		die("%s(): src == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "src == NULL");
 	if (!dest)
-		die("%s(): dest == NULL", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "dest == NULL");
 
 	memcpy(dest, src, sizeof(struct sockaddr_storage));
 }

@@ -5,6 +5,9 @@
 
 #include "packet.h"
 #include "capt.h"
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 
 struct capt_data_mmap_v3 {
 	void				*mmap;
@@ -111,7 +114,7 @@ static unsigned long capt_get_dropped_mmap_v3(struct capt *capt)
 	memset(&stats, 0, len);
 	int err = getsockopt(capt->fd, SOL_PACKET, PACKET_STATISTICS, &stats, &len);
 	if (err < 0)
-		die_errno("%s(): getsockopt(PACKET_STATISTICS)", __func__);
+        exit_program(ERROR_ERRNO, "getsockopt(PACKET_STATISTICS)");
 
 	capt->dropped += stats.tp_drops;
 

@@ -115,6 +115,8 @@ viptraf-h += src/capt-recvmmsg.h
 viptraf-h += src/capt-mmap-v2.h
 viptraf-h += src/capt-mmap-v3.h
 viptraf-h += " \
+        src/viptraf.h \
+        src/close.h \
         src/options.h \
         src/traf_log.h \
         src/interface/video.h \
@@ -168,7 +170,6 @@ viptraf-o += src/landesc.o
 viptraf-o += src/options_old.o
 viptraf-o += src/promisc.o
 viptraf-o += src/ifaces.o
-viptraf-o += src/usage.o
 viptraf-o += src/iptraf.o
 viptraf-o += src/itrafmon.o
 viptraf-o += src/wrapper.o
@@ -195,6 +196,7 @@ viptraf-o += src/rvnamed.o
 viptraf-o += src/addr.o
 
 viptraf-opp += \
+    src/close.opp \
     src/options.opp \
     src/traf_log.opp \
     src/interface/video.opp \

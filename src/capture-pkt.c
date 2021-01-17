@@ -8,6 +8,9 @@
 #include "ifaces.h"
 #include "packet.h"
 #include "capt.h"
+//end old  inc
+#include "close.h"
+#include "viptraf.h"
 
 static const char *const capture_usage[] = {
 	VIPTRAF_NAME " capture [options] <device>",
@@ -36,13 +39,13 @@ int cmd_capture(int argc, char **argv)
 
 	struct capt capt;
 	if (capt_init(&capt, dev) == -1)
-		die_errno("Unable to initialize packet capture interface");
+        exit_program(ERROR_ERRNO, "Unable to initialize packet capture interface");
 
 	FILE *fp = stdout;
 	if (ofilename) {
 		fp = fopen(ofilename, "wb");
 		if (!fp)
-			die_errno("Unable to open file");
+            exit_program(ERROR_ERRNO, "Unable to open %s", ofilename);
 	}
 
 	struct pkt_hdr pkt;
@@ -51,7 +54,7 @@ int cmd_capture(int argc, char **argv)
 	int captured = 0;
 	do {
 		if (capt_get_packet(&capt, &pkt, NULL, NULL) == -1)
-			die_errno("Failed to get packet");
+            exit_program(ERROR_ERRNO, "Failed to get packet");
 
 		if (!pkt.pkt_len)
 			continue;

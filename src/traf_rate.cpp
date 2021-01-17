@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#include "close.h"
+#include "viptraf.h"
 #include "options_old.h"
 #include "log.h"
 
@@ -54,7 +56,7 @@ void Rate::Alloc(unsigned int new_size)
 
     rates = (unsigned long long *) xmalloc(new_size * sizeof(rates[0]));
     if(!rates)
-        die("%s Alloc error", __FUNCTION__);
+        exit_program(ERROR_MEMORY, "");
     size = new_size;
     Init();
 }

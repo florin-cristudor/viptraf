@@ -1,7 +1,8 @@
 /*
  *  VIPTraf - TCPConnection Class
 */
-
+#include "close.h"
+#include "viptraf.h"
 #include "addr.h"
 
 #include "tcp_con.h"
@@ -83,9 +84,9 @@ TCPConnection::~TCPConnection(void)
 bool TCPConnection::IsMe(struct sockaddr_storage *s_addr, struct sockaddr_storage *d_addr)
 {
     if(!s_addr || !d_addr)
-        die("%s Error in call", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
     if(s_addr->ss_family != d_addr->ss_family)
-        die("%s Error in parameters", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Error in parameters");
     if(s_addr->ss_family == AF_INET6 && kind == TCP_CON_IPV4) return false;
     if(s_addr->ss_family == AF_INET && kind == TCP_CON_IPV6) return false;
 
@@ -124,7 +125,7 @@ bool TCPConnection::IsMe(struct sockaddr_storage *s_addr, struct sockaddr_storag
 TCPConnection * TCPConnection::ListGetConnection(sockaddr_storage *s_addr, sockaddr_storage *d_addr)
 {
     if(!s_addr || !d_addr)
-        die("%s Bad parameters", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
 
     TCPConnection *crs = this;
     while(crs)

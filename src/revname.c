@@ -18,6 +18,9 @@ interim IP addresses in the meantime.
 #include "revname.h"
 #include "rvnamed.h"
 #include "sockaddr.h"
+//old inc end
+#include "close.h"
+#include "viptraf.h"
 
 static bool resolver_socket_ready(const struct resolver *res,
 				  const short events,
@@ -174,9 +177,9 @@ static void resolver_quit(struct resolver *res)
 	if (r == res->server)
 		return;
 	if (r == -1)
-		die_errno("waitpid(resolver_child)");
+        exit_program(ERROR_ERRNO, "waitpid(resolver_child)");
 	if (r != 0)
-		die("waitpid(): exited unknown process ???");
+        exit_program(ERROR_ERRNO, "waitpid: exited unknown process");
 
 	/* wait a little for child to process the QUIT request */
 	struct timespec t;
@@ -189,16 +192,16 @@ static void resolver_quit(struct resolver *res)
 	if (r == res->server)
 		return;
 	if (r == -1)
-		die_errno("waitpid(resolver_child)");
+        exit_program(ERROR_ERRNO, "waitpid(resolver_child)");
 	if (r != 0)
-		die("waitpid(): exited unknown process ???");
+        exit_program(ERROR_ERRNO, "waitpid: exited unknown process");
 
 	/* send SIGTERM to terminate the child ... */
 	if (kill(res->server, SIGTERM) == -1) {
 		if(errno == ESRCH)
 			return;		/* already exited ??? */
 
-		die_errno("kill(resolver_child, TERM)");
+        exit_program(ERROR_ERRNO, "kill(resolver_child, TERM)");
 	}
 
 	/* wait a little */

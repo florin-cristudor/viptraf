@@ -32,6 +32,8 @@ An IP Network Statistics Utility
 
 #include "parse-options.h"
 
+#include "close.h"
+#include "viptraf.h"
 #include "interface/video.h"
 #include "interface/video_ncurses.h"
 
@@ -312,8 +314,7 @@ static int create_pidfile(void)
 	}
 
 	if (lockf(fd, F_TLOCK, 0) < 0) {
-		error("The PID file is locked " VIPTRAF_PIDFILE ". "
-		      "Maybe other viptraf instance is running?can not acquire ");
+        exit_program(ERROR_ERRNO, "The PID file %s is locked. Maybe other instance is running? ", VIPTRAF_PIDFILE);
 		return -1;
 	}
 
@@ -332,11 +333,10 @@ static void sanitize_dir(const char *dir)
 	/* Check whether LOCKDIR exists (/var/run is on a tmpfs in Ubuntu) */
 	if (access(dir, F_OK) != 0) {
 		if (mkdir(dir, 0700) == -1)
-			die("Cannot create %s: %s", dir, strerror(errno));
+            exit_program(ERROR_ERRNO, "Cannot create %s", dir);
 
 		if (chown(dir, 0, 0) == -1)
-			die("Cannot change owner of %s: %s", dir,
-			    strerror(errno));
+            exit_program(ERROR_ERRNO, "Cannot change owner of %s", dir);
 	}
 }
 
@@ -352,25 +352,6 @@ static void handle_internal_command(int argc, char **argv,
 	}
 }
 
-int shutdown(int return_code, const char *format, ...)
-{
-    if(pVideo)
-    {
-        delete pVideo;
-        pVideo = NULL;
-    }
-
-    if(return_code)
-    {
-        va_list args;
-        va_start(args, format);
-        die(format, args);
-        va_end(args);
-    }
-
-    exit(return_code);
-}
-
 int main(int argc, char **argv)
 {
 	int current_log_interval = 0;
@@ -378,7 +359,7 @@ int main(int argc, char **argv)
     debug_log("Start program");
 
 	if (geteuid() != 0)
-		die("This program can be run only by the system administrator");
+        exit_program(ERROR_ONLY_ADMIN, "");
 
 	const struct cmd_struct commands[] = {
 		CMD(capture, "capture packet"),
@@ -416,7 +397,7 @@ int main(int argc, char **argv)
 	command |= (g_opt) ? (1 << 5) : 0;
 
 	if (__builtin_popcount(command) > 1)
-		die("only one of -i|-d|-s|-z|-l|-g options must be used");
+        exit_program(ERROR_OPTIONS, "Only one of -i|-d|-s|-z|-l|-g options must be used");
 
 	strcpy(current_logfile, "");
 
@@ -427,7 +408,7 @@ int main(int argc, char **argv)
 
 	if (B_opt) {
 		if (!command)
-			die("one of -i|-d|-s|-z|-l|-g option is missing\n");
+            exit_program(ERROR_OPTIONS, "One of -i|-d|-s|-z|-l|-g option is missing");
 		daemonized = 1;
 		setenv("TERM", "linux", 1);
 	}
@@ -457,14 +438,13 @@ int main(int argc, char **argv)
 #endif
 
 	if ((getenv("TERM") == NULL) && (!daemonized))
-		die("Your TERM variable is not set.\n"
-		    "Please set it to an appropriate value");
+        exit_program(ERROR_ERRNO, "Your TERM variable is not set. Please set it to an appropriate value");
 
 	loadoptions();
 
 
 	if (create_pidfile() < 0)
-        return shutdown(-1, "");
+        return exit_program(ERROR_PID_FILE, "");
 
 	/*
 	 * If a facility is directly invoked from the command line, check for
@@ -478,20 +458,20 @@ int main(int argc, char **argv)
             FILE *f;
             f = freopen("/dev/null", "w", stdout);  /* redirect std output */
             if (NULL == f)
-                die("%s(): f == NULL", __FUNCTION__);
+                exit_program(ERROR_DEMONIZE, "Redirect stdout");
             f = freopen("/dev/null", "r", stdin);   /* redirect std input */
             if (NULL == f)
-                die("%s(): f == NULL", __FUNCTION__);
+                exit_program(ERROR_DEMONIZE, "Redirect stdin");
             f = freopen("/dev/null", "w", stderr);  /* redirect std error */
             if (NULL == f)
-                die("%s(): f == NULL", __FUNCTION__);
+                exit_program(ERROR_DEMONIZE, "Redirect stderr");
 			signal(SIGUSR2, term_usr2_handler);
 
 			options.logging = 1;
 			break;
 		case -1:	/* error */
 		default:	/* parent */
-            return shutdown(-2, "Fork error, %s cannot run in background", VIPTRAF_NAME);
+            return exit_program(ERROR_FORK, "%s cannot run in background", VIPTRAF_NAME);
 		}
 	}
 
@@ -500,12 +480,12 @@ int main(int argc, char **argv)
 
     pVideo = new VideoNcurses;
     if(!pVideo)
-        return shutdown(-3, "Unable to create video object");
+        return exit_program(ERROR_MEMORY, "");
     if(!daemonized)
     {
         pVideo->Init();
         if(!pVideo->IsEnabled())
-            return shutdown(-4, "The video cannot be init");
+            return exit_program(ERROR_INIT_VIDEO, "");
         pVideo->InitColors(options.color);
     }
 
@@ -543,10 +523,10 @@ int main(int argc, char **argv)
 	 * hide all into tui_top_panel(char *msg)
 	 * */
 
-    Desktop *pdesk = new Desktop();
-    if(!pdesk)
-        shutdown(-6, "Unable to init the desktop");
-    pdesk->Run();
+    Desktop *pDesk = new Desktop();
+    if(!pDesk)
+        exit_program(ERROR_MEMORY, "");
+    pDesk->Run();
 
     /* simplify
 	if (g_opt)
@@ -571,7 +551,7 @@ int main(int argc, char **argv)
         program_interface();
 */
 //cleanup:
-    shutdown(0, "");
+    exit_program(EXIT_SUCCESS, "");
 	unlink(VIPTRAF_PIDFILE);
 //bailout:
 	return 0;

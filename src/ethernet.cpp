@@ -1,10 +1,16 @@
+/*
+ * VIPTraf Ethernet Class
+ */
+#include "close.h"
+#include "viptraf.h"
+
 #include "ethernet.h"
 
 Ethernet::Ethernet(uint8_t *my_mac): rate_in(5), rate_out(5)
 {
     Init();
     if(!my_mac)
-        die("%s Bad call", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
 
     memcpy(mac, my_mac, sizeof(mac));
     sprintf(mac_ascii, "%02x:%02x:%02x:%02x:%02x:%02x",
@@ -40,7 +46,7 @@ void Ethernet::Init()
 bool Ethernet::IsMe(uint8_t *test_mac)
 {
     if(!test_mac)
-        die("%s Bad call", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
 
     if(memcmp(mac, test_mac, sizeof(mac)) == 0)
         return true;
@@ -50,7 +56,7 @@ bool Ethernet::IsMe(uint8_t *test_mac)
 Ethernet *Ethernet::ListFindMac(uint8_t *test_mac)
 {
     if(!test_mac)
-        die("%s Bad call", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
 
     if(IsMe(test_mac))
         return this;

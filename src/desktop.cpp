@@ -2,6 +2,9 @@
  * VIPTraf Desktop Class
  */
 #include "iptraf.h"
+
+#include "viptraf.h"
+#include "close.h"
 #include "interface/video.h"
 #include "attrs.h"
 #include "options.h"
@@ -188,7 +191,7 @@ int Desktop::Draw()
 int Desktop::TestScreenSize()
 {
     if(VideoMaxLines < 24 || VideoMaxCols < 80)
-        return shutdown(-10, "Screen must have minimum 24 lines and 80 columns");
+        return exit_program(ERROR_SCREEN_SIZE, "");
 
     return 0;
 }

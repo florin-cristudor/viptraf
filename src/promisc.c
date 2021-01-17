@@ -13,6 +13,9 @@ promisc.c	- handles the promiscuous mode flag for the Ethernet/FDDI/
 #include "ifaces.h"
 #include "error.h"
 #include "promisc.h"
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 
 struct promisc_list {
 	struct list_head list;
@@ -83,7 +86,7 @@ void promisc_enable(int sock, struct list_head *promisc, const char *device_name
 
 	FILE *fp = open_procnetdev();
 	if (!fp)
-		die_errno("%s: open_procnetdev", __func__);
+        exit_program(ERROR_ERRNO, "open_procnetdev");
 
 	char dev_name[IFNAMSIZ];
 	while (get_next_iface(fp, dev_name, sizeof(dev_name))) {

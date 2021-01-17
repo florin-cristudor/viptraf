@@ -1,10 +1,12 @@
 /*
  * VIPTraf Log Class
  */
-
 #include <string.h>
 #include <time.h>
 #include <stdarg.h>
+
+#include "close.h"
+#include "viptraf.h"
 
 #include "traf_log.h"
 
@@ -71,7 +73,7 @@ bool Log::Rotate()
 int Log::Write(const char *format, ...)
 {
     if(!format)
-        die("%s: Bad call", __FUNCTION__);
+        exit_program(ERROR_GENERAL, "Bad call");
 
     if(!enabled)
         return -1;

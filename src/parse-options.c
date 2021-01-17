@@ -1,8 +1,10 @@
 /* For terms of usage/redistribution/modification see the LICENSE file */
 /* For authors and contributors see the AUTHORS file */
-
 #include "iptraf-ng-compat.h"
 #include "parse-options.h"
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 
 static int parse_opt_size(const struct options *opt)
 {
@@ -75,7 +77,7 @@ static int get_value(const struct options *opt)
 	case OPTION_INTEGER:
 		*(int *) opt->value = strtol(optarg, (char **) &s, 10);
 		if (*s) {
-			error("invalid number -- %s", s);
+            exit_program(ERROR_OPTIONS, "Invalid number -- %s", s);
 			return -1;
 		}
 		break;

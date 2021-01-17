@@ -15,6 +15,9 @@
 #include "capt-mmap-v2.h"
 #include "capt-mmap-v3.h"
 #include "time.h"
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 
 int capt_get_socket(struct capt *capt) {
 
@@ -125,7 +128,7 @@ static unsigned long capt_get_dropped_generic(struct capt *capt)
 	memset(&stats, 0, len);
 	int err = getsockopt(capt->fd, SOL_PACKET, PACKET_STATISTICS, &stats, &len);
 	if (err < 0)
-		die_errno("%s(): getsockopt(PACKET_STATISTICS)", __func__);
+        exit_program(ERROR_ERRNO, "getsockopt(PACKET_STATISTICS)");
 
 	capt->dropped += stats.tp_drops;
 

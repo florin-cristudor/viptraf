@@ -19,4 +19,6 @@ private:
     FILE *fdevs;
 };
 
+std::string MenuSelectInterface(bool all_included);
+
 #endif // INTERFACES_H

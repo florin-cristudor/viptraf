@@ -22,6 +22,9 @@ tcptable.c - table manipulation routines for the IP monitor
 #include "hostmon.h"
 #include "sockaddr.h"
 
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 #include "interface/video.h"
 
 #define MSGSTRING_MAX	320
@@ -69,7 +72,7 @@ static unsigned int tcp_hash(struct sockaddr_storage *saddr, struct sockaddr_sto
             hash += 3 * ((struct sockaddr_in6 *)saddr)->sin6_port;
             break;
         default:
-            die("%s(): saddr: unknown address family", __FUNCTION__);
+            exit_program(ERROR_GENERAL, "saddr: unknown address family");
     }
     switch (daddr->ss_family)
     {
@@ -84,7 +87,7 @@ static unsigned int tcp_hash(struct sockaddr_storage *saddr, struct sockaddr_sto
             hash +=     ((struct sockaddr_in6 *)daddr)->sin6_port;
             break;
         default:
-            die("%s(): daddr: unknown address family", __FUNCTION__);
+            exit_program(ERROR_GENERAL, "daddr: unknown address family");
     }
     return (hash % ENTRIES_IN_HASH_TABLE);
 }

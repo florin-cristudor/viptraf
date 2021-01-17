@@ -116,7 +116,7 @@ extern int strtoul_ui(char const *s, int base, unsigned int *result);
 extern int strtol_i(char const *s, int base, int *result);
 
 extern void die(const char *err, ...) __noreturn __printf(1,2);
-extern void die_errno(const char *fmt, ...) __noreturn __printf(1,2);
+//extern void die_errno(const char *fmt, ...) __noreturn __printf(1,2);
 extern void error(const char *err, ...) __printf(1,2);
 
 static inline char *skip_whitespace(char *str)

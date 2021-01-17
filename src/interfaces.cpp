@@ -3,6 +3,12 @@
  */
 #include <linux/if.h>
 
+#include "viptraf.h"
+#include "close.h"
+#include "attrs.h"
+#include "interface/video.h"
+#include "interface/menu.h"
+
 #include "interfaces.h"
 
 #define BUFFER_SIZE 1024
@@ -61,7 +67,7 @@ std::string Interfaces::GetNextInterfaceName(void)
 
 
 
-
+/*
     strcpy(ifname, "");
 
     if (!feof(fd)) {
@@ -74,6 +80,16 @@ std::string Interfaces::GetNextInterfaceName(void)
                 strcpy(ifname, "");
             return 1;
         }
-    }
+    }*/
     return 0;
+}
+
+std::string MenuSelectInterface(bool all_included)
+{
+    Menu *pMenu = new Menu(10, 30, (VideoMaxLines - 10) / 2, (VideoMaxCols - 30) / 2, ATTR_MENU_BOX, 0, 0, "Interfaces Menu", "");
+
+    if(pMenu == NULL)
+        exit_program(ERROR_MEMORY, "");
+
+    return std::string("");
 }

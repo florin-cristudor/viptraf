@@ -2,6 +2,9 @@
 /* For authors and contributors see the AUTHORS file */
 
 #include "iptraf-ng-compat.h"
+//end old inc
+#include "close.h"
+#include "viptraf.h"
 
 // Die if we can't allocate size bytes of memory.
 void *xmalloc(size_t size)
@@ -9,7 +12,7 @@ void *xmalloc(size_t size)
 	void *ptr = malloc(size);
 
 	if (ptr == NULL && size != 0)
-		die("Out of memory, xmalloc failed");
+        exit_program(ERROR_MEMORY, "");
 	return ptr;
 }
 
@@ -26,7 +29,7 @@ void *xcalloc(size_t nmemb, size_t size)
 	void *ptr = calloc(nmemb, size);
 
 	if (!ptr && (!nmemb || !size))
-		die("Out of memory, xcalloc failed");
+        exit_program(ERROR_MEMORY, "");
 	return ptr;
 }
 
@@ -35,7 +38,7 @@ void *xrealloc(void *ptr, size_t size)
 	void *ret = realloc(ptr, size);
 
 	if (!ret && !size)
-		die("Out of memory, xrealloc failed");
+        exit_program(ERROR_MEMORY, "");
 	return ret;
 }
 
@@ -48,7 +51,7 @@ char *xstrdup(const char *s)
 	char *t = strdup(s);
 
 	if (!t)
-		die("Out of memory, %s failed", __func__);
+        exit_program(ERROR_MEMORY, "");
 
 	return t;
 }
