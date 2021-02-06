@@ -10,7 +10,7 @@ class MenuItemEntry : public MenuItem, public ViewText
 {
 public:
     MenuItemEntry(const char *text, const char *help_text,
-                  int use_command, int (*call_back_func)(void)=NULL);
+                  int use_command, int (*call_back_func)(int)=NULL);
 
     virtual int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);
@@ -23,7 +23,7 @@ protected:
     int hot_key;
 
     std::string help;
-    int (*exec_func)(void);
+    int (*exec_func)(int);
 };
 
 #endif // MENU_ITEM_ENTRY_H

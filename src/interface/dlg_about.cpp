@@ -21,7 +21,7 @@ DlgAbout::~DlgAbout()
 {
 }
 
-int RunDlgAbout(void)
+int RunDlgAbout(int command __attribute__((unused)))
 {
     DlgAbout *dlg = new DlgAbout(16, 49, (VideoMaxLines - 16) / 2, (VideoMaxCols - 49) / 2+1);
     if(!dlg) return 0;

@@ -14,6 +14,6 @@ public:
 
 };
 
-extern int RunDlgAbout(void);
+extern int RunDlgAbout(int command);
 
 #endif // DLG_ABOUT_H

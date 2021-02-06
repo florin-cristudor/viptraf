@@ -12,7 +12,7 @@
 
 extern TextLine *pHelpBar;
 
-MenuItemEntry::MenuItemEntry(const char *text, const char *help_text, int use_command, int (*call_back_func)(void)):
+MenuItemEntry::MenuItemEntry(const char *text, const char *help_text, int use_command, int (*call_back_func)(int)):
         MenuItem(use_command),
         ViewText(0, 0, ATTR_MENU_NORMAL, 0, text)
 {
@@ -98,14 +98,11 @@ void MenuItemEntry::Select()
 
 int MenuItemEntry::Execute(void)
 {
+    if(exec_func)
+        return (*exec_func)(command);
+
     if(command >= 1000)
         return command;
-
-    if(exec_func)
-    {
-        (*exec_func)();
-        return MENU_EXECUTE_DONE;
-    }
 
     return MENU_COMMAND_EMPTY;
 }
