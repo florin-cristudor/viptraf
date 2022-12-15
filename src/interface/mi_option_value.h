@@ -7,6 +7,7 @@ class MenuOptionValue: public MenuItemEntry
 {
 public:
     MenuOptionValue(const char *text, const char *help_text, int opt_idx);
+    virtual ~MenuOptionValue();
 
     virtual int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);

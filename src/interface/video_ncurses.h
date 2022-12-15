@@ -22,7 +22,7 @@ class VideoNcurses: public Video
 {
 public:
     VideoNcurses();
-    ~VideoNcurses();
+    virtual ~VideoNcurses();
 
     virtual int Init(void);
     virtual int Down(void);

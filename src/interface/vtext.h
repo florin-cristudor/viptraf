@@ -12,6 +12,7 @@ class ViewText : public View
 public:
     ViewText(int y, int x, int new_attr, unsigned int opts, const char *format, ...);
     ViewText(int y, int x, int new_attr, unsigned int opts, std::string new_text);
+    virtual ~ViewText() {}
 
     virtual int Draw(int win_descriptor, int size);
 

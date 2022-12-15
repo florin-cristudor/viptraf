@@ -7,6 +7,7 @@ class MenuItemLine : public MenuItem
 {
 public:
     MenuItemLine();
+    virtual ~MenuItemLine();
 
     int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);

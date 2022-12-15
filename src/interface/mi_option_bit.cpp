@@ -17,6 +17,10 @@ MenuOptionBit::MenuOptionBit(const char *text, const char *help_text, int opt_id
     index = opt_idx;
 }
 
+MenuOptionBit::~MenuOptionBit()
+{
+}
+
 int MenuOptionBit::Draw(int win_descriptor, int y, int x, int size)
 {
     MenuItemEntry::Draw(win_descriptor, y, x, size);

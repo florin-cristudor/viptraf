@@ -21,6 +21,10 @@ ViewTextInput::ViewTextInput(int y, int x, int size, const char *new_text):
     size_x = size;
 }
 
+ViewTextInput::~ViewTextInput()
+{
+}
+
 int ViewTextInput::Draw(int win_descriptor, int size)
 {
     pVideo->WSetAttribute(win_descriptor, text_attr);

@@ -7,6 +7,7 @@ class MenuOptionBit: public MenuItemEntry
 {
 public:
     MenuOptionBit(const char *text, const char *help_text, int opt_idx);
+    virtual ~MenuOptionBit();
 
     virtual int Draw(int win_descriptor, int y, int x, int size);
     virtual int Execute(void);

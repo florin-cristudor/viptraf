@@ -24,6 +24,10 @@ MenuOptionValue::MenuOptionValue(const char *text, const char *help_text, int op
     index = opt_idx;
 }
 
+MenuOptionValue::~MenuOptionValue()
+{
+}
+
 int MenuOptionValue::Draw(int win_descriptor, int y, int x, int size)
 {
     MenuItemEntry::Draw(win_descriptor, y, x, size);

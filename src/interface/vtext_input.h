@@ -7,6 +7,7 @@ class ViewTextInput : public ViewText
 {
 public:
     ViewTextInput(int y, int x, int size, const char *new_text);
+    virtual ~ViewTextInput();
 
     virtual int Draw(int win_descriptor, int size);
 

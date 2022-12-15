@@ -11,7 +11,7 @@ public:
     Menu(int nlines, int ncols, int begin_y, int begin_x, int attributes,
          int offset_y, int offset_x,
          const char *text, const char *help_text);
-    ~Menu();
+    virtual ~Menu();
 
     virtual int Execute(void);
     virtual int ExecuteHotKey(int ch);

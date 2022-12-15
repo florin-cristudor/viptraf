@@ -34,6 +34,10 @@ MenuItemEntry::MenuItemEntry(const char *text, const char *help_text, int use_co
     help = std::string(help_text);
 }
 
+MenuItemEntry::~MenuItemEntry()
+{
+}
+
 int MenuItemEntry::Draw(int win_descriptor, int y, int x, int size)
 {
     MenuItem::Draw(win_descriptor, y, x, size);

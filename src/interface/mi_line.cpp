@@ -11,6 +11,10 @@ MenuItemLine::MenuItemLine():
 {
 }
 
+MenuItemLine::~MenuItemLine()
+{
+}
+
 int MenuItemLine::Draw(int win_descriptor, int y, int x, int size)
 {
     pVideo->WSetAttribute(win_descriptor, ATTR_MENU_BOX);
